@@ -7,6 +7,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import '@/global.css';
+import React from 'react';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -21,11 +22,9 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
     </GluestackUIProvider>
-  
   );
 }
