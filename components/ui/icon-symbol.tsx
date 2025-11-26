@@ -2,7 +2,7 @@
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SymbolViewProps, SymbolWeight } from 'expo-symbols';
-import { ComponentProps } from 'react';
+import React, { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
 type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
@@ -23,7 +23,9 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'star.fill': 'star',
-} as IconMapping;
+  'chat': 'chat',
+  'team' : 'people',
+} as unknown as IconMapping;
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.

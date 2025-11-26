@@ -18,7 +18,7 @@ export default function myTeamScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText className="text-2xl font-bold">TÄÄLLÄ OLISI TIIMINÄKYMÄ!</ThemedText>
+        <ThemedText className="text-2xl font-bold">Tiimi näkymä!</ThemedText>
         <HelloWave />
       </ThemedView>
     </ParallaxScrollView>

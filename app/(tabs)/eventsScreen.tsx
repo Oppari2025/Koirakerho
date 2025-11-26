@@ -18,7 +18,7 @@ export default function eventsScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText className="text-2xl font-bold">TÄÄL ON TAPAHTUMII!</ThemedText>
+        <ThemedText className="text-2xl font-bold">Tapahtuma näkymä</ThemedText>
         <HelloWave />
       </ThemedView>
     </ParallaxScrollView>

@@ -18,7 +18,7 @@ export default function chatScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText className="text-2xl font-bold">TÄÄLLÄ OLISI Chat!</ThemedText>
+        <ThemedText className="text-2xl font-bold">Chat näkymä</ThemedText>
         <HelloWave />
       </ThemedView>
     </ParallaxScrollView>

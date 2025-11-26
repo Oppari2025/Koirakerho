@@ -18,7 +18,7 @@ export default function homeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText className="text-2xl font-bold">TESTtaas jne!</ThemedText>
+        <ThemedText className="text-2xl font-bold">Koti näkymä</ThemedText>
         <HelloWave />
       </ThemedView>
     </ParallaxScrollView>
