@@ -17,14 +17,16 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    
+
     <GluestackUIProvider mode="dark">
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="eventScreen" options={{ headerShown: true, title: "Event" }}/>
+          <Stack.Screen name="addEventScreen" options={{ headerShown: true, title: "Add Event" }}/>
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
     </GluestackUIProvider>
 
   );
