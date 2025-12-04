@@ -14,8 +14,8 @@ export default function RootLayout() {
           options={{ drawerLabel: "Home", title: "Home" }}
         />
         <Drawer.Screen
-          name="(tabs)"
-          options={{ drawerLabel: "testi", title: "testi" }}
+          name="profileScreen"
+          options={{ drawerLabel: "My Profile", title: "My Profile" }}
         />
       </Drawer>
     </ThemeProvider>
