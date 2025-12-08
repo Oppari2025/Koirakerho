@@ -33,14 +33,14 @@ export default function TabLayout() {
         name="chatScreen"
         options={{
           title: 'Chat',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chat" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="textbox" color={color} />,
         }}
       />
       <Tabs.Screen
         name="myTeamScreen"
         options={{
           title: 'My team',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="team" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.2.fill" color={color} />,
         }}
       />
     </Tabs>

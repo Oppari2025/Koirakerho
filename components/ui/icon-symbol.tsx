@@ -23,8 +23,8 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'star.fill': 'star',
-  'chat': 'chat',
-  'team' : 'people',
+  'textbox': 'chat',
+  'person.2.fill' : 'people',
 } as unknown as IconMapping;
 
 /**

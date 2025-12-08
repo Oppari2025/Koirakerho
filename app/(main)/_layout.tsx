@@ -10,24 +10,25 @@ import '@/global.css';
 import React from 'react';
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+    anchor: '(tabs)',
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+    const colorScheme = useColorScheme();
 
-  return (
+    return (
 
-    <GluestackUIProvider mode="dark">
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="eventScreen" options={{ headerShown: true, title: "Event" }}/>
-          <Stack.Screen name="addEventScreen" options={{ headerShown: true, title: "Add Event" }}/>
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </GluestackUIProvider>
+        <GluestackUIProvider mode="dark">
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <Stack>
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    <Stack.Screen name="eventScreen" options={{ headerShown: true, title: "Event" }} />
+                    <Stack.Screen name="addEventScreen" options={{ headerShown: true, title: "Add Event" }} />
+                    <Stack.Screen name="dogProfileScreen" options={{ headerShown: false, title: "Dog Profile" }} />
+                </Stack>
+                <StatusBar style="auto" />
+            </ThemeProvider>
+        </GluestackUIProvider>
 
-  );
+    );
 }
