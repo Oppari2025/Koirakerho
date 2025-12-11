@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 //import { auth } from '../FirebaseConfig';
 
 export default function Login() {
@@ -18,9 +18,17 @@ export default function Login() {
       setErrorMessage('Register failed. Check your info.');
     }
   };
+  const signIn = async () => {
+    try {
+      //await createUserWithEmailAndPassword(email, password);
+      setErrorMessage('Successfully registered!');
+    } catch (error) {
+      setErrorMessage('Register failed. Check your info.');
+    }
+  };
 
   return (
-    <SafeAreaProvider style={styles.safe}>
+    <SafeAreaView style={styles.safe}>
       <StatusBar style="auto" />
       <ScrollView contentContainerStyle={styles.scroll}>
         
@@ -56,6 +64,15 @@ export default function Login() {
             onChangeText={setPassword}
           />
 
+          {/* Confirm Password */}
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
           {/* Error message */}
           {errorMessage ? (
             <Text style={styles.error}>{errorMessage}</Text>
@@ -73,14 +90,14 @@ export default function Login() {
 
         </View>
       </ScrollView>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff3c0ff',
   },
   scroll: {
     flexGrow: 1,
@@ -97,14 +114,14 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#ffefa8ff',
     padding: 14,
     borderRadius: 10,
     marginBottom: 16,
     fontSize: 16
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#144100ff',
     padding: 14,
     borderRadius: 10,
     alignItems: 'center',
@@ -120,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   secondaryButtonText: {
-    color: '#007AFF',
+    color: '#144100ff',
     fontSize: 16,
     fontWeight: '500'
   },

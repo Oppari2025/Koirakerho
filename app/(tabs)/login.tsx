@@ -1,8 +1,11 @@
+import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-//import { auth } from '../FirebaseConfig';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { auth } from '../../FirebaseConfig';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -11,24 +14,25 @@ export default function Login() {
 
   const signIn = async () => {
     try {
-      //await signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push('/explore');
       setErrorMessage('Successfully logged in!');
-    } catch (error) {
+    } catch (errorMessage) {
       setErrorMessage('Login failed. Check your credentials.');
     }
   };
 
   const signUp = async () => {
     try {
-      //await createUserWithEmailAndPassword(email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
       setErrorMessage('Successfully registered!');
-    } catch (error) {
+    } catch (errorMessage) {
       setErrorMessage('Register failed. Check your info.');
     }
   };
 
   return (
-    <SafeAreaProvider style={styles.safe}>
+    <SafeAreaView style={styles.safe}>
       <StatusBar style="auto" />
       <ScrollView contentContainerStyle={styles.scroll}>
         
@@ -76,7 +80,7 @@ export default function Login() {
 
         </View>
       </ScrollView>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
 
