@@ -24,6 +24,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="eventScreen" options={{ headerShown: true, title: "Event" }}/>
           <Stack.Screen name="addEventScreen" options={{ headerShown: true, title: "Add Event" }}/>
+          <Stack.Screen name="mapScreen" options={{ headerShown: true, title: "Map" }}/>
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
