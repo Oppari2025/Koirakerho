@@ -2,9 +2,10 @@ import { addDoc, collection, getDocs, query, Timestamp, where } from "firebase/f
 import { auth, db } from "../firebase/FirebaseConfig"
 import { Dog, FirestoreDog } from "../types/dog"
 
+// luodaan koira Firestoreen
 
 export const addDog = async (
-  dog: Omit<FirestoreDog, "ownerID" | "createdAt"> // Omit poissulkkee ownderIdcreatedAt, koska se määritellään tässä funktiossa
+  dog: Omit<FirestoreDog, "ownerID" | "createdAt"> // Omit poissulkkee ownderIdcreatedAt, koska ne määritellään tässä funktiossa
 ) => {
   return await addDoc(collection(db, "dogs"), {
     ...dog,

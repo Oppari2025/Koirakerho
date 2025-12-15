@@ -1,6 +1,7 @@
-// src/services/auth/authService.ts
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User } from "firebase/auth"
 import { auth } from "../firebase/FirebaseConfig"
+
+// palvelut käyttäjän rekisteröintiin, kirjautumiseen ja uloskirjautumiseen
 
 export const registerAuthUser = async (
   email: string,

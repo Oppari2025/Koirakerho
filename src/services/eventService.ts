@@ -2,8 +2,10 @@ import { addDoc, arrayUnion, collection, doc, getDocs, query, Timestamp, updateD
 import { auth, db } from "../firebase/FirebaseConfig"
 import { Event, FirestoreEvent } from "../types/event"
 
+// luodaan tapahtuma Firestoreen
+
 export const createEvent = async (
-  event: Omit<FirestoreEvent, "createdBy" | "createdAt" | "participants"> // Omit poissulkkee sarakkeet, koska ne määritellään täällä tiedostossa
+  event: Omit<FirestoreEvent, "createdBy" | "createdAt" | "participants"> // Omit poissulkkee sarakkeet, koska ne määritellään täällä
 ) => {
   return await addDoc(collection(db, "events"), {
     ...event,

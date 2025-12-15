@@ -1,5 +1,6 @@
-// src/types/dog.ts
 import { Timestamp } from "firebase/firestore"
+
+// määritellään koiran tiedot tallennettavaksi Firestoreen
 
 export interface FirestoreDog {
   ownerId: string
@@ -9,6 +10,7 @@ export interface FirestoreDog {
   description?: string
   imageUrl?: string
   createdAt: Timestamp
+  healthAssessmentDone: boolean
 }
 
 export interface Dog extends FirestoreDog {

@@ -3,6 +3,8 @@ import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore"
 import { db } from "../firebase/FirebaseConfig"
 import { FirestoreUser } from "../types/user"
 
+// luodaan käyttäjäprofiili Firestoreen
+
 export const createUserProfile = async (
   userId: string,
   data: Omit<FirestoreUser, "createdAt"> // Omit poissulkkee createdAt, koska se määritellään tässä funktiossa

@@ -1,5 +1,6 @@
-// src/types/event.ts
 import { Timestamp } from "firebase/firestore"
+
+// määritellään tapahtuman tiedot tallennettavaksi Firestoreen
 
 export interface EventLocation {
   address: string

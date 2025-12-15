@@ -6,6 +6,7 @@ import { createUserProfile, getUserProfile } from "../services/userProfileServic
 import { FirestoreUser } from "../types/user"
 
 // tässä tiedostossa hallitaan käyttäjän todennusta ja profiilitietoja
+// AuthContext tarjoaa rekisteröinti-, kirjautumis- ja uloskirjautumistoiminnot sekä käyttäjän profiilitiedot sovelluksen muille osille
 
 /* type */
 
@@ -78,7 +79,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const user = await loginAuthUser(email, password)
       console.log('AuthContext.login: loginAuthUser succeeded', user?.uid)
 
-      // set firebase user and load profile immediately to avoid routing race
       setFirebaseUser(user as FirebaseUser)
       const profile = await getUserProfile(user.uid)
       setUserProfile(profile)
