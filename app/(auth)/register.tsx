@@ -15,6 +15,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
+  // Rekisteröintifunktio
   const handleRegister = async () => {
     if (!email || !password || !name) {
       setErrorMessage("Täytä kaikki kentät")

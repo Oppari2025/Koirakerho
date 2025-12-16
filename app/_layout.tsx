@@ -16,6 +16,7 @@ export const unstable_settings = {
   anchor: '(tabs)',
 };
 
+// Komponentti, joka ohjaa käyttäjän oikealle sivulle autentikointitilasta riippuen
 function AuthRedirector() {
   const { firebaseUser, loading } = useAuth()
   const router = useRouter()

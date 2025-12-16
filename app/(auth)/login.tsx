@@ -14,6 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
+  // Kirjautumisfunktio
   const handleLogin = async () => {
     if (!email || !password) {
       setErrorMessage('Täytä kaikki kentät')

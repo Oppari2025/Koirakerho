@@ -94,8 +94,10 @@ export default function Index() {
         }
     }
 
+    // Näytetään latausnäyttö, kun autentikointitila on latautumassa
     if (loading) return null
 
+    // Jos käyttäjää ei ole kirjautunut sisään, ohjataan login-sivulle
     if (!firebaseUser) {
         return <Redirect href="/login" />
     }
@@ -138,11 +140,13 @@ export default function Index() {
                     {/* Lista tulevista tapahtumista */}
                     <Text style={styles.sectionTitle}>Tulevat tapahtumat</Text>
 
-                    {events.length === 0 ? <Text style={styles.empty}>Ei tulevia tapahtumia</Text> : events.map(ev => (
+                    {events.length === 0 ? 
+                    <Text style={styles.empty}>Ei tulevia tapahtumia</Text> 
+                    : events.map(ev => (
                         <View key={ev.id} style={styles.item}>
                             <Text style={styles.itemTitle}>{ev.title} {ev.date.toDate().toLocaleString()}</Text>
                             <Text style={styles.itemMeta}>{ev.description}</Text>
-                            <Text style={styles.itemMeta}>{ev.location.address}, {ev.location.lat}, {ev.location.lng}</Text>
+                            <Text style={styles.itemMeta}>{ev.location.address}, {ev.location.lat}°, {ev.location.lng}°</Text>
                             <Text style={styles.itemMeta}>Julkaistu: {ev.createdAt.toDate().toLocaleString()}</Text>
                             <Text style={styles.itemMeta}>Osallistujat: {ev.participants.length}</Text>
                         </View>

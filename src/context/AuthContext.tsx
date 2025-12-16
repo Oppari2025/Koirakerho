@@ -15,9 +15,10 @@ interface AuthContextType {
 
   register: (email: string, password: string, name: string) => Promise<void>
   login: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void>
+  logout: () => Promise<void> 
 }
 
+// luodaan AuthContext ja AuthProvider-komponentit
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -59,7 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       const user = await registerAuthUser(email, password)
-      console.log('createUserProfile: creating profile for uid', user.uid)
+      //console.log('createUserProfile: creating profile for uid', user.uid)
       await createUserProfile(user.uid, { email, name })
     } catch (err) {
       console.error('createUserProfile failed', err)
@@ -105,14 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // jaetaan AuthContextin arvot lapsikomponenteille
   return (
     <AuthContext.Provider
-      value={{
-        firebaseUser,
-        userProfile,
-        loading,
-        register,
-        login,
-        logout
-      }}
+      value={{ firebaseUser, userProfile, loading, register, login, logout }}
     >
       {children}
     </AuthContext.Provider>
