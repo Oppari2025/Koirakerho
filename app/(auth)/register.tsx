@@ -2,7 +2,7 @@ import { useRouter } from "expo-router"
 import { StatusBar } from "expo-status-bar"
 import React, { useState } from "react"
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { SafeAreaProvider } from "react-native-safe-area-context"
 import { useAuth } from "../../src/context/AuthContext"
 
 export default function Register() {
@@ -35,7 +35,7 @@ export default function Register() {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaProvider style={styles.safe}>
       <StatusBar style="auto" />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.container}>
@@ -98,7 +98,7 @@ export default function Register() {
             </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
 

@@ -3,6 +3,7 @@ import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import 'react-native-reanimated';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from "../src/context/AuthContext";
 
@@ -27,7 +28,7 @@ function AuthRedirector() {
     } else {
       router.replace('/')
     }
-  }, [firebaseUser, loading])
+  }, [firebaseUser, loading, router])
 
   return null
 }
@@ -37,18 +38,18 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <SafeAreaProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)/login" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)/register" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         </Stack>
 
         <AuthRedirector />
 
         <StatusBar style="auto" />
-      </ThemeProvider>
+        </ThemeProvider>
+      </SafeAreaProvider>
     </AuthProvider>
   );
 }
