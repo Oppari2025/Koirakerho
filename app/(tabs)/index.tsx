@@ -7,8 +7,6 @@ import { useAuth } from '../../src/context/AuthContext';
 import { addDog, getMyDogs } from '../../src/services/dogService';
 import { createEvent, getUpcomingEvents } from '../../src/services/eventService';
 
-
-
 export default function Index() {
     const { firebaseUser, userProfile, logout, loading } = useAuth()
     const [status, setStatus] = useState<string | null>(null)

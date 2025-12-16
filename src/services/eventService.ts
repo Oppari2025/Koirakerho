@@ -2,10 +2,11 @@ import { addDoc, arrayUnion, collection, doc, getDocs, query, Timestamp, updateD
 import { auth, db } from "../firebase/FirebaseConfig"
 import { Event, FirestoreEvent } from "../types/event"
 
-// luodaan tapahtuma Firestoreen
+// luodaan tapahtuma Firestoreen ja varmistetaan että käyttäjä on kirjautunut
+// asetetaan createdBy, participants ja createdAt kentät täällä
 
 export const createEvent = async (
-  event: Omit<FirestoreEvent, "createdBy" | "createdAt" | "participants"> // Omit poissulkkee sarakkeet, koska ne määritellään täällä
+  event: Omit<FirestoreEvent, "createdBy" | "createdAt" | "participants"> // Omit poissulkkee sarakkeet
 ) => {
   if (!auth.currentUser) {
     console.error('createEvent: no authenticated user', auth.currentUser)
@@ -22,6 +23,8 @@ export const createEvent = async (
   })
 }
 
+// haetaan tulevat tapahtumat ja päivämäärän pitää olla suurempi kuin nyt
+
 export const getUpcomingEvents = async (): Promise<Event[]> => {
   const q = query(
     collection(db, "events"),
@@ -35,6 +38,9 @@ export const getUpcomingEvents = async (): Promise<Event[]> => {
     ...(doc.data() as FirestoreEvent)
   }))
 }
+
+// lisätään nykyinen käyttäjä osallistujaksi olemassa olevaan tapahtumaan
+// varmistetaan ensin että käyttäjä on kirjautunut
 
 export const joinEvent = async (eventId: string) => {
   if (!auth.currentUser) {

@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User } from "firebase/auth"
 import { auth } from "../firebase/FirebaseConfig"
 
-// palvelut käyttäjän rekisteröintiin, kirjautumiseen ja uloskirjautumiseen
+// käyttäjän rekisteröintiin, kirjautumiseen ja uloskirjautumiseen liittyvät funktiot
 
 export const registerAuthUser = async (
   email: string,
@@ -15,6 +15,8 @@ export const registerAuthUser = async (
   return credential.user
 }
 
+// kirjautuu sisään käyttäjän sähköpostilla ja salasanalla
+
 export const loginAuthUser = async (
   email: string,
   password: string
@@ -26,6 +28,8 @@ export const loginAuthUser = async (
   )
   return credential.user
 }
+
+// kirjautuu ulos nykyiseltä käyttäjältä
 
 export const logoutAuthUser = async (): Promise<void> => {
   await signOut(auth)

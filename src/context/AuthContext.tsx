@@ -6,9 +6,7 @@ import { createUserProfile, getUserProfile } from "../services/userProfileServic
 import { FirestoreUser } from "../types/user"
 
 // tässä tiedostossa hallitaan käyttäjän todennusta ja profiilitietoja
-// AuthContext tarjoaa rekisteröinti-, kirjautumis- ja uloskirjautumistoiminnot sekä käyttäjän profiilitiedot sovelluksen muille osille
-
-/* type */
+// jakaa myös käyttäjän profiilitiedot sovelluksen muille osille
 
 interface AuthContextType {
   firebaseUser: FirebaseUser | null
@@ -20,11 +18,7 @@ interface AuthContextType {
   logout: () => Promise<void>
 }
 
-/* context */
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-/* provider */
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children
@@ -33,7 +27,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userProfile, setUserProfile] = useState<FirestoreUser | null>(null)
   const [loading, setLoading] = useState(true)
 
-  /* Firebase listener */
+  // kuunnellaan Firebase Authin muutoksia (elikkä kirjautuminen / uloskirjautuminen)
+  // päivitetaan firebaseUser ja ladataan käyttäjäprofiili Firestoresta tarvittaessa
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
       setFirebaseUser(user)
@@ -51,7 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return unsubscribe
   }, [])
 
-  /* actions */
+  // rekisteröidään uusi käyttäjä (Firebase Auth) ja luo käyttäjäprofiili (Firestore)
+  // asetetaan lataus päälle rekisteröinnin ajaksi
 
   const register = async (
     email: string,
@@ -72,6 +69,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }
   }
 
+  // kirjataan käyttäjä sisään Firebase Authilla ja haetaan profiilitiedot Firestoresta
+  // palautetaan errorit eteenpäin jos kirjautuminen epäonnistuu
+
   const login = async (email: string, password: string) => {
     setLoading(true)
     try {
@@ -90,6 +90,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  // kirjataan käyttäjä ulos ja tyhjennetää paikallinen käyttäjätila ja profiili
+
   const logout = async () => {
     setLoading(true)
     try {
@@ -100,9 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(false)
     }
   }
-
-  /* provider value */
-
+  // jaetaan AuthContextin arvot lapsikomponenteille
   return (
     <AuthContext.Provider
       value={{
@@ -119,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   )
 }
 
-/* hook */
+// palautetaan AuthContext-arvot. Heittää erroria jos hookkia käytetään AuthProviderin ulkopuolella
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext)

@@ -2,7 +2,7 @@ import { addDoc, collection, getDocs, query, Timestamp, where } from "firebase/f
 import { auth, db } from "../firebase/FirebaseConfig"
 import { Dog, FirestoreDog } from "../types/dog"
 
-// luodaan koira Firestoreen
+// luodaan koira Firestoreen ja tarkistetaan kirjautunut käyttäjä
 
 export const addDog = async (
   dog: Omit<FirestoreDog, "ownerID" | "createdAt"> // Omit poissulkkee ownderIdcreatedAt, koska ne määritellään tässä funktiossa
@@ -18,6 +18,9 @@ export const addDog = async (
     createdAt: Timestamp.now()
   })
 }
+
+// haetaan kirjautuneen käyttäjän koirat
+// jos käyttäjää ei ole kirjautunut, palautetaan tyhjä taulukko
 
 export const getMyDogs = async (): Promise<Dog[]> => {
   if (!auth.currentUser) {

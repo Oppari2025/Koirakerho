@@ -4,6 +4,9 @@ import { initializeApp } from "firebase/app"
 import { initializeAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
 
+// Firebasen konfiguraatio ja arvot ympäristömuuttujista
+// hakeen arvot .env.local tiedostosta
+
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN,
