@@ -13,11 +13,14 @@ export default function Index() {
     const [dogs, setDogs] = useState<any[]>([])
     const [events, setEvents] = useState<any[]>([])
 
+    // ladataan koirat ja tapahtumat komponentin latautuessa
     useEffect(() => {
         loadDogs()
         loadEvents()
     }, [])
 
+    // Funktio koirien lataamiseen käyttäjälle 
+    // Tullaan käyttämään vain käyttäjän omassa profiilissa
     const loadDogs = async () => {
         setStatus('Loading dogs...')
         try {
@@ -30,6 +33,7 @@ export default function Index() {
         }
     }
 
+    // Funktio tulevien tapahtumien lataamiseen
     const loadEvents = async () => {
         setStatus('Loading events...')
         try {
@@ -42,8 +46,7 @@ export default function Index() {
         }
     }
 
-    {/* Testinappi koiran lisäykseen */}
-
+    // Testinappi koiran lisäykseen
     const handleAddDog = async () => {
         setStatus('Lisätään koiraa...')
         // tarkistetaan omistajan uid, jolla estetään koirien lisäys ilman autentikointia
@@ -71,7 +74,7 @@ export default function Index() {
         }
     }
 
-    {/* Testinappi tapahtuman lisäykseen */}
+    // Testinappi tapahtuman lisäykseen
     const handleAddEvent = async () => {
         setStatus('Lisätään tapahtumaa...')
         try {
@@ -120,7 +123,7 @@ export default function Index() {
 
                     {status ? <Text style={styles.status}>{status}</Text> : null}
 
-                    {/* Lista käyttäjän koirista */}
+                    {/* Lista käyttäjän koirista. Tätä tullaan käyttämään käyttäjän profiilissa*/}
                     <Text style={styles.sectionTitle}>Koirani</Text>
 
                     {dogs.length === 0 ? <Text style={styles.empty}>Ei koiria</Text> : dogs.map(d => (
