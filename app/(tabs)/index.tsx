@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuth } from '../../src/context/AuthContext';
 import { addDog, getMyDogs } from '../../src/services/dogService';
-import { createEvent, getUpcomingEvents } from '../../src/services/eventService';
+import { createEvent, getUpcomingEvents, joinEvent, leaveEvent } from '../../src/services/eventService';
 
 export default function Index() {
     const { firebaseUser, userProfile, logout, loading } = useAuth()
@@ -51,22 +51,23 @@ export default function Index() {
         setStatus('Lisätään koiraa...')
         // tarkistetaan omistajan uid, jolla estetään koirien lisäys ilman autentikointia
         if (!firebaseUser?.uid) {
-            setStatus('Not authenticated')
+            setStatus('Not authenticated, cannot add dog')
             return
         }
 
         try {
-            const res = await addDog({
+            const dogData = {
                 ownerId: firebaseUser.uid,
                 name: `TestikoiraRex`,
                 breed: 'Sakemanni',
                 age: 100,
                 description: 'Testikoira, joka lisättiin sovelluksesta',
                 imageUrl: '',
-                healthAssessmentDone: false
-            })
+                healthAssessmentDone: true
+            }
+            const res = await addDog(dogData)
 
-            setStatus(`Koira lisätty (id: ${res.id})`)
+            setStatus(`Koira '${dogData.name}' lisätty (id: ${res.id})`)
             console.log('Added dog', res.id)
         } catch (e: any) {
             console.error(e)
@@ -79,19 +80,49 @@ export default function Index() {
         setStatus('Lisätään tapahtumaa...')
         try {
             const tomorrow = Timestamp.fromDate(new Date(Date.now() + 24 * 60 * 60 * 1000))
-            const res = await createEvent({
+            const eventData = {
                 title: `Testi Tapahtuma`,
                 description: 'Testitapahtuma, joka lisättiin sovelluksesta',
-                location: { address: 'Vaikka Oulussa', lat: 65.01236, lng: 25.46816 },
+                location: { address: 'Torikatu 18a Oulu', lat: 65.01236, lng: 25.46816 },
                 date: tomorrow
-            })
+            }
+            const res = await createEvent(eventData)
 
-            setStatus(`Tapahtuma lisätty (id: ${res.id})`)
+            setStatus(`Tapahtuma '${eventData.title}' lisätty (id: ${res.id})`)
             console.log('Added event', res.id)
         } catch (e: any) {
             console.error(e)
             setStatus(`Failed to add event: ${e?.message ?? e}`)
         }
+    }
+
+    // Tapahtumaan liittyminen
+    const handleJoinEvent = async (eventId: string) => {
+        setStatus(`Liitytään tapahtumaan ${eventId}...`)
+        try {
+            joinEvent(eventId)
+            setStatus(`Liityit tapahtumaan ${eventId}`)
+        } catch (e: any) {
+            console.error(e)
+            setStatus(`Failed to join event: ${e?.message ?? e}`)
+        }}
+
+    // Tapahtumasta poistuminen
+    const handleLeaveEvent = async (eventId: string) => {
+        setStatus(`Poistutaan tapahtumasta ${eventId}...`)
+        try {
+            leaveEvent(eventId)
+            setStatus(`Poistuit tapahtumasta ${eventId}`)
+        } catch (e: any) {
+            console.error(e)
+            setStatus(`Failed to leave event: ${e?.message ?? e}`)
+        }}
+
+    // tarkistetaan onko käyttäjä jo liittynyt tapahtumaan
+    const hasJoined = (event: any) => {
+        if (!firebaseUser?.uid) return false
+        if (!Array.isArray(event.participants)) return false;
+        return event.participants.includes(firebaseUser.uid)
     }
 
     // Näytetään latausnäyttö, kun autentikointitila on latautumassa
@@ -137,18 +168,23 @@ export default function Index() {
                         </View>
                     ))}
 
-                    {/* Lista tulevista tapahtumista */}
+                    {/* Lista tulevista tapahtumista ja niihin liittyminen/liittymisen peruuttaminen */}
                     <Text style={styles.sectionTitle}>Tulevat tapahtumat</Text>
 
-                    {events.length === 0 ? 
-                    <Text style={styles.empty}>Ei tulevia tapahtumia</Text> 
-                    : events.map(ev => (
+                    {events.length === 0 ? <Text style={styles.empty}>Ei tulevia tapahtumia</Text> : events.map(ev => (
                         <View key={ev.id} style={styles.item}>
                             <Text style={styles.itemTitle}>{ev.title} {ev.date.toDate().toLocaleString()}</Text>
                             <Text style={styles.itemMeta}>{ev.description}</Text>
                             <Text style={styles.itemMeta}>{ev.location.address}, {ev.location.lat}°, {ev.location.lng}°</Text>
                             <Text style={styles.itemMeta}>Julkaistu: {ev.createdAt.toDate().toLocaleString()}</Text>
                             <Text style={styles.itemMeta}>Osallistujat: {ev.participants.length}</Text>
+                            <TouchableOpacity
+                                style={[ styles.button, hasJoined(ev) ? styles.cancel : styles.button ]}
+                                onPress={() => hasJoined(ev) ? handleLeaveEvent(ev.id) : handleJoinEvent(ev.id)}>
+                                <Text style={styles.buttonText}>
+                                    {hasJoined(ev) ? "Peruuta osallistuminen" : "Liity tapahtumaan"}
+                                </Text>
+                            </TouchableOpacity>
                         </View>
                     ))}
 
@@ -191,7 +227,7 @@ const styles = StyleSheet.create({
     },
     button: { 
         marginTop: 6,
-        backgroundColor: '#144100ff', 
+        backgroundColor: '#206b00ff', 
         padding: 12, 
         borderRadius: 8,
         marginBottom: 6
@@ -199,10 +235,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff', 
         fontWeight: '600' 
-    },
-    secondary: {
-        marginTop: 12,
-        backgroundColor: '#1e6b00'
     },
     status: {
         marginTop: 12,
@@ -230,4 +262,8 @@ const styles = StyleSheet.create({
     itemMeta: {
         color: '#666'
     },
+    cancel: {
+        marginTop: 12,
+        backgroundColor: '#aa0000'
+    }
 })

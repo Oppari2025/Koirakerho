@@ -1,4 +1,4 @@
-import { addDoc, arrayUnion, collection, doc, getDocs, query, Timestamp, updateDoc, where } from "firebase/firestore"
+import { addDoc, arrayRemove, arrayUnion, collection, doc, getDocs, query, Timestamp, updateDoc, where } from "firebase/firestore"
 import { auth, db } from "../firebase/FirebaseConfig"
 import { Event, FirestoreEvent } from "../types/event"
 
@@ -50,5 +50,18 @@ export const joinEvent = async (eventId: string) => {
 
   await updateDoc(doc(db, "events", eventId), {
     participants: arrayUnion(auth.currentUser.uid)
+  })
+}
+
+// poistetaan nykyinen käyttäjä osallistujista olemassa olevassa tapahtumassa
+// varmistetaan ensin että käyttäjä on kirjautunut
+export const leaveEvent = async (eventId: string) => {
+  if (!auth.currentUser) {
+    console.error("leaveEvent: no authenticated user");
+    throw new Error("Not authenticated");
+  }
+
+  await updateDoc(doc(db, "events", eventId), {
+    participants: arrayRemove(auth.currentUser.uid),
   })
 }
