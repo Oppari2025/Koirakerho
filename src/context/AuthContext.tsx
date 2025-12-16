@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       console.log('AuthContext.login: calling loginAuthUser', email)
       const user = await loginAuthUser(email, password)
-      console.log('AuthContext.login: loginAuthUser succeeded', user?.uid)
+      //console.log('AuthContext.login: loginAuthUser succeeded', user?.uid)
 
       setFirebaseUser(user as FirebaseUser)
       const profile = await getUserProfile(user.uid)
