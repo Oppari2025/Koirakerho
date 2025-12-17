@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import {
   Avatar,
@@ -14,28 +14,28 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function chatScreen() {
 
-const nameData = [
-  {
-    name: 'Ronald Richards',
-    message: 'Hello, how are you?',
-  },
-  {
-    name: 'Arlene McCoy',
-    message: 'Are we still on for tomorrow?',
-  },
-  {
-    name: 'John Smith',
-    message: "Don't forget to bring the documents.",
-  },
-  {
-    name: 'Walter White',
-    message: 'Happy Birthday! Hope you have a great day!',
-  },
-  {
-    name: 'Alice Johnson',
-    message: "Let me know when you're available for a call.",
-  },
-];
+  const nameData = [
+    {
+      name: 'Ronald Richards',
+      message: 'Hello, how are you?',
+    },
+    {
+      name: 'Arlene McCoy',
+      message: 'Are we still on for tomorrow?',
+    },
+    {
+      name: 'John Smith',
+      message: "Don't forget to bring the documents.",
+    },
+    {
+      name: 'Walter White',
+      message: 'Happy Birthday! Hope you have a great day!',
+    },
+    {
+      name: 'Alice Johnson',
+      message: "Let me know when you're available for a call.",
+    },
+  ];
 
 
   return (
@@ -44,21 +44,23 @@ const nameData = [
         Koirakerho
       </Heading>
       <ScrollView className='flex-1 pt-2' contentContainerStyle={{ gap: 24 }}>
-        { nameData.map((item, index) => (
-        <VStack space="2xl" className="p-4 border border-gray-200 rounded-lg" key={index}>
-          <HStack space="md">
-            <Avatar className="bg-indigo-600">
-              <AvatarFallbackText className="text-white">
-                Ronald Richards
-              </AvatarFallbackText>
-            </Avatar>
-            <VStack>
-              <Heading size="sm">{item.name}</Heading>
-              <Text size="sm">{item.message}</Text>
+        {nameData.map((item, index) => (
+          <TouchableOpacity onPress={() => {console.log('Pressed', item.name)}}>
+            <VStack space="2xl" className="p-4 border border-gray-200 rounded-lg" key={index}>
+              <HStack space="md">
+                <Avatar className="bg-indigo-600">
+                  <AvatarFallbackText className="text-white">
+                    Ronald Richards
+                  </AvatarFallbackText>
+                </Avatar>
+                <VStack>
+                  <Heading size="sm">{item.name}</Heading>
+                  <Text size="sm">{item.message}</Text>
+                </VStack>
+              </HStack>
             </VStack>
-          </HStack>
-        </VStack>
-        )) }
+          </TouchableOpacity>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
