@@ -8,6 +8,7 @@ import { Heading } from '@/components/ui/heading';
 import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -45,12 +46,12 @@ export default function chatScreen() {
       </Heading>
       <ScrollView className='flex-1 pt-2' contentContainerStyle={{ gap: 24 }}>
         {nameData.map((item, index) => (
-          <TouchableOpacity onPress={() => {console.log('Pressed', item.name)}}>
+          <TouchableOpacity onPress={() => router.push(`/friendChatScreen`)} key={index}>
             <VStack space="2xl" className="p-4 border border-gray-200 rounded-lg" key={index}>
               <HStack space="md">
                 <Avatar className="bg-indigo-600">
                   <AvatarFallbackText className="text-white">
-                    Ronald Richards
+                    {item.name}
                   </AvatarFallbackText>
                 </Avatar>
                 <VStack>

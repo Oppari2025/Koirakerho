@@ -1,45 +1,113 @@
-import { Image } from 'expo-image';
-import { StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+    FlatList,
+    Text,
+    View
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import React from 'react';
+import { Button, ButtonIcon } from '@/components/ui/button';
+import { ArrowRightIcon } from '@/components/ui/icon';
+import { Input, InputField } from '@/components/ui/input';
 
-export default function homeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText className="text-2xl font-bold">Tämä on kaverin chatti ikkuna</ThemedText>
-        <HelloWave />
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+type Message = {
+    id: string;
+    text: string;
+    sender: 'user' | 'other';
+    time: string;
+};
+
+export default function friendChatScreen() {
+    const [inputValue, setInputValue] = useState('');
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    const flatListRef = useRef(null);
+
+    const createMessage = (text: string, sender: 'user' | 'other') => ({
+        id: `${Date.now()}-${Math.random()}`,
+        text,
+        sender,
+        time: new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+        }),
+    });
+
+    const sendMyMessage = () => {
+        if (!inputValue.trim()) return;
+
+        setMessages(prev => [...prev, createMessage(inputValue, 'user')]);
+        setInputValue('');
+    };
+
+    const sendFriendMessage = () => {
+        if (!inputValue.trim()) return;
+
+        setMessages(prev => [...prev, createMessage(inputValue, 'other')]);
+        setInputValue('');
+    };
+
+    const renderMessage = ({ item }: { item: Message }) => {
+        const isUser = item.sender === 'user';
+
+        return (
+            <View
+                className="mb-2 px-4 py-2 rounded-full"
+                style={{
+                    alignSelf: isUser ? 'flex-end' : 'flex-start', // right/left
+                    backgroundColor: isUser ? '#3B82F6' : '#118e34ff', // primary-500 / primary-700
+                }}
+            >
+                <View className='flex-row px-2'>
+                    <Text style={{ color: 'white', fontSize: 14, marginRight: 10 }}>{item.text}</Text>
+                    <Text style={{ color: 'black', fontSize: 10, marginTop: 4 }}>
+                        {item.time}
+                    </Text>
+                </View>
+            </View>
+        );
+    };
+
+    return (
+        <SafeAreaView className="flex-1">
+            <FlatList
+                ref={flatListRef}
+                data={messages}
+                keyExtractor={item => item.id}
+                renderItem={renderMessage}
+                contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
+                onContentSizeChange={() =>
+                    flatListRef.current?.scrollToEnd({ animated: true })
+                }
+            />
+            <View className="flex-row items-center p-4 gap-2">
+                <Input variant="rounded" size="md" className="flex-1">
+                    <InputField
+                        placeholder="Type a message..."
+                        value={inputValue}
+                        onChangeText={setInputValue}
+                    />
+                </Input>
+
+                {/* User */}
+                <Button
+                    size="lg"
+                    className="rounded-full px-3"
+                    onPress={sendMyMessage}
+                >
+                    <ButtonIcon as={ArrowRightIcon} />
+                </Button>
+
+                {/* Friend */}
+                <Button
+                    size="lg"
+                    variant="outline"
+                    className="rounded-full px-3"
+                    onPress={sendFriendMessage}
+                >
+                    <ButtonIcon as={ArrowRightIcon} />
+                </Button>
+            </View>
+        </SafeAreaView>
+    );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
