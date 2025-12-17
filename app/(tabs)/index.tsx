@@ -12,7 +12,6 @@ import { createEvent } from '../../src/services/eventService';
 export default function Index() {
     const { firebaseUser, userProfile, logout, loading } = useAuth()
     const [status, setStatus] = useState<string | null>(null)
-    const [events, setEvents] = useState<any[]>([])
 
 
     // Testinappi koiran lisäykseen
@@ -99,7 +98,7 @@ export default function Index() {
                     <ListOfDogs />
 
                     <ListOfEvents/>
-                    
+
                 </View>
 
             </ScrollView>
