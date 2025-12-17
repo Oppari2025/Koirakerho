@@ -19,7 +19,7 @@ export default function Index() {
         setStatus('Lisätään koiraa...')
         // tarkistetaan omistajan uid, jolla estetään koirien lisäys ilman autentikointia
         if (!firebaseUser?.uid) {
-            setStatus('Not authenticated, cannot add dog')
+            setStatus('Ei kirjautunutta käyttäjää, koiraa ei lisätä')
             return
         }
 
@@ -36,10 +36,10 @@ export default function Index() {
             const res = await addDog(dogData)
 
             setStatus(`Koira '${dogData.name}' lisätty (id: ${res.id})`)
-            console.log('Added dog', res.id)
+            console.log('Koira lisätty', res.id)
         } catch (e: any) {
             console.error(e)
-            setStatus(`Failed to add dog: ${e?.message ?? e}`)
+            setStatus(`Koiran lisäys epäonnistui: ${e?.message ?? e}`)
         }
     }
 
@@ -60,7 +60,7 @@ export default function Index() {
             console.log('Added event', res.id)
         } catch (e: any) {
             console.error(e)
-            setStatus(`Failed to add event: ${e?.message ?? e}`)
+            setStatus(`Tapahtuman lisäys epäonnistui: ${e?.message ?? e}`)
         }
     }
 
@@ -95,7 +95,7 @@ export default function Index() {
 
                     {status ? <Text style={styles.status}>{status}</Text> : null}
 
-                    <ListOfDogs />
+                    <ListOfDogs/>
 
                     <ListOfEvents/>
 
