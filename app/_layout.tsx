@@ -7,15 +7,11 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme} children={undefined}>
       <Drawer screenOptions={{ headerShown: false }}>
         <Drawer.Screen
           name="(main)"
           options={{ drawerLabel: "Home", title: "Home" }}
-        />
-        <Drawer.Screen
-          name="(tabs)"
-          options={{ drawerLabel: "testi", title: "testi" }}
         />
       </Drawer>
     </ThemeProvider>

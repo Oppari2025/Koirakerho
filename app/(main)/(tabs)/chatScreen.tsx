@@ -1,27 +1,66 @@
-import { Image } from 'expo-image';
 import { StyleSheet } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import {
+  Avatar,
+  AvatarFallbackText
+} from '@/components/ui/avatar';
+import { Heading } from '@/components/ui/heading';
+import { HStack } from '@/components/ui/hstack';
+import { Text } from '@/components/ui/text';
+import { VStack } from '@/components/ui/vstack';
 import React from 'react';
+import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function chatScreen() {
+
+const nameData = [
+  {
+    name: 'Ronald Richards',
+    message: 'Hello, how are you?',
+  },
+  {
+    name: 'Arlene McCoy',
+    message: 'Are we still on for tomorrow?',
+  },
+  {
+    name: 'John Smith',
+    message: "Don't forget to bring the documents.",
+  },
+  {
+    name: 'Walter White',
+    message: 'Happy Birthday! Hope you have a great day!',
+  },
+  {
+    name: 'Alice Johnson',
+    message: "Let me know when you're available for a call.",
+  },
+];
+
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText className="text-2xl font-bold">Chat näkymä</ThemedText>
-        <HelloWave />
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView className="flex-1 p-4 py-6">
+      <Heading size="lg" className="mb-6">
+        Koirakerho
+      </Heading>
+      <ScrollView className='flex-1 pt-2' contentContainerStyle={{ gap: 24 }}>
+        { nameData.map((item, index) => (
+        <VStack space="2xl" className="p-4 border border-gray-200 rounded-lg" key={index}>
+          <HStack space="md">
+            <Avatar className="bg-indigo-600">
+              <AvatarFallbackText className="text-white">
+                Ronald Richards
+              </AvatarFallbackText>
+            </Avatar>
+            <VStack>
+              <Heading size="sm">{item.name}</Heading>
+              <Text size="sm">{item.message}</Text>
+            </VStack>
+          </HStack>
+        </VStack>
+        )) }
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
