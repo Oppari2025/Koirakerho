@@ -1,50 +1,19 @@
+import ListOfDogs from '@/components/database/listOfDogs';
+import ListOfEvents from '@/components/database/listOfEvents';
 import { Redirect } from 'expo-router';
 import { Timestamp } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuth } from '../../src/context/AuthContext';
-import { addDog, getMyDogs } from '../../src/services/dogService';
-import { createEvent, getUpcomingEvents, joinEvent, leaveEvent } from '../../src/services/eventService';
+import { addDog } from '../../src/services/dogService';
+import { createEvent } from '../../src/services/eventService';
 
 export default function Index() {
     const { firebaseUser, userProfile, logout, loading } = useAuth()
     const [status, setStatus] = useState<string | null>(null)
-    const [dogs, setDogs] = useState<any[]>([])
     const [events, setEvents] = useState<any[]>([])
 
-    // ladataan koirat ja tapahtumat komponentin latautuessa
-    useEffect(() => {
-        loadDogs()
-        loadEvents()
-    }, [])
-
-    // Funktio koirien lataamiseen käyttäjälle 
-    // Tullaan käyttämään vain käyttäjän omassa profiilissa
-    const loadDogs = async () => {
-        setStatus('Loading dogs...')
-        try {
-            const list = await getMyDogs()
-            setDogs(list)
-            setStatus(null)
-        } catch (e: any) {
-            console.error(e)
-            setStatus(`Koirien lataus epäonnistui: ${e?.message ?? e}`)
-        }
-    }
-
-    // Funktio tulevien tapahtumien lataamiseen
-    const loadEvents = async () => {
-        setStatus('Loading events...')
-        try {
-            const list = await getUpcomingEvents()
-            setEvents(list)
-            setStatus(null)
-        } catch (e: any) {
-            console.error(e)
-            setStatus(`Tapahtumien lataus epäonnistui: ${e?.message ?? e}`)
-        }
-    }
 
     // Testinappi koiran lisäykseen
     const handleAddDog = async () => {
@@ -61,8 +30,8 @@ export default function Index() {
                 name: `TestikoiraRex`,
                 breed: 'Sakemanni',
                 age: 100,
-                description: 'Testikoira, joka lisättiin sovelluksesta',
-                imageUrl: '',
+                description: 'Testikoira, joka lisättiin sovelluksesta. Hän on erittäin kiltti ja leikkisä. Rakastaa pitkiä kävelyitä ja herkkuja.',
+                imageUrl: 'image/sakemanni.jpg',
                 healthAssessmentDone: true
             }
             const res = await addDog(dogData)
@@ -96,35 +65,6 @@ export default function Index() {
         }
     }
 
-    // Tapahtumaan liittyminen
-    const handleJoinEvent = async (eventId: string) => {
-        setStatus(`Liitytään tapahtumaan ${eventId}...`)
-        try {
-            joinEvent(eventId)
-            setStatus(`Liityit tapahtumaan ${eventId}`)
-        } catch (e: any) {
-            console.error(e)
-            setStatus(`Failed to join event: ${e?.message ?? e}`)
-        }}
-
-    // Tapahtumasta poistuminen
-    const handleLeaveEvent = async (eventId: string) => {
-        setStatus(`Poistutaan tapahtumasta ${eventId}...`)
-        try {
-            leaveEvent(eventId)
-            setStatus(`Poistuit tapahtumasta ${eventId}`)
-        } catch (e: any) {
-            console.error(e)
-            setStatus(`Failed to leave event: ${e?.message ?? e}`)
-        }}
-
-    // tarkistetaan onko käyttäjä jo liittynyt tapahtumaan
-    const hasJoined = (event: any) => {
-        if (!firebaseUser?.uid) return false
-        if (!Array.isArray(event.participants)) return false;
-        return event.participants.includes(firebaseUser.uid)
-    }
-
     // Näytetään latausnäyttö, kun autentikointitila on latautumassa
     if (loading) return null
 
@@ -156,42 +96,10 @@ export default function Index() {
 
                     {status ? <Text style={styles.status}>{status}</Text> : null}
 
-                    {/* Lista käyttäjän koirista. Tätä tullaan käyttämään käyttäjän profiilissa*/}
-                    <Text style={styles.sectionTitle}>Koirani</Text>
+                    <ListOfDogs />
 
-                    {dogs.length === 0 ? <Text style={styles.empty}>Ei koiria</Text> : dogs.map(d => (
-                        <View key={d.id} style={styles.item}>
-                            <Text style={styles.itemTitle}>{d.name} — {d.breed}</Text>
-                            <Text style={styles.itemMeta}>Ikä: {d.age} vuotta</Text>
-                            <Text style={styles.itemMeta}>Terveyskartoitus: {d.healthAssessmentDone ? 'Valmis' : 'Ei tehty'}</Text>
-                            <Text style={styles.itemMeta}>{d.description}</Text>
-                        </View>
-                    ))}
-
-                    {/* Lista tulevista tapahtumista ja niihin liittyminen/liittymisen peruuttaminen */}
-                    <Text style={styles.sectionTitle}>Tulevat tapahtumat</Text>
-
-                    {events.length === 0 ? <Text style={styles.empty}>Ei tulevia tapahtumia</Text> : events.map(ev => (
-                        <View key={ev.id} style={styles.item}>
-                            <Text style={styles.itemTitle}>{ev.title} {ev.date.toDate().toLocaleString()}</Text>
-                            <Text style={styles.itemMeta}>{ev.description}</Text>
-                            <Text style={styles.itemMeta}>{ev.location.address}, {ev.location.lat}°, {ev.location.lng}°</Text>
-                            <Text style={styles.itemMeta}>Julkaistu: {ev.createdAt.toDate().toLocaleString()}</Text>
-                            <Text style={styles.itemMeta}>Osallistujat: {ev.participants.length}</Text>
-                            <TouchableOpacity
-                                style={[ styles.button, hasJoined(ev) ? styles.cancel : styles.button ]}
-                                onPress={() => hasJoined(ev) ? handleLeaveEvent(ev.id) : handleJoinEvent(ev.id)}>
-                                <Text style={styles.buttonText}>
-                                    {hasJoined(ev) ? "Peruuta osallistuminen" : "Liity tapahtumaan"}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    ))}
-
-                    {/* Päivitysnappi listoille */}
-                    <TouchableOpacity style={[styles.button]} onPress={() => { loadDogs(); loadEvents(); }}>
-                        <Text style={styles.buttonText}>Päivitä lista</Text>
-                    </TouchableOpacity>
+                    <ListOfEvents/>
+                    
                 </View>
 
             </ScrollView>
