@@ -13,6 +13,10 @@ export default function RootLayout() {
           name="(main)"
           options={{ drawerLabel: "Home", title: "Home" }}
         />
+        <Drawer.Screen
+          name="profileScreen"
+          options={{ drawerLabel: "My Profile", title: "My Profile" }}
+        />
       </Drawer>
     </ThemeProvider>
   );
