@@ -40,9 +40,14 @@ export default function RootLayout() {
   return (
     <AuthProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Drawer screenOptions={{ headerShown: false }}>
-          <Drawer.Screen name="(main)" options={{ drawerLabel: "Home", headerShown: false }} />
-        </Drawer>
+        <Drawer.Screen
+          name="(main)"
+          options={{ drawerLabel: "Home", title: "Home" }}
+        />
+        <Drawer.Screen
+          name="profileScreen"
+          options={{ drawerLabel: "My Profile", title: "My Profile" }}
+        />
 
         <AuthRedirector />
 
