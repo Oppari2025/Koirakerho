@@ -1,3 +1,6 @@
+import { Button, ButtonIcon } from '@/components/ui/button';
+import { ArrowRightIcon } from '@/components/ui/icon';
+import { Input, InputField } from '@/components/ui/input';
 import React, { useRef, useState } from 'react';
 import {
     FlatList,
@@ -5,10 +8,6 @@ import {
     View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { Button, ButtonIcon } from '@/components/ui/button';
-import { ArrowRightIcon } from '@/components/ui/icon';
-import { Input, InputField } from '@/components/ui/input';
 
 type Message = {
     id: string;
@@ -54,8 +53,8 @@ export default function friendChatScreen() {
             <View
                 className="mb-2 px-4 py-2 rounded-full"
                 style={{
-                    alignSelf: isUser ? 'flex-end' : 'flex-start', // right/left
-                    backgroundColor: isUser ? '#3B82F6' : '#118e34ff', // primary-500 / primary-700
+                    alignSelf: isUser ? 'flex-end' : 'flex-start',
+                    backgroundColor: isUser ? '#3B82F6' : '#118e34ff',
                 }}
             >
                 <View className='flex-row px-2'>
