@@ -6,9 +6,9 @@ export const OSM_RASTER_STYLE = {
       type: "raster",
       tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
       tileSize: 256,
-      attribution: "&copy; OpenStreetMap Contributors",
+      attribution: '<a href="http://www.openstreetmap.org/about/" target="_blank">&copy; OpenStreetMap</a>',
       maxzoom: 19,
-    },
+    }
   },
   layers: [
     {

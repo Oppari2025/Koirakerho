@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/radio';
 import { Textarea, TextareaInput } from '@/components/ui/textarea';
 import { VStack } from '@/components/ui/vstack';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -40,17 +41,41 @@ const MAX_EVENT_NAME_LENGTH = 100
 const MIN_EVENT_DESCRIPTION_LENGTH = 1
 const MAX_EVENT_DESCRIPTION_LENGTH = 1000
 
+type AddEventScreenSearchParams = {
+    location: number[]
+}
+
 export default function AddEventScreen() {
+    const router = useRouter();
+    const params = useLocalSearchParams<any>();
+
     const [isInvalidEventName, setIsInvalidEventName] = React.useState(false);
     const [isInvalidEventDescription, setIsInvalidEventDescription] = React.useState(false);
     const [isInvalidAllowedDogs, setIsInvalidAllowedDogs] = React.useState(false);
 
-    const [eventName, setEventName] = React.useState("");
-    const [eventType, setEventType] = React.useState("");
-    const [eventDescription, setEventDescription] = React.useState("");
-    const [eventStartTime, setEventStartTime] = React.useState("");
-    const [eventEndTime, setEventEndTime] = React.useState("");
+    const [eventName, setEventName] = React.useState<string>("");
+    const [eventType, setEventType] = React.useState<string>("");
+    const [eventLocationName, setEventLocationName] = React.useState<string>("");
+    const [eventLocationAddress, setEventLocationAddress] = React.useState<string>("");
+    const [eventLocationCoordinates, setEventLocationCoordinates] = React.useState<number[]>([0, 0]);
+    const [eventDescription, setEventDescription] = React.useState<string>("");
+    const [eventStartTime, setEventStartTime] = React.useState<string>("");
+    const [eventEndTime, setEventEndTime] = React.useState<string>("");
     const [eventAllowedDogsChecks, setEventAllowedDogsChecks] = React.useState<string[]>([]);
+
+
+    React.useEffect(() => {
+        if (params?.selection) {
+            setEventLocationCoordinates(params?.selection);
+        }
+    }, [params]);
+
+    React.useEffect(() => {
+        (async () => {
+            console.log(eventAllowedDogsChecks);
+
+        })();
+    }, [eventAllowedDogsChecks])
 
     function handleSubmitForm() {
         const isInvalidEventName = eventName.length < MIN_EVENT_NAME_LENGTH || eventName.length > MAX_EVENT_NAME_LENGTH
@@ -93,7 +118,110 @@ export default function AddEventScreen() {
                             </Input>
                             <FormControlHelper>
                                 <FormControlHelperText>
-                                    The name of the event. This must be at least {MIN_EVENT_NAME_LENGTH} characters long.
+                                    The name of the event.
+                                </FormControlHelperText>
+                            </FormControlHelper>
+                            <FormControlError>
+                                <FormControlErrorIcon as={AlertCircleIcon} className={classes.formControlErrorText} />
+                                <FormControlErrorText className={classes.formControlErrorText}>
+                                    At least {MIN_EVENT_NAME_LENGTH} characters are required.
+                                </FormControlErrorText>
+                            </FormControlError>
+                        </FormControl>
+
+                        <FormControl
+                            isInvalid={isInvalidEventName}
+                            size="lg"
+                            isDisabled={false}
+                            isReadOnly={false}
+                            isRequired={true}
+                        >
+                            <FormControlLabel>
+                                <FormControlLabelText>Location Name</FormControlLabelText>
+                            </FormControlLabel>
+                            <Input className="my-1" size="lg">
+                                <InputField
+                                    type="text"
+                                    placeholder="Location Name"
+                                    value={eventLocationName}
+                                    onChangeText={(text) => setEventLocationName(text)}
+                                />
+                            </Input>
+                            <FormControlHelper>
+                                <FormControlHelperText>
+                                    The name of the location where the event is hosted.
+                                </FormControlHelperText>
+                            </FormControlHelper>
+                            <FormControlError>
+                                <FormControlErrorIcon as={AlertCircleIcon} className={classes.formControlErrorText} />
+                                <FormControlErrorText className={classes.formControlErrorText}>
+                                    At least {MIN_EVENT_NAME_LENGTH} characters are required.
+                                </FormControlErrorText>
+                            </FormControlError>
+                        </FormControl>
+
+                        <FormControl
+                            isInvalid={isInvalidEventName}
+                            size="lg"
+                            isDisabled={false}
+                            isReadOnly={false}
+                            isRequired={false}
+                        >
+                            <FormControlLabel>
+                                <FormControlLabelText>Location Address</FormControlLabelText>
+                            </FormControlLabel>
+                            <Input className="my-1" size="lg">
+                                <InputField
+                                    type="text"
+                                    placeholder="Location Address"
+                                    value={eventLocationAddress}
+                                    onChangeText={(text) => setEventLocationAddress(text)}
+                                />
+                            </Input>
+                            <FormControlHelper>
+                                <FormControlHelperText>
+                                    The street address of the location where the event is hosted.
+                                </FormControlHelperText>
+                            </FormControlHelper>
+                            <FormControlError>
+                                <FormControlErrorIcon as={AlertCircleIcon} className={classes.formControlErrorText} />
+                                <FormControlErrorText className={classes.formControlErrorText}>
+                                    At least {MIN_EVENT_NAME_LENGTH} characters are required.
+                                </FormControlErrorText>
+                            </FormControlError>
+                        </FormControl>
+
+                        <FormControl
+                            isInvalid={isInvalidEventName}
+                            size="lg"
+                            isDisabled={false}
+                            isReadOnly={false}
+                            isRequired={false}
+                        >
+                            <FormControlLabel>
+                                <FormControlLabelText>Location Coordinates</FormControlLabelText>
+                            </FormControlLabel>
+                            <Button
+                                className="my-1"
+                                size="lg"
+                                variant="outline"
+                                onPress={() => {
+                                    router.navigate({
+                                        pathname: "/(main)/coordinatePickerScreen"
+                                    });
+                                }}
+                            >
+                                <ButtonText>
+                                    {
+                                        eventLocationCoordinates
+                                            ? `${eventLocationCoordinates}`
+                                            : "Pick on Map"
+                                    }
+                                </ButtonText>
+                            </Button>
+                            <FormControlHelper>
+                                <FormControlHelperText>
+                                    The coordinates of the location where the event is hosted.
                                 </FormControlHelperText>
                             </FormControlHelper>
                             <FormControlError>
@@ -153,7 +281,7 @@ export default function AddEventScreen() {
                                             </CheckboxIndicator>
                                             <CheckboxLabel>Small</CheckboxLabel>
                                         </Checkbox>
-                                        <Checkbox value="medium">
+                                        <Checkbox value="medium" defaultIsChecked={true}>
                                             <CheckboxIndicator>
                                                 <CheckboxIcon as={CheckIcon} />
                                             </CheckboxIndicator>
