@@ -5,9 +5,9 @@ import { Timestamp } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useAuth } from '../../src/context/AuthContext';
-import { addDog } from '../../src/services/dogService';
-import { createEvent } from '../../src/services/eventService';
+import { useAuth } from '../../../src/context/AuthContext';
+import { addDog } from '../../../src/services/dogService';
+import { createEvent } from '../../../src/services/eventService';
 
 export default function Index() {
     const { firebaseUser, userProfile, logout, loading } = useAuth()
