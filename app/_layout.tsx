@@ -1,14 +1,45 @@
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { Drawer } from "expo-router/drawer";
-import React from "react";
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
+import { StatusBar } from 'expo-status-bar';
+import React, { useEffect } from 'react';
+import 'react-native-reanimated';
+
+import { AuthProvider, useAuth } from "../src/context/AuthContext";
+
+
+import { useColorScheme } from '@/hooks/use-color-scheme';
+
+import '@/global.css';
+
+export const unstable_settings = {
+  anchor: '(tabs)',
+};
+
+// Komponentti, joka ohjaa käyttäjän oikealle sivulle autentikointitilasta riippuen
+function AuthRedirector() {
+  const { firebaseUser, loading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (loading) return
+
+    if (!firebaseUser) {
+      
+    } else {
+      router.replace('/')
+    }
+  }, [firebaseUser, loading, router])
+
+  return null
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme} children={undefined}>
-      <Drawer screenOptions={{ headerShown: false }}>
+    <AuthProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Drawer.Screen
           name="(main)"
           options={{ drawerLabel: "Home", title: "Home" }}
@@ -17,7 +48,11 @@ export default function RootLayout() {
           name="profileScreen"
           options={{ drawerLabel: "My Profile", title: "My Profile" }}
         />
-      </Drawer>
-    </ThemeProvider>
+
+        <AuthRedirector />
+
+        <StatusBar style="auto" />
+        </ThemeProvider>
+    </AuthProvider>
   );
 }
