@@ -23,8 +23,9 @@ export default function RootLayout() {
                 <Stack>
                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                     <Stack.Screen name="eventScreen" options={{ headerShown: true, title: "Event" }} />
-                    <Stack.Screen name="addEventScreen" options={{ headerShown: true, title: "Add Event" }} />
+                    <Stack.Screen name="addEvent" options={{ headerShown: true, title: "Add Event" }} />
                     <Stack.Screen name="dogProfileScreen" options={{ headerShown: false, title: "Dog Profile" }} />
+                    <Stack.Screen name="friendChatScreen" options={{ headerShown: true, title: "Ronald Richards" }} /> {/* Tittle should be dynamic */}
                 </Stack>
                 <StatusBar style="auto" />
             </ThemeProvider>
