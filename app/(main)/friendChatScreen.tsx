@@ -20,7 +20,7 @@ export default function friendChatScreen() {
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
 
-    const flatListRef = useRef(null);
+    const flatListRef = useRef<FlatList<any> | null>(null);
 
     const createMessage = (text: string, sender: 'user' | 'other') => ({
         id: `${Date.now()}-${Math.random()}`,
