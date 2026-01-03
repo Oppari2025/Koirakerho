@@ -12,7 +12,8 @@ import {
     collection, doc, getDoc,
     onSnapshot,
     orderBy,
-    query, serverTimestamp, setDoc
+    query, serverTimestamp, setDoc,
+    updateDoc
 } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -59,21 +60,21 @@ export default function friendChatScreen() {
     };
 
     const sendMessage = async () => {
-        if (!inputValue.trim() || !chatId || !currentUser) return;
+    if (!inputValue.trim() || !currentUser || !chatId) return;
 
-        try {
-            await addDoc(collection(db, 'chats', chatId, 'messages'), {
-                text: inputValue.trim(),
-                senderUid: currentUser.uid,
-                createdAt: serverTimestamp(),
-            });
+    // Lähetä viesti
+    await addDoc(collection(db, 'chats', chatId, 'messages'), {
+        text: inputValue,
+        senderUid: currentUser.uid,
+        createdAt: serverTimestamp(),
+    });
 
-            setInputValue('');
-        } catch (err) {
-            console.error('Error sending message:', err);
-        }
+    // Päivittää chatin viimeisin viesti aika
+    await updateDoc(doc(db, 'chats', chatId), {
+        lastMessageAt: serverTimestamp(),
+    });
+    setInputValue('');
     };
-
 
     const currentUser: any = getAuth().currentUser;
 
@@ -84,8 +85,6 @@ export default function friendChatScreen() {
                 ? `${currentUser.uid}_${otherUid}`
                 : `${otherUid}_${currentUser.uid}`
             : null;
-
-    console.log('chatId:', chatId);
 
     // Ladataan toinen käyttäjä
     useEffect(() => {
@@ -141,6 +140,18 @@ export default function friendChatScreen() {
 
         return unsubscribe;
     }, [chatId]);
+
+    useEffect(() => {
+    if (!chatId || !currentUser) return;
+
+    const markAsRead = async () => {
+        await updateDoc(doc(db, 'chats', chatId), {
+        [`lastRead.${currentUser.uid}`]: serverTimestamp(),
+        });
+    };
+
+    markAsRead();
+    }, [chatId, messages.length]);
 
 
     return (

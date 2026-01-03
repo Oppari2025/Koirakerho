@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
 import { getAuth } from 'firebase/auth';
-import { arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { Modal, TextInput, TouchableOpacity, View } from 'react-native';
+import { Modal, RefreshControl, TextInput, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../../../src/firebase/FirebaseConfig';
@@ -18,36 +18,96 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 
 export default function chatScreen() {
-  const [contacts, setContacts] = useState<Array<{ uid: string; name: string; email: string }>>([]);
+  const [contacts, setContacts] = useState<
+    Array<{
+      uid: string;
+      name: string;
+      email: string;
+      unreadCount: number;
+    }>
+  >([]);
+  const [refreshing, setRefreshing] = useState(false);
   const currentUser = getAuth().currentUser;
   const [modalVisible, setModalVisible] = useState(false);
   const [newEmail, setNewEmail] = useState('');
+  const getChatId = (uid1: string, uid2: string) =>
+    uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
 
-  const loadContacts = async () => {
-    if (!currentUser) return;
+ const loadContacts = async () => {
+  if (!currentUser) return;
 
-    const snap = await getDoc(doc(db, 'users', currentUser.uid));
-    if (!snap.exists()) return;
+  const snap = await getDoc(doc(db, 'users', currentUser.uid));
+  if (!snap.exists()) return;
 
-    const data = snap.data();
-    const emails = data.contacts || [];
+  const emails = snap.data().contacts || [];
+  if (emails.length === 0) {
+    setContacts([]);
+    return;
+  }
 
-    if (emails.length === 0) {
-      setContacts([]);
-      return;
-    }
+  const users = await Promise.all(
+    emails.map((email: string) => getUserByEmail(email))
+  );
 
-    const users = await Promise.all(
-      emails.map((email: string) => getUserByEmail(email))
-    );
+  const gotNewMessage = await Promise.all(
+    users.filter(Boolean).map(async (user: any) => {
+      const chatId = getChatId(currentUser.uid, user.uid);
+      const chatRef = doc(db, 'chats', chatId);
+      const chatSnap = await getDoc(chatRef);
 
-    setContacts(users.filter(Boolean));
+      let unreadCount = 0;
+      let lastMessageAt: any = null;
+
+      if (chatSnap.exists()) {
+        const chatData = chatSnap.data();
+        lastMessageAt = chatData?.lastMessageAt || null;
+
+        const lastRead = chatData?.lastRead?.[currentUser.uid];
+
+        const msgsRef = collection(db, 'chats', chatId, 'messages');
+        const allMsgsSnap = await getDocs(msgsRef);
+
+        const unreadMsgs = allMsgsSnap.docs.filter(msg => {
+          const data = msg.data();
+          return (
+            data.senderUid !== currentUser.uid &&
+            (!lastRead || data.createdAt.toMillis() > lastRead.toMillis())
+          );
+        });
+
+        unreadCount = unreadMsgs.length;
+      }
+
+      return {
+        ...user,
+        unreadCount,
+        lastMessageAt,
+      };
+    })
+  );
+
+  // Järjestetää kontaktit viimeisimmän viestin mukaan
+  gotNewMessage.sort((a, b) => {
+    const aTime = a.lastMessageAt ? a.lastMessageAt.toMillis() : 0;
+    const bTime = b.lastMessageAt ? b.lastMessageAt.toMillis() : 0;
+    return bTime - aTime;
+  });
+
+  setContacts(gotNewMessage);
+};
+
+  // Päivittää sivun
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadContacts();
+    setRefreshing(false);
   };
 
   useEffect(() => {
-    loadContacts().catch(() => {});
+    loadContacts().catch(() => { });
   }, []);
 
+  // Lisää kontaktin sähköpostilla ja päivittää listan
   const addContactByEmail = async () => {
     if (!currentUser) return;
 
@@ -63,7 +123,7 @@ export default function chatScreen() {
 
     setModalVisible(false);
     setNewEmail('');
-    loadContacts().catch(() => {});
+    loadContacts().catch(() => { });
   };
 
   return (
@@ -72,7 +132,10 @@ export default function chatScreen() {
         Koirakerho
       </Heading>
 
-      <ScrollView contentContainerStyle={{ gap: 24 }}>
+      <ScrollView contentContainerStyle={{ gap: 24 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        } >
         {contacts.map(user => (
           <TouchableOpacity
             key={user.uid}
@@ -84,16 +147,23 @@ export default function chatScreen() {
             }
           >
             <VStack className="p-4 border border-gray-200 rounded-lg">
-              <HStack space="md">
-                <Avatar className="bg-indigo-600">
-                  <AvatarFallbackText className="text-white">
-                    {user.name}
-                  </AvatarFallbackText>
-                </Avatar>
-                <VStack>
-                  <Heading size="sm">{user.name}</Heading>
-                  <Text size="sm">{user.email}</Text>
-                </VStack>
+              <HStack className="items-center justify-between">
+                <HStack space="md">
+                  <Avatar className="bg-indigo-600">
+                    <AvatarFallbackText className="text-white">
+                      {user.name}
+                    </AvatarFallbackText>
+                  </Avatar>
+                  <VStack>
+                    <Heading size="sm">{user.name}</Heading>
+                    <Text size="sm">{user.email}</Text>
+                  </VStack>
+                </HStack>
+                {user.unreadCount > 0 && (
+                  <View className="bg-green-500 rounded-full px-3.5 py-2 items-center justify-center">
+                    <Text className="text-white text-xs font-bold">{user.unreadCount}</Text>
+                  </View>
+                )}
               </HStack>
             </VStack>
           </TouchableOpacity>
