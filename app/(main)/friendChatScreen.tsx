@@ -1,7 +1,13 @@
+import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { Button, ButtonIcon } from '@/components/ui/button';
+import { Heading } from '@/components/ui/heading';
 import { ArrowRightIcon } from '@/components/ui/icon';
 import { Input, InputField } from '@/components/ui/input';
-import React, { useRef, useState } from 'react';
+import { VStack } from '@/components/ui/vstack';
+import { db } from '@/src/firebase/FirebaseConfig';
+import { useLocalSearchParams } from 'expo-router';
+import { doc, getDoc } from 'firebase/firestore';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     FlatList,
     Text,
@@ -19,7 +25,8 @@ type Message = {
 export default function friendChatScreen() {
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
-
+    const { otherUid } = useLocalSearchParams();
+    const [otherUser, setOtherUser] = useState<any>(null);
     const flatListRef = useRef<FlatList<any> | null>(null);
 
     const createMessage = (text: string, sender: 'user' | 'other') => ({
@@ -67,8 +74,39 @@ export default function friendChatScreen() {
         );
     };
 
+    useEffect(() => {
+        if (!otherUid) return;
+
+        const loadOtherUser = async () => {
+            const snap = await getDoc(doc(db, 'users', otherUid as string));
+            if (snap.exists()) {
+                setOtherUser(snap.data());
+            }
+        };
+
+        loadOtherUser();
+    }, [otherUid]);
+
     return (
         <SafeAreaView className="flex-1">
+            <View className="flex-row items-center gap-4 p-4">
+                <Avatar className="bg-indigo-600">
+                    <AvatarFallbackText className="text-white">
+                        {otherUser?.name || '?'}
+                    </AvatarFallbackText>
+                    <AvatarImage
+                        source={{
+                            uri: otherUser?.profilePictureUrl || '../assets/images/dog1.jpg',
+                        }}
+                    />
+                </Avatar>
+                <VStack>
+                    <Heading size="sm">{otherUser?.name}</Heading>
+                </VStack>
+                <Text className="text-lg font-bold">
+                    {otherUser?.name ?? 'Ladataan...'}
+                </Text>
+            </View>
             <FlatList
                 ref={flatListRef}
                 data={messages}

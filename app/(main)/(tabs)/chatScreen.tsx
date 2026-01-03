@@ -18,7 +18,7 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 
 export default function chatScreen() {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState<Array<{ uid: string; name: string; email: string }>>([]);
   const currentUser = getAuth().currentUser;
   const [modalVisible, setModalVisible] = useState(false);
   const [newEmail, setNewEmail] = useState('');
@@ -38,7 +38,7 @@ export default function chatScreen() {
     }
 
     const users = await Promise.all(
-      emails.map(email => getUserByEmail(email))
+      emails.map((email: string) => getUserByEmail(email))
     );
 
     setContacts(users.filter(Boolean));
@@ -49,6 +49,8 @@ export default function chatScreen() {
   }, []);
 
   const addContactByEmail = async () => {
+    if (!currentUser) return;
+
     const email = newEmail.trim().toLowerCase();
     if (!email || email === currentUser.email) return;
 
@@ -61,8 +63,6 @@ export default function chatScreen() {
 
     setModalVisible(false);
     setNewEmail('');
-
-    // Päivitetään lista heti
     loadContacts().catch(() => {});
   };
 

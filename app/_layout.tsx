@@ -18,11 +18,11 @@ export default function RootLayout() {
         <Drawer>
           <Drawer.Screen
             name="(main)"
-            options={{ drawerLabel: 'Home', title: 'Home' }}
+            options={{ drawerLabel: 'Home', title: 'Home', headerShown: false }}
           />
           <Drawer.Screen
             name="profileScreen"
-            options={{ drawerLabel: 'My Profile', title: 'My Profile' }}
+            options={{ drawerLabel: 'My Profile', title: 'My Profile', headerShown: false }}
           />
         </Drawer>
         <StatusBar style="auto" />
