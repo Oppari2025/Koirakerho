@@ -6,7 +6,14 @@ import { Input, InputField } from '@/components/ui/input';
 import { VStack } from '@/components/ui/vstack';
 import { db } from '@/src/firebase/FirebaseConfig';
 import { useLocalSearchParams } from 'expo-router';
-import { doc, getDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import {
+    addDoc,
+    collection, doc, getDoc,
+    onSnapshot,
+    orderBy,
+    query, serverTimestamp, setDoc
+} from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     FlatList,
@@ -18,8 +25,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 type Message = {
     id: string;
     text: string;
-    sender: 'user' | 'other';
-    time: string;
+    senderUid: string;
+    createdAt: any;
 };
 
 export default function friendChatScreen() {
@@ -29,32 +36,8 @@ export default function friendChatScreen() {
     const [otherUser, setOtherUser] = useState<any>(null);
     const flatListRef = useRef<FlatList<any> | null>(null);
 
-    const createMessage = (text: string, sender: 'user' | 'other') => ({
-        id: `${Date.now()}-${Math.random()}`,
-        text,
-        sender,
-        time: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-        }),
-    });
-
-    const sendMyMessage = () => {
-        if (!inputValue.trim()) return;
-
-        setMessages(prev => [...prev, createMessage(inputValue, 'user')]);
-        setInputValue('');
-    };
-
-    const sendFriendMessage = () => {
-        if (!inputValue.trim()) return;
-
-        setMessages(prev => [...prev, createMessage(inputValue, 'other')]);
-        setInputValue('');
-    };
-
     const renderMessage = ({ item }: { item: Message }) => {
-        const isUser = item.sender === 'user';
+        const isUser = item.senderUid === currentUser.uid;
 
         return (
             <View
@@ -67,25 +50,98 @@ export default function friendChatScreen() {
                 <View className='flex-row px-2'>
                     <Text style={{ color: 'white', fontSize: 14, marginRight: 10 }}>{item.text}</Text>
                     <Text style={{ color: 'black', fontSize: 10, marginTop: 4 }}>
-                        {item.time}
+                        {item.createdAt?.toDate().toLocaleTimeString()}
+
                     </Text>
                 </View>
             </View>
         );
     };
 
+    const sendMessage = async () => {
+        if (!inputValue.trim() || !chatId || !currentUser) return;
+
+        try {
+            await addDoc(collection(db, 'chats', chatId, 'messages'), {
+                text: inputValue.trim(),
+                senderUid: currentUser.uid,
+                createdAt: serverTimestamp(),
+            });
+
+            setInputValue('');
+        } catch (err) {
+            console.error('Error sending message:', err);
+        }
+    };
+
+
+    const currentUser: any = getAuth().currentUser;
+
+    // Määritellään chatId
+    const chatId =
+        currentUser && otherUid
+            ? currentUser.uid < otherUid
+                ? `${currentUser.uid}_${otherUid}`
+                : `${otherUid}_${currentUser.uid}`
+            : null;
+
+    console.log('chatId:', chatId);
+
+    // Ladataan toinen käyttäjä
     useEffect(() => {
         if (!otherUid) return;
-
         const loadOtherUser = async () => {
             const snap = await getDoc(doc(db, 'users', otherUid as string));
             if (snap.exists()) {
                 setOtherUser(snap.data());
             }
         };
-
         loadOtherUser();
     }, [otherUid]);
+
+    // Varmistetaan että chat on olemassa
+    useEffect(() => {
+        if (!chatId || !currentUser) return;
+        const ensureChatExists = async () => {
+            try {
+                const chatRef = doc(db, 'chats', chatId);
+                const snap = await getDoc(chatRef);
+
+                if (snap.exists()) {
+                    return;
+                }
+                await setDoc(chatRef, {
+                    members: [currentUser.uid, otherUid],
+                    createdAt: serverTimestamp(),
+                });
+            } catch (err) {
+                console.error('Error ensuring chat:', err);
+            }
+        };
+        ensureChatExists();
+    }, [chatId]);
+
+    // Ladataan viestit 
+    useEffect(() => {
+        if (!chatId) return;
+
+        const q = query(
+            collection(db, 'chats', chatId, 'messages'),
+            orderBy('createdAt', 'asc')
+        );
+
+        const unsubscribe = onSnapshot(q, snapshot => {
+            const msgs = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as Message[];
+
+            setMessages(msgs);
+        });
+
+        return unsubscribe;
+    }, [chatId]);
+
 
     return (
         <SafeAreaView className="flex-1">
@@ -125,26 +181,14 @@ export default function friendChatScreen() {
                         onChangeText={setInputValue}
                     />
                 </Input>
-
-                {/* User */}
                 <Button
                     size="lg"
                     className="rounded-full px-3"
-                    onPress={sendMyMessage}
-                >
-                    <ButtonIcon as={ArrowRightIcon} />
-                </Button>
-
-                {/* Friend */}
-                <Button
-                    size="lg"
-                    variant="outline"
-                    className="rounded-full px-3"
-                    onPress={sendFriendMessage}
+                    onPress={sendMessage}
                 >
                     <ButtonIcon as={ArrowRightIcon} />
                 </Button>
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     );
 }
