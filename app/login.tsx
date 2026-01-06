@@ -1,36 +1,34 @@
-import { useRouter } from "expo-router"
-import { StatusBar } from "expo-status-bar"
-import React, { useState } from "react"
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
-import { SafeAreaProvider } from "react-native-safe-area-context"
-import { useAuth } from "../../../src/context/AuthContext"
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useAuth } from '../src/context/AuthContext';
 
-export default function Register() {
-  const { register, loading } = useAuth()
+
+export default function Login() {
+  const { login, loading } = useAuth()
   const router = useRouter()
 
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
-  // Rekisteröintifunktio
-  const handleRegister = async () => {
-    if (!email || !password || !name) {
-      setErrorMessage("Täytä kaikki kentät")
-      return
-    }
-
-    if (password !== confirmPassword) {
-      setErrorMessage("Salasanat eivät täsmää")
+  // Kirjautumisfunktio
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setErrorMessage('Täytä kaikki kentät')
       return
     }
 
     try {
-      setErrorMessage("")
-      await register(email, password, name)
+      console.log('handleLogin: attempting login for', email)
+      setErrorMessage('')
+      await login(email, password)
+      console.log('handleLogin: login() returned')
+      router.replace?.('/')
     } catch (error: any) {
+      console.error('handleLogin error', error)
       setErrorMessage(error.message)
     }
   }
@@ -40,7 +38,7 @@ export default function Register() {
       <StatusBar style="auto" />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.container}>
-          <Text style={styles.title}>Register</Text>
+          <Text style={styles.title}>Login</Text>
 
           <TextInput
             style={styles.input}
@@ -53,28 +51,11 @@ export default function Register() {
 
           <TextInput
             style={styles.input}
-            placeholder="Name"
-            placeholderTextColor="#111111ff"
-            value={name}
-            onChangeText={setName}
-          />
-
-          <TextInput
-            style={styles.input}
             placeholder="Password"
             placeholderTextColor="#111111ff"
             secureTextEntry
             value={password}
             onChangeText={setPassword}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            placeholderTextColor="#111111ff"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
           />
 
           {errorMessage ? (
@@ -83,26 +64,25 @@ export default function Register() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={handleRegister}
+            onPress={handleLogin}
             disabled={loading}
           >
             <Text style={styles.buttonText}>
-              {loading ? "Registering..." : "Register"}
+              {loading ? 'Logging in...' : 'Login'}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-              style={styles.secondaryButton}
-              onPress={() => router.push?.('/login')}
-            >
-              <Text style={styles.secondaryButtonText}>Already have an account? Login</Text>
-            </TouchableOpacity>
+            style={styles.secondaryButton}
+            onPress={() => router.push?.('/register')}
+          >
+            <Text style={styles.secondaryButtonText}>Dont have an account? Register</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaProvider>
   )
 }
-
 
 const styles = StyleSheet.create({
   safe: {

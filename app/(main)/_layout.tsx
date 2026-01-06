@@ -1,5 +1,5 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
@@ -20,13 +20,20 @@ export default function RootLayout() {
 
         <GluestackUIProvider mode="dark">
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                <Stack>
-                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                    <Stack.Screen name="eventScreen" options={{ headerShown: true, title: "Event" }} />
-                    <Stack.Screen name="addEventScreen" options={{ headerShown: true, title: "Add Event" }} />
-                    <Stack.Screen name="dogProfileScreen" options={{ headerShown: false, title: "Dog Profile" }} />
-                </Stack>
+                <Drawer>
+                    <Drawer.Screen
+                        name="(main)"
+                        options={{ drawerLabel: "Home", title: "Home" }}
+                        />
+                        <Drawer.Screen
+                        name="profileScreen"
+                        options={{ drawerLabel: "My Profile", title: "My Profile" }}
+                    />
+                </Drawer>
+                
+
                 <StatusBar style="auto" />
+            
             </ThemeProvider>
         </GluestackUIProvider>
 

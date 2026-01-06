@@ -1,9 +1,8 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'react-native-reanimated';
-import { Drawer } from 'expo-router/drawer';
 
 import { AuthProvider, useAuth } from "../src/context/AuthContext";
 
@@ -11,48 +10,51 @@ import { AuthProvider, useAuth } from "../src/context/AuthContext";
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 import '@/global.css';
+import { ActivityIndicator, View } from 'react-native';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-// Komponentti, joka ohjaa käyttäjän oikealle sivulle autentikointitilasta riippuen
-function AuthRedirector() {
-  const { firebaseUser, loading } = useAuth()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (loading) return
-
-    if (!firebaseUser) {
-      
-    } else {
-      router.replace('/')
-    }
-  }, [firebaseUser, loading, router])
-
-  return null
-}
-
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <AuthProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Drawer.Screen
-          name="(main)"
-          options={{ drawerLabel: "Home", title: "Home" }}
-        />
-        <Drawer.Screen
-          name="profileScreen"
-          options={{ drawerLabel: "My Profile", title: "My Profile" }}
-        />
-
-        <AuthRedirector />
-
-        <StatusBar style="auto" />
-        </ThemeProvider>
+      <InnerRoot />
     </AuthProvider>
+  );
+}
+
+function InnerRoot() {
+  const { firebaseUser, loading } = useAuth();
+  const colorScheme = useColorScheme();
+
+  // näytetään latausindikaattori, kun autentikointitila on latautumassa
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        {firebaseUser ? (
+          <>
+            <Stack.Screen name="(main)/(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(main)/eventScreen" options={{ headerShown: true, title: "Event" }} />
+            <Stack.Screen name="(main)/addEventScreen" options={{ headerShown: true, title: "Add Event" }} />
+            <Stack.Screen name="(main)/dogProfileScreen" options={{ headerShown: false, title: "Dog Profile" }} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="/login" options={{ headerShown: false }} />
+            <Stack.Screen name="/register" options={{ headerShown: false }} />
+          </>
+        )}
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 }
