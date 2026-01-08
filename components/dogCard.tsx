@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/heading';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import React from 'react';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
@@ -28,6 +29,14 @@ export default function DogCard({ name, image }: { name: string; image: any }) {
                         </TouchableOpacity>
                     </Card>
                 ))}
+                <Card size="md" variant="elevated" className="m-3 bg-gray-600 p-2 rounded-lg">
+                    <TouchableOpacity onPress={() => router.push(`/addDogScreen`)}>
+                        <MaterialIcons name="add-circle-outline" size={128} color="white" className="self-center mb-2" />
+                        <Heading size="lg" className="mb-1 text-white self-center">
+                            + Add Dog
+                        </Heading>
+                    </TouchableOpacity>
+                </Card>
             </ScrollView>
         </View>
     )
