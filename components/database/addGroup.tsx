@@ -6,7 +6,6 @@ import { Input, InputField } from "@/components/ui/input";
 import { uploadImage } from "@/src/firebase/storage";
 import { createGroup } from "@/src/services/groupService";
 import { Group } from "@/src/types/group";
-import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ActivityIndicator, Image, Modal, Pressable, Text, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -16,7 +15,6 @@ type Props = {
 };
 
 export default function AddGroup({ onCreated }: Props) {
-  const router = useRouter();
   const [visible, setVisible] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
@@ -28,7 +26,7 @@ export default function AddGroup({ onCreated }: Props) {
   async function handleCreate() {
     setError(null);
     if (!groupName.trim()) {
-      setError("Group name is required");
+      setError("Ryhmän nimi on pakollinen");
       return;
     }
 
@@ -57,7 +55,7 @@ export default function AddGroup({ onCreated }: Props) {
       setSelectedImage(null);
     } catch (err: any) {
       console.error("Failed to create group", err);
-      setError(err?.message ?? "Failed to create group");
+      setError(err?.message ?? "Ryhmän luonti epäonnistui");
     } finally {
       setLoading(false);
     }
@@ -74,11 +72,11 @@ export default function AddGroup({ onCreated }: Props) {
       if (!result.canceled && result.assets[0]?.uri) {
         setSelectedImage(result.assets[0].uri);
       } else {
-        setError("Permission to access media library is required");
+        setError("Vaaditaan kuvien käyttöoikeus");
       }
     } catch (e: any) {
       console.error("Image pick failed", e);
-      setError("Failed to pick image");
+      setError("Kuvan valinta epäonnistui: " + (e?.message ?? e));
     }
   }
 
@@ -92,11 +90,11 @@ export default function AddGroup({ onCreated }: Props) {
 
             <View className="space-y-3">
               <Input>
-                <InputField placeholder="Group name" value={groupName} onChangeText={setGroupName} />
+                <InputField placeholder="Ryhmän nimi" value={groupName} onChangeText={setGroupName} />
               </Input>
 
               <Input>
-                <InputField placeholder="Description (optional)" value={groupDescription} onChangeText={setGroupDescription} />
+                <InputField placeholder="Kuvaus (valinnainen)" value={groupDescription} onChangeText={setGroupDescription} />
               </Input>
 
               <View className="flex-row items-center space-x-3">
@@ -104,25 +102,16 @@ export default function AddGroup({ onCreated }: Props) {
                   <Image source={{ uri: selectedImage }} className="h-20 w-20 rounded-lg" />
                 ) : (
                   <View className="h-20 w-20 rounded-lg bg-background-50 items-center justify-center">
-                    <Text className="text-sm text-typography-500">No image</Text>
+                    <Text className="text-sm text-typography-500">Ei kuvaa</Text>
                   </View>
                 )}
 
-                <Button onPress={pickImage} size="md" action="secondary"><ButtonText>Choose Image</ButtonText></Button>
-
+                <Button onPress={pickImage} size="md" action="secondary"><ButtonText>Valitse kuva</ButtonText></Button>
                 {selectedImage ? (
-                  <Button onPress={() => setSelectedImage(null)} size="md" action="negative"><ButtonText>Remove</ButtonText></Button>
+                  <Button onPress={() => setSelectedImage(null)} size="md" action="negative"><ButtonText>Poista</ButtonText></Button>
                 ) : null}
               </View>
-
-              {error ? (
-                <View>
-                  <Text className="text-sm text-error-600">{error}</Text>
-                  {error === "Not authenticated" ? (
-                    <Button onPress={() => { setVisible(false); router.push?.('/login'); }} size="md" action="secondary"><ButtonText>Sign in</ButtonText></Button>
-                  ) : null}
-                </View>
-              ) : null}
+                {error ? <Text className="text-sm text-negative-500">{error}</Text> : null}
 
               <Button onPress={handleCreate} disabled={loading} size="md" action="primary">
                 {loading ? <ActivityIndicator /> : <ButtonText>Create</ButtonText>}
