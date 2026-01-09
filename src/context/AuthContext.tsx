@@ -13,7 +13,7 @@ interface AuthContextType {
   userProfile: FirestoreUser | null
   loading: boolean
 
-  register: (email: string, password: string, name: string) => Promise<void>
+  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void> 
 }
@@ -54,14 +54,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const register = async (
     email: string,
     password: string,
-    name: string
+    firstName: string,
+    lastName: string
   ) => {
     setLoading(true)
 
     try {
       const user = await registerAuthUser(email, password)
       //console.log('createUserProfile: creating profile for uid', user.uid)
-      await createUserProfile(user.uid, { email, name })
+      await createUserProfile(user.uid, { email, firstName, lastName })
     } catch (err) {
       console.error('createUserProfile failed', err)
       throw err

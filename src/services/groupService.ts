@@ -1,21 +1,20 @@
-import { Group, FirestoreGroup } from "../types/group";
-import { db } from "../firebase/FirebaseConfig"
 import {
-  getFirestore,
-  collection,
-  doc,
   addDoc,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
   getDoc,
   getDocs,
-  updateDoc,
-  deleteDoc,
   query,
-  where,
   serverTimestamp,
-  arrayUnion,
-  arrayRemove,
-  WhereFilterOp,
+  updateDoc,
+  where,
+  WhereFilterOp
 } from "firebase/firestore";
+import { auth, db } from "../firebase/FirebaseConfig";
+import { FirestoreGroup, Group } from "../types/group";
 
 const groupsCol = collection(db, "groups");
 
@@ -23,13 +22,27 @@ const groupsCol = collection(db, "groups");
 export async function createGroup(
   data: Omit<FirestoreGroup, "createdAt">
 ): Promise<Group> {
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("Not authenticated");
+
+  const groupAdminIds = Array.from(new Set([...(data.groupAdminIds ?? []), uid]));
+  const memberIds = Array.from(new Set([...(data.memberIds ?? []), uid]));
+
   const payload: Omit<Group, "id"> = {
     ...data,
-    memberIds: data.memberIds ?? [],
+    memberIds,
     eventIds: data.eventIds ?? [],
-    groupAdminIds: data.groupAdminIds ?? [],
+    groupAdminIds,
     createdAt: serverTimestamp() as unknown as FirestoreGroup["createdAt"],
   };
+
+  // Firestore rejects `undefined` values — remove any undefined fields
+  Object.keys(payload).forEach((key) => {
+    // @ts-expect-error dynamic access
+    if (payload[key] === undefined) {
+      delete (payload as any)[key];
+    }
+  });
 
   const ref = await addDoc(groupsCol, payload);
 

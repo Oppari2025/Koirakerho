@@ -7,6 +7,7 @@ export interface FirestoreGroup {
   groupDescription?: string;
   groupAdminIds: string[];
   createdAt: Timestamp;
+  imageUrl?: string;
   memberIds: string[]; 
   eventIds: string[];
 }

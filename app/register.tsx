@@ -9,7 +9,8 @@ export default function Register() {
   const { register, loading } = useAuth()
   const router = useRouter()
 
-  const [name, setName] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -17,19 +18,17 @@ export default function Register() {
 
   // Rekisteröintifunktio
   const handleRegister = async () => {
-    if (!email || !password || !name) {
+    if (!email || !password || !firstName || !lastName) {
       setErrorMessage("Täytä kaikki kentät")
       return
     }
-
     if (password !== confirmPassword) {
       setErrorMessage("Salasanat eivät täsmää")
       return
     }
-
     try {
       setErrorMessage("")
-      await register(email, password, name)
+      await register(email, password, firstName, lastName)
     } catch (error: any) {
       setErrorMessage(error.message)
     }
@@ -53,10 +52,18 @@ export default function Register() {
 
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder="First Name"
             placeholderTextColor="#111111ff"
-            value={name}
-            onChangeText={setName}
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            placeholderTextColor="#111111ff"
+            value={lastName}
+            onChangeText={setLastName}
           />
 
           <TextInput
