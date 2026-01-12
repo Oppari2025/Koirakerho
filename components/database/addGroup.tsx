@@ -3,12 +3,12 @@ import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { AddIcon } from "@/components/ui/icon";
 import { Input, InputField } from "@/components/ui/input";
-import { uploadImage } from "@/src/firebase/storage";
+import { uploadGroupImage } from "@/src/firebase/storage";
 import { createGroup } from "@/src/services/groupService";
 import { Group } from "@/src/types/group";
+import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import { ActivityIndicator, Image, Modal, Pressable, Text, View } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 
 type Props = {
   onCreated?: (group: Group) => void;
@@ -34,7 +34,7 @@ export default function AddGroup({ onCreated }: Props) {
     try {
       let uploadedImageUrl: string | undefined = undefined;
       if (selectedImage) {
-        uploadedImageUrl = await uploadImage(selectedImage);
+        uploadedImageUrl = await uploadGroupImage(selectedImage);
       }
 
       const payload = {
@@ -86,7 +86,7 @@ export default function AddGroup({ onCreated }: Props) {
         <Pressable className="absolute inset-0 bg-black/40" onPress={() => setVisible(false)} />
         <View className="flex-1 justify-start pt-6">
           <Card className="m-3 mt-4 p-4 rounded-lg" variant="elevated" size="lg">
-            <Heading size="sm" className="mb-3">Create New Group</Heading>
+            <Heading size="sm" className="mb-3">Luo uusi ryhmä</Heading>
 
             <View className="space-y-3">
               <Input>
@@ -97,7 +97,7 @@ export default function AddGroup({ onCreated }: Props) {
                 <InputField placeholder="Kuvaus (valinnainen)" value={groupDescription} onChangeText={setGroupDescription} />
               </Input>
 
-              <View className="flex-row items-center space-x-3">
+              <View className="p-2 flex-row items-center space-x-3">
                 {selectedImage ? (
                   <Image source={{ uri: selectedImage }} className="h-20 w-20 rounded-lg" />
                 ) : (
@@ -106,15 +106,15 @@ export default function AddGroup({ onCreated }: Props) {
                   </View>
                 )}
 
-                <Button onPress={pickImage} size="md" action="secondary"><ButtonText>Valitse kuva</ButtonText></Button>
+                <Button onPress={pickImage} className="" size="md" action="secondary"><ButtonText>Valitse kuva</ButtonText></Button>
                 {selectedImage ? (
                   <Button onPress={() => setSelectedImage(null)} size="md" action="negative"><ButtonText>Poista</ButtonText></Button>
                 ) : null}
               </View>
-                {error ? <Text className="text-sm text-negative-500">{error}</Text> : null}
+                {error ? <Text className="pb-1 text-sm text-error-200">{error}</Text> : null}
 
               <Button onPress={handleCreate} disabled={loading} size="md" action="primary">
-                {loading ? <ActivityIndicator /> : <ButtonText>Create</ButtonText>}
+                {loading ? <ActivityIndicator /> : <ButtonText>Luo ryhmä</ButtonText>}
               </Button>
             </View>
           </Card>

@@ -25,11 +25,21 @@ export async function createGroup(
   const uid = auth.currentUser?.uid;
   if (!uid) throw new Error("Not authenticated");
 
+  // ensure the group name is unique
+  const name = (data.groupName ?? "").toString().trim();
+  if (!name) throw new Error("Group name is required");
+  const existingQ = query(groupsCol, where("groupName", "==", name));
+  const existingSnaps = await getDocs(existingQ);
+  if (!existingSnaps.empty) {
+    throw new Error("A group with this name already exists");
+  }
+
   const groupAdminIds = Array.from(new Set([...(data.groupAdminIds ?? []), uid]));
   const memberIds = Array.from(new Set([...(data.memberIds ?? []), uid]));
 
   const payload: Omit<Group, "id"> = {
     ...data,
+    groupName: name,
     memberIds,
     eventIds: data.eventIds ?? [],
     groupAdminIds,

@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, ref as storageRef, uploadBytes } from 'firebase/storage';
-import { auth, storage } from './FirebaseConfig';
+import { storage } from './FirebaseConfig';
 
 export async function pickImage(): Promise<string | null> {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -16,10 +16,17 @@ export async function pickImage(): Promise<string | null> {
   return result.assets[0].uri;
 }
 
-export async function uploadImage(uri: string, folder = 'groups'): Promise<string> {
-  const uid = auth.currentUser?.uid ?? 'anon';
+export async function uploadGroupImage(uri: string, folder = 'groups'): Promise<string> {
   const blob = await (await fetch(uri)).blob();
-  const path = `${folder}/${uid}/${Date.now()}.jpg`;
+  const path = `${folder}/${Date.now()}.jpg`;
+  const ref = storageRef(storage, path);
+  await uploadBytes(ref, blob);
+  return getDownloadURL(ref);
+}
+
+export async function uploadDogImage(uri: string, folder = 'dogs'): Promise<string> {
+  const blob = await (await fetch(uri)).blob();
+  const path = `${folder}/${Date.now()}.jpg`;
   const ref = storageRef(storage, path);
   await uploadBytes(ref, blob);
   return getDownloadURL(ref);
