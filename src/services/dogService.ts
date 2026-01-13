@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, Timestamp, where } from "firebase/firestore"
+import { addDoc, collection, deleteDoc, doc, getDocs, query, Timestamp, where } from "firebase/firestore"
 import { auth, db } from "../firebase/FirebaseConfig"
 import { Dog, FirestoreDog } from "../types/dog"
 
@@ -38,4 +38,7 @@ export const getMyDogs = async (): Promise<Dog[]> => {
     id: doc.id,
     ...(doc.data() as FirestoreDog)
   }))
+}
+export async function deleteDog(dogId: string) {
+  await deleteDoc(doc(db, 'dogs', dogId));
 }

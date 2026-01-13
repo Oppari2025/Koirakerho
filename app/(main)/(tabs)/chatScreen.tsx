@@ -1,3 +1,11 @@
+import {
+  Avatar,
+  AvatarFallbackText,
+} from '@/components/ui/avatar';
+import { Heading } from '@/components/ui/heading';
+import { HStack } from '@/components/ui/hstack';
+import { Text } from '@/components/ui/text';
+import { VStack } from '@/components/ui/vstack';
 import { router } from 'expo-router';
 import { getAuth } from 'firebase/auth';
 import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
@@ -7,15 +15,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../../../src/firebase/FirebaseConfig';
 import { getUserByEmail } from '../../../src/services/getUserByEmail';
-
-import {
-  Avatar,
-  AvatarFallbackText,
-} from '@/components/ui/avatar';
-import { Heading } from '@/components/ui/heading';
-import { HStack } from '@/components/ui/hstack';
-import { Text } from '@/components/ui/text';
-import { VStack } from '@/components/ui/vstack';
 
 export default function chatScreen() {
   const [contacts, setContacts] = useState<
