@@ -57,11 +57,11 @@ export default function dogProfileScreen() {
             </View>
 
             <View className="mx-6 mb-4 p-5 rounded-lg">
-                <Heading size="md" className="mb-2">Description: {description}</Heading>
-                <Heading size="md" className="mb-2">Breed: {breed}</Heading>
-                <Heading size="md" className="mb-2">Age: {age}</Heading>
-                <Heading size="md" className="mb-2">Gender: {gender}</Heading>
-                <Heading size="md" className="mb-2">Size: {size}</Heading>
+                <Heading size="md" className="mb-2">Kuvaus: {description}</Heading>
+                <Heading size="md" className="mb-2">Rotu: {breed}</Heading>
+                <Heading size="md" className="mb-2">Ikä: {age}</Heading>
+                <Heading size="md" className="mb-2">Sukupuoli: {gender}</Heading>
+                <Heading size="md" className="mb-2">Koko: {size}</Heading>
             </View>
             <View className="px-2">
             <TouchableOpacity
