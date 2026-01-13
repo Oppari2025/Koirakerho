@@ -25,10 +25,8 @@ export default function addDogScreen() {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // Testinappi koiran lisäykseen
     const handleAddDog = async () => {
         setStatus('Lisätään koiraa...')
-        // tarkistetaan omistajan uid, jolla estetään koirien lisäys ilman autentikointia
         if (!firebaseUser?.uid) {
             setStatus('Ei kirjautunutta käyttäjää, koiraa ei lisätä')
             return
@@ -55,9 +53,7 @@ export default function addDogScreen() {
 
             setStatus(`Koira '${dogData.name}' lisätty (id: ${res.id})`)
             console.log('Koira lisätty', res.id)
-            router.back();
-            //router.back on sitä varten että ei jää stackiin
-            router.push('/profileScreen');
+            router.replace('/profileScreen');
         } catch (e: any) {
             console.error(e)
             setStatus(`Koiran lisäys epäonnistui: ${e?.message ?? e}`)
