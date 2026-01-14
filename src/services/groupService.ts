@@ -46,7 +46,7 @@ export async function createGroup(
     createdAt: serverTimestamp() as unknown as FirestoreGroup["createdAt"],
   };
 
-  // Firestore rejects `undefined` values — remove any undefined fields
+  // Firestore ei tallenna undefined-arvoja, poistetaan ne ennen tallennusta
   Object.keys(payload).forEach((key) => {
     // @ts-expect-error dynamic access
     if (payload[key] === undefined) {

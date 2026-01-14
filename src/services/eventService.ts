@@ -65,3 +65,21 @@ export const leaveEvent = async (eventId: string) => {
     participants: arrayRemove(auth.currentUser.uid),
   })
 }
+
+// fetch events by a list of ids (chunked, respects Firestore 'in' limit)
+export const getEventsByIds = async (ids: string[]): Promise<Event[]> => {
+  if (!ids || !ids.length) return [];
+  const chunks: string[][] = [];
+  for (let i = 0; i < ids.length; i += 10) chunks.push(ids.slice(i, i + 10));
+
+  const results: Event[] = [];
+  const { collection, query, where, getDocs, documentId } = await import("firebase/firestore");
+
+  for (const chunk of chunks) {
+    const q = query(collection(db, "events"), where(documentId(), "in", chunk));
+    const snap = await getDocs(q);
+    snap.docs.forEach((d) => results.push({ id: d.id, ...(d.data() as FirestoreEvent) }));
+  }
+
+  return results;
+}

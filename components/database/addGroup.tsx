@@ -8,7 +8,7 @@ import { createGroup } from "@/src/services/groupService";
 import { Group } from "@/src/types/group";
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
-import { ActivityIndicator, Image, Modal, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Image, Modal, Pressable, Text, View, TouchableOpacity } from "react-native";
 
 type Props = {
   onCreated?: (group: Group) => void;
@@ -85,7 +85,7 @@ export default function AddGroup({ onCreated }: Props) {
       <Modal visible={visible} transparent animationType="slide">
         <Pressable className="absolute inset-0 bg-black/40" onPress={() => setVisible(false)} />
         <View className="flex-1 justify-start pt-6">
-          <Card className="m-3 mt-4 p-4 rounded-lg" variant="elevated" size="lg">
+          <Card className="m-3 p-4 rounded-lg" variant="elevated" size="lg">
             <Heading size="sm" className="mb-3">Luo uusi ryhmä</Heading>
 
             <View className="space-y-3">
@@ -97,7 +97,7 @@ export default function AddGroup({ onCreated }: Props) {
                 <InputField placeholder="Kuvaus (valinnainen)" value={groupDescription} onChangeText={setGroupDescription} />
               </Input>
 
-              <View className="p-2 flex-row items-center space-x-3">
+              <View className="p-2 flex-row gap-2 items-center">
                 {selectedImage ? (
                   <Image source={{ uri: selectedImage }} className="h-20 w-20 rounded-lg" />
                 ) : (
@@ -106,9 +106,9 @@ export default function AddGroup({ onCreated }: Props) {
                   </View>
                 )}
 
-                <Button onPress={pickImage} className="" size="md" action="secondary"><ButtonText>Valitse kuva</ButtonText></Button>
+                <TouchableOpacity onPress={pickImage} className="bg-yellow-600 px-4 py-2 rounded-lg" size="md"><Text> Valitse kuva </Text></TouchableOpacity>
                 {selectedImage ? (
-                  <Button onPress={() => setSelectedImage(null)} size="md" action="negative"><ButtonText>Poista</ButtonText></Button>
+                  <TouchableOpacity onPress={() => setSelectedImage(null)} className="bg-red-500 px-4 py-2 rounded-lg" size="md"><Text> Poista </Text></TouchableOpacity>
                 ) : null}
               </View>
                 {error ? <Text className="pb-1 text-sm text-error-200">{error}</Text> : null}

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-export default function GroupScreen() {
+export default function GroupList() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (

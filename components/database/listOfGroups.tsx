@@ -3,6 +3,7 @@ import { Heading } from "@/components/ui/heading";
 import { listGroups } from "@/src/services/groupService";
 import { Group } from "@/src/types/group";
 import React, { useEffect, useState } from "react";
+import { useRouter } from 'expo-router';
 import {
   ActivityIndicator,
   FlatList,
@@ -19,8 +20,10 @@ type Props = {
 };
 
 export default function ListOfGroups({ onSelect, limit, refreshKey }: Props) {
+  const router = useRouter();
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     let mounted = true;
 
@@ -67,7 +70,7 @@ export default function ListOfGroups({ onSelect, limit, refreshKey }: Props) {
       keyExtractor={(item) => item.id}
       contentContainerStyle={{ paddingVertical: 8 }}
       renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => onSelect?.(item)}>
+        <TouchableOpacity onPress={() => onSelect?.(item) || router.push({ pathname: "/(main)/groupScreen", params: { id: item.id } })}>
           <Card className="m-3 p-4 rounded-lg" variant="elevated" size="lg">
             <View className="flex-row items-center space-x-4">
               <Image

@@ -44,7 +44,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="groupScreen"
+        name="groupList"
         options={{
           title: 'Group',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.2.fill" color={color} />,
