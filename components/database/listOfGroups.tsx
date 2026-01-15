@@ -23,6 +23,8 @@ export default function ListOfGroups({ onSelect, limit, refreshKey }: Props) {
   const router = useRouter();
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
+  
+
 
   useEffect(() => {
     let mounted = true;
@@ -40,7 +42,6 @@ export default function ListOfGroups({ onSelect, limit, refreshKey }: Props) {
         if (mounted) setLoading(false);
       }
     }
-
     load();
 
     return () => {

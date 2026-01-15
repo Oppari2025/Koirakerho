@@ -1,3 +1,4 @@
+import EditGroup from "@/components/database/editGroup";
 import { Heading } from "@/components/ui/heading";
 import { useAuth } from "@/src/context/AuthContext";
 import { getEventsByIds } from "@/src/services/eventService";
@@ -25,6 +26,7 @@ export default function GroupProfileScreen() {
     const [group, setGroup] = useState<Group | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
 
     const [members, setMembers] = useState<{ id: string; data: any }[]>([]);
     const [admins, setAdmins] = useState<{ id: string; data: any }[]>([]);
@@ -131,6 +133,26 @@ export default function GroupProfileScreen() {
     };
 
     const isAdmin = !!(firebaseUser?.uid && Array.isArray(group?.groupAdminIds) && group?.groupAdminIds.includes(firebaseUser.uid));
+
+    const handleGroupUpdated = async () => {
+        if (!id) return;
+        try {
+            const refreshed = await getGroupById(id);
+            setGroup(refreshed);
+            if (refreshed) {
+                const [memberProfiles, adminProfiles, evts] = await Promise.all([
+                    getUserProfiles(refreshed.memberIds ?? []),
+                    getUserProfiles(refreshed.groupAdminIds ?? []),
+                    getEventsByIds(refreshed.eventIds ?? []),
+                ]);
+                setMembers(memberProfiles);
+                setAdmins(adminProfiles);
+                setEvents(evts);
+            }
+        } catch (err) {
+            console.error("Failed to refresh group:", err);
+        }
+    };
 
     if (loading) {
         return (
@@ -254,7 +276,7 @@ export default function GroupProfileScreen() {
 
                 {isAdmin ? (
                     <View className="mt-4 flex-row space-x-3">
-                        <TouchableOpacity className="bg-yellow-600 px-4 py-3 rounded-lg items-center flex-1" onPress={() => router.push(`/(main)/editGroupScreen?id=${id}`)}>
+                        <TouchableOpacity className="bg-yellow-600 px-4 py-3 rounded-lg items-center flex-1" onPress={() => setEditModalVisible(true)}>
                             <Text className="text-white">Edit</Text>
                         </TouchableOpacity>
                         <Text>   </Text>
@@ -263,6 +285,13 @@ export default function GroupProfileScreen() {
                         </TouchableOpacity>
                     </View>
                 ) : null}
+
+                <EditGroup
+                    groupId={id || ""}
+                    visible={editModalVisible}
+                    onClose={() => setEditModalVisible(false)}
+                    onUpdated={handleGroupUpdated}
+                />
                 </ScrollView>
             </SafeAreaView>
         </SafeAreaProvider>
