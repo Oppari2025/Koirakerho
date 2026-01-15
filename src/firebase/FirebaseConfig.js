@@ -3,6 +3,7 @@ import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage'
 import { initializeApp } from "firebase/app"
 import { initializeAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
+import { getStorage } from "firebase/storage"
 
 // Firebasen konfiguraatio ja arvot ympäristömuuttujista
 // hakeen arvot .env.local tiedostosta
@@ -24,3 +25,4 @@ export const auth = initializeAuth(app, {
 })
 
 export const db = getFirestore(app)
+export const storage = getStorage(app)
