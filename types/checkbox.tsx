@@ -6,6 +6,7 @@ type CheckBoxGroupProps = {
     checkedValues: string[];
     onChange: (updatedCheckedValues: string[]) => void;
     style: any;
+    isEditable: boolean;
 }
 
 type CheckBoxOption = {

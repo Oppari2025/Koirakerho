@@ -1,12 +1,7 @@
-import { Card } from '@/components/ui/card';
-import { Heading } from '@/components/ui/heading';
-import { Image } from '@/components/ui/image';
-import { Text } from '@/components/ui/text';
-import { VStack } from "@/components/ui/vstack";
 import { EventCardProps, EventData } from '@/types/events';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { FlatList, TouchableOpacity } from 'react-native';
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 
@@ -48,8 +43,13 @@ function AddEventButton({ onPress }: AddEventButtonProps) {
 }
 
 const EventCard = ({ item, onPress }: EventCardProps) => (
-  <TouchableOpacity onPress={() => onPress()}>
-    <Card className={classes.eventCard}>
+  <TouchableOpacity
+    onPress={onPress}
+  >
+    <View
+      className={classes.eventCard}
+      style={{ backgroundColor: "#948a8aff", padding: 8 }}
+    >
       <Image
         source={{
           uri: item.imageUrl,
@@ -60,15 +60,15 @@ const EventCard = ({ item, onPress }: EventCardProps) => (
       <Text className={classes.eventCardDate}>
         {item.date}
       </Text>
-      <VStack className={classes.eventCardBottomContainer}>
-        <Heading className={classes.eventCardEventNameText}>
+      <View className={classes.eventCardBottomContainer}>
+        <Text className={classes.eventCardEventNameText}>
           {item.eventName}
-        </Heading>
+        </Text>
         <Text className={classes.eventCardInfoText}>
           {item.eventInfo}
         </Text>
-      </VStack>
-    </Card>
+      </View>
+    </View>
   </TouchableOpacity>
 
 
@@ -77,6 +77,11 @@ const EventCard = ({ item, onPress }: EventCardProps) => (
 
 export default function eventsScreen() {
   const router = useRouter();
+
+
+  function onPressGoToTicketsPage() {
+    router.navigate(`/(main)/ticketsScreen`);
+  }
 
   const renderItem = ({ item }: { item: EventData }) => {
     return (
@@ -89,19 +94,29 @@ export default function eventsScreen() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView className={classes.page}>
-        <VStack className={classes.pageContent}>
+      <SafeAreaView style={{ width: "100%", height: "100%", alignItems: "center" }}>
+        <View style={{ width: "100%", backgroundColor: "#9e1010ff" }}>
+          <TouchableOpacity
+            style={{ padding: 16 }}
+            onPress={onPressGoToTicketsPage}
+          >
+            <Text>fghfghgfh</Text>
+          </TouchableOpacity>
+
+        </View>
+        <View style={{ height: "auto" }}>
+
           <FlatList
             data={DATA}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
             // extraData={selectedId}
             className={classes.eventCardList}
-            ListHeaderComponent={() => <VStack style={{ height: 8 }} />}
-            ItemSeparatorComponent={() => <VStack style={{ height: 8 }} />}
-            ListFooterComponent={() => <VStack style={{ height: 8 }} />}
+            ListHeaderComponent={() => <View style={{ height: 8 }} />}
+            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+            ListFooterComponent={() => <View style={{ height: 200 }} />}
           />
-        </VStack>
+        </View>
         <AddEventButton onPress={() => router.navigate(`/(main)/addEventScreen`)} />
       </SafeAreaView>
     </SafeAreaProvider>
@@ -119,7 +134,7 @@ const classes = {
   eventCardList: "",
 
   eventCard: "rounded-lg max-w-[360px] h-[380px]",
-  eventCardImage: "h-[240px] w-full rounded-md aspect-[4/3] mb-4",
+  eventCardImage: "h-[150px] w-full rounded-md aspect-[4/3] mb-4",
   eventCardContent: "",
   eventCardDate: "text-sm font-normal text-typography-700",
   eventCardBottomContainer: "",

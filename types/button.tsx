@@ -5,6 +5,7 @@ type ButtonProps = {
     title: string;
     style?: StyleProp<ViewStyle> | undefined;
     textColor: string;
+    key: string;
 }
 
 export { ButtonProps };

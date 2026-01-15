@@ -2,7 +2,7 @@ import { TextEditBoxProps } from "@/types/text-edit-box";
 import React from "react";
 import { Text, TextInput, View } from "react-native";
 
-export default function TextEditBox({ label, isEditable, onChangeText, numberOfLines }: TextEditBoxProps): React.JSX.Element {
+export default function TextEditBox({ label, isEditable, onChangeText, numberOfLines, placeholder, value }: TextEditBoxProps): React.JSX.Element {
     numberOfLines = numberOfLines || 1;
     const inputHeight = numberOfLines > 10
         ? 10 * 36
@@ -18,12 +18,14 @@ export default function TextEditBox({ label, isEditable, onChangeText, numberOfL
 
             <TextInput
                 style={{
-                    borderWidth: 1,
+                    borderWidth: isEditable ? 1 : 0,
                     borderColor: "#FFF",
                     borderRadius: 5,
                     height: inputHeight,
                 }}
-                placeholder="Empty"
+                editable={isEditable}
+                value={value}
+                placeholder={placeholder}
                 clearButtonMode="always"
                 placeholderTextColor="#818181ff"
                 className="text-white text-md"
