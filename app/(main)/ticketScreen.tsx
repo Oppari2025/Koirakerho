@@ -4,8 +4,15 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import QRCodeStyled from 'react-native-qrcode-styled';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-export default function TicketScreen(): React.JSX.Element {
-    const [ticket, setTicket] = React.useState<EventTicket>([]);
+export default function ticketScreen(): React.JSX.Element {
+    const [ticket, setTicket] = React.useState<EventTicket>({
+        id: "???",
+        type: "???",
+        eventId: "???",
+        eventName: "???",
+        data: "???",
+        startTime: "???"
+    });
 
     React.useEffect(() => {
         const test_ticket = {

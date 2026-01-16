@@ -118,7 +118,7 @@ export default function TicketsScreen(): React.JSX.Element {
         <SafeAreaProvider>
             <SafeAreaView
                 style={{
-                    padding: 4,
+                    padding: 8,
                     height: "100%"
                 }}
             >

@@ -24,7 +24,6 @@ export default function RootLayout() {
                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                     <Stack.Screen name="eventScreen" options={{ headerShown: true, title: "Event" }} />
                     <Stack.Screen name="addEventScreen" options={{ headerShown: true, title: "Add Event" }} />
-                    <Stack.Screen name="ticketsScreen" options={{ headerShown: true, title: "Event Tickets" }} />
                     <Stack.Screen name="ticketScreen" options={{ headerShown: true, title: "Ticket" }} />
                     <Stack.Screen name="dogProfileScreen" options={{ headerShown: false, title: "Dog Profile" }} />
                     <Stack.Screen name="friendChatScreen" options={{ headerShown: true, title: "Ronald Richards" }} /> {/* Tittle should be dynamic */}

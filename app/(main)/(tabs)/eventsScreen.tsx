@@ -1,147 +1,37 @@
-import { EventCardProps, EventData } from '@/types/events';
-import { useRouter } from 'expo-router';
-import React from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import EventListScreen from "@/app/eventListScreen";
+import TicketsScreen from "@/app/ticketsScreen";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import React from "react";
 
+const Tab = createMaterialTopTabNavigator();
 
-const DATA: EventData[] = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    eventName: 'First Item',
-    eventInfo: "fddfg",
-    date: "01.01.2020",
-    imageUrl: "https://gluestack.github.io/public-blog-video-assets/saree.png"
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    eventName: 'Second Item',
-    eventInfo: "fdgdfd",
-    date: "01.01.2020",
-    imageUrl: "https://gluestack.github.io/public-blog-video-assets/saree.png"
-  },
-  {
-    id: '3ac68afc-c60ghf5-48d3-a4f8-fbd91aa97f63',
-    eventName: 'Second Item',
-    eventInfo: "fdgdfd",
-    date: "01.01.2020",
-    imageUrl: "https://gluestack.github.io/public-blog-video-assets/saree.png"
-  }
-];
-
-type AddEventButtonProps = {
-  onPress: () => void;
-}
-
-
-function AddEventButton({ onPress }: AddEventButtonProps) {
-  return (
-    <TouchableOpacity className={classes.floatingButton} onPress={() => onPress()}>
-      <Text className={classes.floatingButtonText}>+</Text>
-    </TouchableOpacity>
-  )
-}
-
-const EventCard = ({ item, onPress }: EventCardProps) => (
-  <TouchableOpacity
-    onPress={onPress}
-  >
-    <View
-      className={classes.eventCard}
-      style={{ backgroundColor: "#948a8aff", padding: 8 }}
-    >
-      <Image
-        source={{
-          uri: item.imageUrl,
-        }}
-        className={classes.eventCardImage}
-        alt="image"
-      />
-      <Text className={classes.eventCardDate}>
-        {item.date}
-      </Text>
-      <View className={classes.eventCardBottomContainer}>
-        <Text className={classes.eventCardEventNameText}>
-          {item.eventName}
-        </Text>
-        <Text className={classes.eventCardInfoText}>
-          {item.eventInfo}
-        </Text>
-      </View>
-    </View>
-  </TouchableOpacity>
-
-
-);
-
-
-export default function eventsScreen() {
-  const router = useRouter();
-
-
-  function onPressGoToTicketsPage() {
-    router.navigate(`/(main)/ticketsScreen`);
-  }
-
-  const renderItem = ({ item }: { item: EventData }) => {
+export default function eventsScreen(): React.JSX.Element {
     return (
-      <EventCard
-        item={item}
-        onPress={() => router.navigate(`/(main)/eventScreen?id=${item.id}`)}
-      />
-    );
-  };
-
-  return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ width: "100%", height: "100%", alignItems: "center" }}>
-        <View style={{ width: "100%", backgroundColor: "#9e1010ff" }}>
-          <TouchableOpacity
-            style={{ padding: 16 }}
-            onPress={onPressGoToTicketsPage}
-          >
-            <Text>fghfghgfh</Text>
-          </TouchableOpacity>
-
-        </View>
-        <View style={{ height: "auto" }}>
-
-          <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            // extraData={selectedId}
-            className={classes.eventCardList}
-            ListHeaderComponent={() => <View style={{ height: 8 }} />}
-            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-            ListFooterComponent={() => <View style={{ height: 200 }} />}
-          />
-        </View>
-        <AddEventButton onPress={() => router.navigate(`/(main)/addEventScreen`)} />
-      </SafeAreaView>
-    </SafeAreaProvider>
-  )
+        <Tab.Navigator
+            initialRouteName="EventListScreen"
+            screenOptions={{
+                tabBarLabelStyle: {
+                    fontWeight: "bold",
+                },
+                tabBarIndicatorStyle: {
+                    backgroundColor: "#009200ff"
+                }
+            }}
+        >
+            <Tab.Screen
+                name="EventListScreen"
+                component={EventListScreen}
+                options={{
+                    title: "Listing"
+                }}
+            />
+            <Tab.Screen
+                name="TicketsScreen"
+                component={TicketsScreen}
+                options={{
+                    title: "Tickets"
+                }}
+            />
+        </Tab.Navigator>
+    )
 }
-
-const classes = {
-  page: "w-full h-full items-center",
-  pageHeader: "w-full justify-center",
-  pageHeaderText: "font-bold text-3xl p-2",
-  pageContent: "h-auto",
-
-
-
-  eventCardList: "",
-
-  eventCard: "rounded-lg max-w-[360px] h-[380px]",
-  eventCardImage: "h-[150px] w-full rounded-md aspect-[4/3] mb-4",
-  eventCardContent: "",
-  eventCardDate: "text-sm font-normal text-typography-700",
-  eventCardBottomContainer: "",
-  eventCardEventNameText: "text-base mb-2",
-  eventCardInfoText: "text-sm",
-
-  floatingButton: "w-16 h-16 absolute z-[10] bottom-4 bg-red-700 justify-center items-center rounded-full",
-  floatingButtonText: "text-2xl",
-}
-

@@ -1,9 +1,8 @@
 import Button from "@/components/button";
-import CheckBoxGroup from "@/components/checkBoxGroup";
-import TextEditBox from "@/components/textEditBox";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 
@@ -21,124 +20,202 @@ export default function EventScreen() {
     const previousEventDescription = React.useRef<string>("");
     const [allowedDogs, setAllowedDogs] = React.useState<string[]>([]);
     const [allowedPeople, setAllowedPeople] = React.useState<string[]>([]);
+    const [imageUrl, setImageUrl] = React.useState<string>("https://gluestack.github.io/public-blog-video-assets/saree.png");
 
-async function onPressEdit() {
-    // Back up old values.
-    previousEventName.current = eventName;
-    previousEventDescription.current = eventDescription;
+    async function onPressEdit() {
+        // Back up old values.
+        previousEventName.current = eventName;
+        previousEventDescription.current = eventDescription;
 
-    setIsEditMode(true);
-}
+        setIsEditMode(true);
+    }
 
-async function onPressDiscardChanges() {
-    // Restore old values.
-    setEventName(previousEventName.current);
-    setEventDescription(previousEventDescription.current);
+    async function onPressDiscardChanges() {
+        // Restore old values.
+        setEventName(previousEventName.current);
+        setEventDescription(previousEventDescription.current);
 
-    setIsEditMode(false);
-}
+        setIsEditMode(false);
+    }
 
-async function onPressSaveChanges() {
-    setIsEditMode(false);
-}
+    async function onPressSaveChanges() {
+        setIsEditMode(false);
+    }
 
-return (
-    <SafeAreaProvider>
-        <SafeAreaView style={{ width: "100%" }}>
-            <ScrollView style={{ width: "100%", padding: 8 }}>
-                <View style={{ gap: 16, marginTop: 8, width: "100%" }}>
-                    <TextEditBox
-                        label="Event Name"
-                        placeholder="Nameless Event"
-                        numberOfLines={1}
-                        isEditable={isEditMode}
-                        value={eventName}
-                        onChangeText={setEventName}
+    return (
+        <SafeAreaProvider>
+            <SafeAreaView
+                style={{
+                    width: "100%",
+                    backgroundColor: '#fff3c0ff',
+                }}
+            >
+                <ScrollView
+                    style={{
+                        width: "100%",
+                    }}
+                >
+                    <Image
+                        source={{
+                            uri: imageUrl,
+                        }}
+                        style={{
+                            width: "100%",
+                            height: 140
+                        }}
+                        alt="image"
                     />
 
-                    <CheckBoxGroup
-                        label="Allowed People"
-                        options={[
-                            { label: "Club Members", value: "members" },
-                            { label: "Event Organizers", value: "organizers" },
-                            { label: "Others", value: "others" }
-                        ]}
-                        fontSize={16}
-                        isEditable={isEditMode}
-                        checkedValues={allowedPeople}
-                        onChange={setAllowedPeople}
-                        style={{}}
-                    />
+                    <View
+                        style={{
+                            padding: 8,
+                            gap: 8
+                        }}
+                    >
+                        {
+                            isEditMode && (
+                                <Text
+                                    style={{
+                                        fontWeight: "bold",
+                                        fontSize: 16
+                                    }}
+                                >
+                                    Event Name
+                                </Text>
+                            )
+                        }
+                        <TextInput
+                            style={{
+                                backgroundColor: isEditMode ? "#FFF" : undefined,
+                                borderWidth: isEditMode ? 1 : 0,
 
-                    <CheckBoxGroup
-                        label="Allowed Dogs"
-                        options={[
-                            { label: "Small", value: "small" },
-                            { label: "Medium", value: "medium" },
-                            { label: "Big", value: "big" }
-                        ]}
-                        fontSize={16}
-                        isEditable={isEditMode}
-                        checkedValues={allowedDogs}
-                        onChange={setAllowedDogs}
-                        style={{}}
-                    />
+                                borderColor: "black",
+                                borderRadius: 10,
+                                color: "black",
+                                fontSize: 20,
 
-                    <TextEditBox
-                        label="Event Description"
-                        placeholder="No description provided."
-                        numberOfLines={50}
-                        isEditable={isEditMode}
-                        value={eventDescription}
-                        onChangeText={setEventDescription}
-                    />
+                            }}
+                            value={eventName}
+                            onChangeText={setEventName}
+                            placeholder="Nameless Event"
+                            editable={isEditMode}
+                            multiline={true}
+                        />
 
-                    <View style={{ height: 500 }} />
-                </View>
-            </ScrollView>
-            <View style={{ width: "100%" }}>
-                {
-                    isAdminControlsEnabled && (
-                        <View style={{ width: "50%", flexDirection: "row", alignSelf: "center", justifyContent: "center", position: "relative", zIndex: 99, bottom: "200%", gap: 4 }}>
-                            {
-                                isEditMode
-                                    ? (
-                                        <>
-                                            <Button
-                                                style={{ backgroundColor: "#006b00ff", padding: 16, flexGrow: 1, borderRadius: 10 }}
-                                                textColor="#FFF"
-                                                title="Save"
-                                                key="save"
-                                                onPress={onPressSaveChanges}
-                                            />
-                                            <Button
-                                                style={{ backgroundColor: "#bd003fff", padding: 16, flexGrow: 1, borderRadius: 10 }}
-                                                textColor="#FFF"
-                                                title="Discard"
-                                                key="discard"
-                                                onPress={onPressDiscardChanges}
-                                            />
-                                        </>
-                                    )
-                                    : (
-                                        <>
-                                            <Button
-                                                style={{ backgroundColor: "#e07b1cff", padding: 16, flexGrow: 1, borderRadius: 10 }}
-                                                textColor="#FFF"
-                                                title="Edit"
-                                                key="edit"
-                                                onPress={onPressEdit}
-                                            />
-                                        </>
-                                    )
-                            }
+                        <View style={{ borderBottomColor: "gray", borderBottomWidth: StyleSheet.hairlineWidth, borderStyle: "dashed" }} />
+
+                        <View
+                            style={{
+                                gap: 8
+                            }}
+                        >
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    gap: 16
+                                }}
+                            >
+                                <MaterialIcons
+                                    name="calendar-month"
+                                    size={32}
+                                />
+                                <Text>
+                                    01.01.2020
+                                </Text>
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    gap: 16
+                                }}
+                            >
+                                <MaterialIcons
+                                    name="place"
+                                    size={32}
+                                />
+                                <Text>
+                                    Test Road 1
+                                </Text>
+                            </View>
                         </View>
-                    )
-                }
-            </View>
-        </SafeAreaView>
-    </SafeAreaProvider>
-)
+
+                        <View style={{ borderBottomColor: "gray", borderBottomWidth: StyleSheet.hairlineWidth, borderStyle: "dashed" }} />
+
+                        <Text
+                            style={{
+                                fontWeight: "bold",
+                                fontSize: 16
+                            }}
+                        >
+                            Description
+                        </Text>
+                        <TextInput
+                            style={{
+                                backgroundColor: isEditMode ? "#FFF" : undefined,
+                                borderWidth: isEditMode ? 1 : 0,
+                                borderColor: "black",
+                                borderRadius: 10,
+                                color: "black",
+                                fontSize: 16,
+                            }}
+                            value={eventDescription}
+                            onChangeText={setEventDescription}
+                            placeholder="No Description"
+                            editable={isEditMode}
+                            multiline={true}
+
+                        />
+
+                        <View style={{ borderBottomColor: "gray", borderBottomWidth: StyleSheet.hairlineWidth, borderStyle: "dashed" }} />
+
+                        <View style={{ height: 300 }} />
+                    </View>
+                </ScrollView>
+                <View style={{ width: "100%" }}>
+                    {
+                        isAdminControlsEnabled && (
+                            <View style={{ width: "50%", flexDirection: "row", alignSelf: "center", justifyContent: "center", position: "relative", zIndex: 99, bottom: "200%", gap: 4 }}>
+                                {
+                                    isEditMode
+                                        ? (
+                                            <>
+                                                <Button
+                                                    style={{ backgroundColor: "#006b00ff", padding: 16, flexGrow: 1, borderRadius: 10 }}
+                                                    textColor="#FFF"
+                                                    title="Save"
+                                                    key="save"
+                                                    onPress={onPressSaveChanges}
+                                                />
+                                                <Button
+                                                    style={{ backgroundColor: "#bd003fff", padding: 16, flexGrow: 1, borderRadius: 10 }}
+                                                    textColor="#FFF"
+                                                    title="Discard"
+                                                    key="discard"
+                                                    onPress={onPressDiscardChanges}
+                                                />
+                                            </>
+                                        )
+                                        : (
+                                            <>
+                                                <Button
+                                                    style={{ backgroundColor: "#e07b1cff", padding: 16, flexGrow: 1, borderRadius: 10 }}
+                                                    textColor="#FFF"
+                                                    title="Edit"
+                                                    key="edit"
+                                                    onPress={onPressEdit}
+                                                />
+                                            </>
+                                        )
+                                }
+                            </View>
+                        )
+                    }
+                </View>
+            </SafeAreaView>
+        </SafeAreaProvider>
+    )
 
 
 }
