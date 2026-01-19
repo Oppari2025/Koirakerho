@@ -8,9 +8,12 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider } from '../src/context/AuthContext';
 
 import '@/global.css';
+import { Stack } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function RootLayout() {
+ const colorScheme = useColorScheme();
+
   return (
     <AuthProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
