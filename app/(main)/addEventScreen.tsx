@@ -1,39 +1,9 @@
-import {
-    Button,
-    ButtonText
-} from '@/components/ui/button';
-import {
-    Checkbox,
-    CheckboxGroup,
-    CheckboxIcon,
-    CheckboxIndicator,
-    CheckboxLabel,
-} from '@/components/ui/checkbox';
-import {
-    FormControl,
-    FormControlError,
-    FormControlErrorIcon,
-    FormControlErrorText,
-    FormControlHelper,
-    FormControlHelperText,
-    FormControlLabel,
-    FormControlLabelText
-} from '@/components/ui/form-control';
-import { Heading } from '@/components/ui/heading';
-import { AlertCircleIcon, CheckIcon, CircleIcon } from '@/components/ui/icon';
-import { Input, InputField } from '@/components/ui/input';
-import {
-    Radio,
-    RadioGroup,
-    RadioIcon,
-    RadioIndicator,
-    RadioLabel,
-} from '@/components/ui/radio';
-import { Textarea, TextareaInput } from '@/components/ui/textarea';
-import { VStack } from '@/components/ui/vstack';
+import Button from '@/components/button';
+import CheckBoxGroup from '@/components/checkBoxGroup';
+import TextEditBox from '@/components/textEditBox';
 import React from 'react';
-import { ScrollView } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ScrollView, View } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const MIN_EVENT_NAME_LENGTH = 1
 const MAX_EVENT_NAME_LENGTH = 100
@@ -50,7 +20,8 @@ export default function AddEventScreen() {
     const [eventDescription, setEventDescription] = React.useState("");
     const [eventStartTime, setEventStartTime] = React.useState("");
     const [eventEndTime, setEventEndTime] = React.useState("");
-    const [eventAllowedDogsChecks, setEventAllowedDogsChecks] = React.useState<string[]>([]);
+    const [allowedDogs, setAllowedDogs] = React.useState<string[]>([]);
+    const [allowedPeople, setAllowedPeople] = React.useState<string[]>([]);
 
     function handleSubmitForm() {
         const isInvalidEventName = eventName.length < MIN_EVENT_NAME_LENGTH || eventName.length > MAX_EVENT_NAME_LENGTH
@@ -70,156 +41,72 @@ export default function AddEventScreen() {
 
     return (
         <SafeAreaProvider>
-            <VStack className={classes.page}>
-                <ScrollView className={classes.pageContent}>
-                    <VStack className={classes.form}>
-                        <FormControl
-                            isInvalid={isInvalidEventName}
-                            size="lg"
-                            isDisabled={false}
-                            isReadOnly={false}
-                            isRequired={true}
-                        >
-                            <FormControlLabel>
-                                <FormControlLabelText>Event Name</FormControlLabelText>
-                            </FormControlLabel>
-                            <Input className="my-1" size="lg">
-                                <InputField
-                                    type="text"
-                                    placeholder="Event Name"
-                                    value={eventName}
-                                    onChangeText={(text) => setEventName(text)}
-                                />
-                            </Input>
-                            <FormControlHelper>
-                                <FormControlHelperText>
-                                    The name of the event. This must be at least {MIN_EVENT_NAME_LENGTH} characters long.
-                                </FormControlHelperText>
-                            </FormControlHelper>
-                            <FormControlError>
-                                <FormControlErrorIcon as={AlertCircleIcon} className={classes.formControlErrorText} />
-                                <FormControlErrorText className={classes.formControlErrorText}>
-                                    At least {MIN_EVENT_NAME_LENGTH} characters are required.
-                                </FormControlErrorText>
-                            </FormControlError>
-                        </FormControl>
+            <SafeAreaView style={{ width: "100%" }}>
+                <ScrollView style={{ width: "100%", padding: 8 }}>
+                    <View style={{ gap: 16, marginTop: 8, width: "100%" }}>
+                        <TextEditBox
+                            label="Event Name"
+                            placeholder="Nameless Event"
+                            numberOfLines={1}
+                            isEditable={true}
+                            value={eventName}
+                            onChangeText={setEventName}
+                        />
 
+                        <CheckBoxGroup
+                            label="Allowed People"
+                            options={[
+                                { label: "Club Members", value: "members" },
+                                { label: "Event Organizers", value: "organizers" },
+                                { label: "Others", value: "others" }
+                            ]}
+                            fontSize={16}
+                            isEditable={true}
+                            checkedValues={allowedPeople}
+                            onChange={setAllowedPeople}
+                            style={{}}
+                        />
 
-                        <FormControl>
-                            <VStack space="md">
-                                <Heading size="sm">Event Type</Heading>
-                                <RadioGroup value={eventType} onChange={(text) => setEventType(text)}>
-                                    <VStack space="sm">
-                                        <Radio value="Competitive" size="lg">
-                                            <RadioIndicator>
-                                                <RadioIcon as={CircleIcon} />
-                                            </RadioIndicator>
-                                            <RadioLabel>Competitive</RadioLabel>
-                                        </Radio>
-                                        <Radio value="Fun" size="lg">
-                                            <RadioIndicator>
-                                                <RadioIcon as={CircleIcon} />
-                                            </RadioIndicator>
-                                            <RadioLabel>Fun</RadioLabel>
-                                        </Radio>
-                                    </VStack>
-                                </RadioGroup>
-                                <FormControlHelper>
-                                    <FormControlHelperText>
-                                        Choose one.
-                                    </FormControlHelperText>
-                                </FormControlHelper>
-                                <FormControlError>
-                                    <FormControlErrorIcon as={AlertCircleIcon} className={classes.formControlErrorText} />
-                                    <FormControlErrorText className={classes.formControlErrorText}>
+                        <CheckBoxGroup
+                            label="Allowed Dogs"
+                            options={[
+                                { label: "Small", value: "small" },
+                                { label: "Medium", value: "medium" },
+                                { label: "Big", value: "big" }
+                            ]}
+                            fontSize={16}
+                            isEditable={true}
+                            checkedValues={allowedDogs}
+                            onChange={setAllowedDogs}
+                            style={{}}
+                        />
 
-                                    </FormControlErrorText>
-                                </FormControlError>
-                            </VStack>
-                        </FormControl>
+                        <TextEditBox
+                            label="Event Description"
+                            placeholder="No description provided."
+                            numberOfLines={50}
+                            isEditable={true}
+                            value={eventDescription}
+                            onChangeText={setEventDescription}
+                        />
 
-
-                        <FormControl>
-                            <VStack space="md">
-                                <Heading size="sm">Allowed Dogs</Heading>
-                                <CheckboxGroup
-                                    value={eventAllowedDogsChecks}
-                                    onChange={(keys) => setEventAllowedDogsChecks(keys)}
-                                >
-                                    <VStack space="xl">
-                                        <Checkbox value="small">
-                                            <CheckboxIndicator>
-                                                <CheckboxIcon as={CheckIcon} />
-                                            </CheckboxIndicator>
-                                            <CheckboxLabel>Small</CheckboxLabel>
-                                        </Checkbox>
-                                        <Checkbox value="medium">
-                                            <CheckboxIndicator>
-                                                <CheckboxIcon as={CheckIcon} />
-                                            </CheckboxIndicator>
-                                            <CheckboxLabel>Medium</CheckboxLabel>
-                                        </Checkbox>
-                                        <Checkbox value="large">
-                                            <CheckboxIndicator>
-                                                <CheckboxIcon as={CheckIcon} />
-                                            </CheckboxIndicator>
-                                            <CheckboxLabel>Large</CheckboxLabel>
-                                        </Checkbox>
-                                    </VStack>
-                                </CheckboxGroup>
-                            </VStack>
-                        </FormControl>
-
-
-                        <FormControl
-                            isInvalid={isInvalidEventDescription}
-                            size="lg"
-                            isDisabled={false}
-                            isReadOnly={false}
-                            isRequired={true}
-                        >
-                            <FormControlLabel>
-                                <FormControlLabelText>Description</FormControlLabelText>
-                            </FormControlLabel>
-                            <Textarea
-                                size="lg"
-                                className="w-128 h-64"
-                                isReadOnly={false}
-                                isDisabled={false}
-                                isRequired={true}>
-                                <TextareaInput
-                                    placeholder="Description"
-                                    value={eventDescription}
-                                    numberOfLines={100}
-                                    onChangeText={(text) => setEventDescription(text)}
-                                />
-                            </Textarea>
-                            <FormControlHelper>
-                                <FormControlHelperText>
-                                    Write a description of the event. This must be at least {MIN_EVENT_DESCRIPTION_LENGTH} characters long.
-                                </FormControlHelperText>
-                            </FormControlHelper>
-                            <FormControlError>
-                                <FormControlErrorIcon as={AlertCircleIcon} className={classes.formControlErrorText} />
-                                <FormControlErrorText className={classes.formControlErrorText}>
-                                    At least {MIN_EVENT_DESCRIPTION_LENGTH} characters are required.
-                                </FormControlErrorText>
-                            </FormControlError>
-                        </FormControl>
-
-                    </VStack>
+                        <View style={{ height: 500 }} />
+                    </View>
                 </ScrollView>
-                <Button
-                    className={classes.submitButton}
-                    size="lg"
-                    variant="solid"
-                    onPress={handleSubmitForm}
-                >
-                    <ButtonText>Create</ButtonText>
-                </Button>
-            </VStack>
+                <View style={{ width: "100%" }}>
+                    <View style={{ width: "50%", flexDirection: "row", alignSelf: "center", justifyContent: "center", position: "relative", zIndex: 99, bottom: "150%", gap: 4 }}>
+                        <Button
+                            style={{ backgroundColor: "#006b00ff", padding: 16, flexGrow: 1, borderRadius: 10 }}
+                            textColor="#FFF"
+                            title="Create"
+                            key="create"
+                            onPress={handleSubmitForm}
+                        />
+                    </View>
+                </View>
+            </SafeAreaView>
         </SafeAreaProvider>
-    );
+    )
 }
 
 
