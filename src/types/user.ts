@@ -8,6 +8,9 @@ export interface FirestoreUser {
   lastName: string
   imageUrl?: string
   createdAt: Timestamp
+  age?: number
+  description?: string
+  gender?: 'Male' | 'Female'
 }
 
 export interface User extends FirestoreUser {

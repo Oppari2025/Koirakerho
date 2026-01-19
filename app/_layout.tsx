@@ -12,6 +12,7 @@ import { Stack } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function RootLayout() {
+//Lisäsin ton colorScheme tähän väliin myös -J
  const colorScheme = useColorScheme();
 
   return (
