@@ -4,7 +4,9 @@ import { Timestamp } from "firebase/firestore"
 
 export interface FirestoreUser {
   email: string
-  name: string
+  firstName: string
+  lastName: string
+  imageUrl?: string
   createdAt: Timestamp
 }
 

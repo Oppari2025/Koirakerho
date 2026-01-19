@@ -6,7 +6,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+    const colorScheme = useColorScheme();
 
   return (
     <Tabs
@@ -40,6 +40,13 @@ export default function TabLayout() {
         name="myTeamScreen"
         options={{
           title: 'My team',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.2.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="groupList"
+        options={{
+          title: 'Group',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.2.fill" color={color} />,
         }}
       />

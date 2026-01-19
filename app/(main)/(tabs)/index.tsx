@@ -77,7 +77,7 @@ export default function Index() {
             <ScrollView contentContainerStyle={styles.scroll}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Home</Text>
-                    <Text style={styles.welcome}>Tervetuloa takaisin {userProfile?.name ?? firebaseUser?.email ?? ''}</Text>
+                    <Text style={styles.welcome}>Tervetuloa takaisin {userProfile?.firstName ?? firebaseUser?.email ?? ''}</Text>
 
                     {/* Testinapit */}
                     <TouchableOpacity style={[styles.button]} onPress={handleAddDog}>

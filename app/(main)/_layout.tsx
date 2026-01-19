@@ -1,5 +1,5 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
@@ -30,6 +30,7 @@ export default function RootLayout() {
                     <Stack.Screen name="friendChatScreen" options={{ headerShown: true, title: "Ronald Richards" }} /> {/* Tittle should be dynamic */}
                 </Stack>
                 <StatusBar style="auto" />
+            
             </ThemeProvider>
         </GluestackUIProvider>
 
