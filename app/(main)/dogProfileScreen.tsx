@@ -1,6 +1,7 @@
 import AppHeader from '@/components/appHeader';
 import { Heading } from '@/components/ui/heading';
 import { deleteDog } from '@/src/services/dogService';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
@@ -47,11 +48,22 @@ export default function dogProfileScreen() {
 
     return (
         <SafeAreaView className="flex-1 px-4 pt-6">
-            <AppHeader title={name} />
+            <View className="">
+                <AppHeader title={name} />
+                <View className="absolute top-6 right-6">
+                    <TouchableOpacity onPress={() => router.push({ pathname: '/editDogProfileScreen', params: { dogId: id } })}>
+                        <MaterialIcons name="settings" size={24} color="black" />
+                    </TouchableOpacity>
+                </View>
+            </View>
 
-            <View className="m-4 p-4 rounded">
+            <View className="p-4 rounded items-center">
                 <Image
-                    source={{ uri: imageUrl }}
+                    source={
+                        imageUrl
+                            ? { uri: imageUrl }
+                            : require('@/assets/images/dog1.jpg')
+                    }
                     className="h-64 w-64 rounded-lg mb-2"
                 />
             </View>
@@ -64,14 +76,14 @@ export default function dogProfileScreen() {
                 <Heading size="md" className="mb-2">Koko: {size}</Heading>
             </View>
             <View className="px-2">
-            <TouchableOpacity
-                onPress={handleDelete}
-                className=" mt-4 w-32 h-14 bg-error-500 p-4 rounded-lg"
-            >
-                <Text className="text-white text-center font-semibold">
-                    Delete Dog
-                </Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={handleDelete}
+                    className=" mt-4 w-32 h-14 bg-error-500 p-4 rounded-lg"
+                >
+                    <Text className="text-white text-center font-semibold">
+                        Delete Dog
+                    </Text>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );

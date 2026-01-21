@@ -168,10 +168,10 @@ export default function friendChatScreen() {
                     />
                 </Avatar>
                 <VStack>
-                    <Heading size="sm">{otherUser?.name}</Heading>
+                    <Heading size="sm">{otherUser?.firstName + " " + otherUser?.lastName}</Heading>
                 </VStack>
                 <Text className="text-lg font-bold">
-                    {otherUser?.name ?? 'Ladataan...'}
+                    {(otherUser?.firstName && otherUser?.lastName) ? otherUser.firstName + " " + otherUser.lastName : 'Ladataan...'}
                 </Text>
             </View>
             <FlatList

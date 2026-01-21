@@ -42,18 +42,18 @@ export default function profileScreen() {
                     <HStack space="md" style={{ alignItems: 'center' }}>
                         <Avatar className="bg-blue-600">
                             {userProfile?.imageUrl ? (
-                                <AvatarImage src={userProfile.imageUrl} alt={userProfile?.name ?? 'User'} />
+                                <AvatarImage src={userProfile.imageUrl} alt={userProfile?.firstName ?? 'User'} />
                             ) : (
                                 <AvatarFallbackText>
                                     <AvatarFallbackText className="text-white">
-                                        {userProfile?.name?.[0].toUpperCase() ?? ''}
+                                        {userProfile?.firstName?.[0].toUpperCase() ?? ''}
                                     </AvatarFallbackText>
                                 </AvatarFallbackText>
                             )}
                         </Avatar>
                         <VStack>
                             <Heading size="sm" className="text-black">
-                                {userProfile?.name ?? ''}
+                                {(userProfile?.firstName ?? '') + ' ' + (userProfile?.lastName ?? '')}
                             </Heading>
                         </VStack>
                     </HStack>

@@ -17,7 +17,8 @@ export default function editProfileScreen() {
     const { firebaseUser } = useAuth()
     const { userProfile } = useAuth()
     const [status, setStatus] = useState<string | null>(null)
-    const [name, setName] = useState<string>('');
+    const [firstName, setFirstName] = useState<string>('');
+    const [lastName, setLastName] = useState<string>('');
     const [age, setAge] = useState<string>('');
     const [description, setDescription] = useState('');
     const [gender, setGender] = useState<'Male' | 'Female'>(userProfile?.gender || 'Male');
@@ -37,9 +38,10 @@ export default function editProfileScreen() {
             const editData: Partial<any> = {};
             let imageUrl: string = '';
             if (selectedImage) {
-            imageUrl = await uploadProfileImage(selectedImage, 'users', firebaseUser.uid);
+                imageUrl = await uploadProfileImage(selectedImage, 'users', firebaseUser.uid);
             }
-            if (name.trim() !== '') editData.name = name;
+            if (firstName.trim() !== '') editData.firstName = firstName;
+            if (lastName.trim() !== '') editData.lastName = lastName;
             if (age.trim() !== '') editData.age = Number(age);
             if (description.trim() !== '') editData.description = description;
             if (gender) editData.gender = gender;
@@ -56,11 +58,6 @@ export default function editProfileScreen() {
             console.error(e);
             setStatus(`Profiilin päivitys epäonnistui: ${e?.message ?? e}`);
         }
-    };
-
-    const checkInfo = () => {
-        console.log("userProfile:", userProfile);
-
     };
 
     async function pickImage() {
@@ -87,12 +84,13 @@ export default function editProfileScreen() {
             <View className="flex-row mb-4">
                 <FormControl className="flex-1">
                     <FormControlLabel>
-                        <FormControlLabelText>Name</FormControlLabelText>
+                        <FormControlLabelText>First name</FormControlLabelText>
                     </FormControlLabel>
                     <Textarea className="h-12 w-4/5 bg-white  rounded-lg">
-                        <TextInput value={name} onChangeText={setName} placeholder={userProfile?.name || "Enter name"} />
+                        <TextInput value={firstName} onChangeText={setFirstName} placeholder={userProfile?.firstName || "Enter first name"} />
                     </Textarea>
                 </FormControl>
+
                 <FormControl className="flex-1">
                     <FormControlLabel>
                         <FormControlLabelText>Age</FormControlLabelText>
@@ -102,6 +100,14 @@ export default function editProfileScreen() {
                     </Textarea>
                 </FormControl>
             </View>
+            <FormControl>
+                <FormControlLabel>
+                    <FormControlLabelText>Last name</FormControlLabelText>
+                </FormControlLabel>
+                <Textarea className="h-12 w-4/5 bg-white  rounded-lg">
+                    <TextInput value={lastName} onChangeText={setLastName} placeholder={userProfile?.lastName || "Enter last name"} />
+                </Textarea>
+            </FormControl>
             <FormControl>
                 <FormControlLabel>
                     <FormControlLabelText>Description</FormControlLabelText>
@@ -139,9 +145,6 @@ export default function editProfileScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleEditProfile}>
                         <Text className='bg-white w-1/6 p-2 mx-4 my-2 rounded-lg'>Edit Profile</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={checkInfo}>
-                        <Text className='bg-white w-1/6 p-2 mx-4 my-2 rounded-lg'>Check Info</Text>
                     </TouchableOpacity>
                 </FormControl>
             </FormControl>

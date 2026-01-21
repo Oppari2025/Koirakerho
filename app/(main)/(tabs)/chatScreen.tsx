@@ -20,7 +20,8 @@ export default function chatScreen() {
   const [contacts, setContacts] = useState<
     Array<{
       uid: string;
-      name: string;
+      firstName: string;
+      lastName: string;
       email: string;
       unreadCount: number;
     }>
@@ -150,11 +151,11 @@ export default function chatScreen() {
                 <HStack space="md">
                   <Avatar className="bg-indigo-600">
                     <AvatarFallbackText className="text-white">
-                      {user.name}
+                      {user.firstName}
                     </AvatarFallbackText>
                   </Avatar>
                   <VStack>
-                    <Heading size="sm">{user.name}</Heading>
+                    <Heading size="sm">{user.firstName + " " + user.lastName}</Heading>
                     <Text size="sm">{user.email}</Text>
                   </VStack>
                 </HStack>

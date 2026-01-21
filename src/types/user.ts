@@ -3,6 +3,7 @@ import { Timestamp } from "firebase/firestore"
 // määritellään käyttäjän tiedot tallennettavaksi Firestoreen
 
 export interface FirestoreUser {
+  name: string
   email: string
   firstName: string
   lastName: string

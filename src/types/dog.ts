@@ -10,6 +10,8 @@ export interface FirestoreDog {
   description?: string
   imageUrl?: string
   createdAt: Timestamp
+  gender?: 'Male' | 'Female'
+  size?: 'Small' | 'Medium' | 'Large'
   healthAssessmentDone: boolean
 }
 
