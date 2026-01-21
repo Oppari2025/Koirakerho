@@ -53,11 +53,14 @@ export default function profileScreen() {
                         </Avatar>
                         <VStack>
                             <Heading size="sm" className="text-black">
-                                {(userProfile?.firstName ?? '') + ' ' + (userProfile?.lastName ?? '')}
+                                {(userProfile?.firstName ?? '') + ' ' + (userProfile?.lastName ?? '') + ', ' + (userProfile?.age ?? '')}
                             </Heading>
                         </VStack>
                     </HStack>
                 </VStack>
+            </View>
+            <View>
+                <Text className="text-lg  text-white">{userProfile?.description}</Text>
             </View>
             <View className="mt-4 absolute top-12 right-6">
                 <TouchableOpacity onPress={() => router.push('/editProfileScreen')}>
