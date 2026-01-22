@@ -1,15 +1,15 @@
+import DogSelectionModal from "@/components/database/dogSelectionModal";
 import EditGroup from "@/components/database/editGroup";
+import { deleteGroupAction, joinGroupWithDogs, leaveGroupWithDogs, loadGroupData, refreshGroupData } from "@/components/database/groupActions";
+import ListOfEvents from "@/components/database/listOfEvents";
 import { Heading } from "@/components/ui/heading";
 import { useAuth } from "@/src/context/AuthContext";
-import { getEventsByIds } from "@/src/services/eventService";
-import { addMember, deleteGroup, getGroupById, removeMember } from "@/src/services/groupService";
-import { getUserProfiles } from "@/src/services/userProfileService";
 import { Group } from "@/src/types/group";
+import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     FlatList,
     Image,
     ScrollView,
@@ -27,10 +27,12 @@ export default function GroupProfileScreen() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [dogSelectionVisible, setDogSelectionVisible] = useState(false);
 
     const [members, setMembers] = useState<{ id: string; data: any }[]>([]);
     const [admins, setAdmins] = useState<{ id: string; data: any }[]>([]);
     const [events, setEvents] = useState<any[]>([]);
+    const [memberDogs, setMemberDogs] = useState<(any & { ownerName: string })[]>([]);
 
     const router = useRouter();
 
@@ -40,23 +42,17 @@ export default function GroupProfileScreen() {
             if (!id) return;
             setLoading(true);
             try {
-                const g = await getGroupById(id);
+                const data = await loadGroupData(id);
                 if (!mounted) return;
-                setGroup(g);
-                // haetaan jäsenet, adminit ja tapahtumat
-                if (g) {
-                    const memberIds = Array.isArray(g.memberIds) ? g.memberIds : [];
-                    const adminIds = Array.isArray(g.groupAdminIds) ? g.groupAdminIds : [];
-                    const [memberProfiles, adminProfiles, evts] = await Promise.all([
-                        getUserProfiles(memberIds),
-                        getUserProfiles(adminIds),
-                        getEventsByIds(g.eventIds ?? []),
-                    ]);
-
-                    if (!mounted) return;
-                    setMembers(memberProfiles);
-                    setAdmins(adminProfiles);
-                    setEvents(evts);
+                
+                if (data) {
+                    setGroup(data.group);
+                    setMembers(data.members);
+                    setAdmins(data.admins);
+                    setEvents(data.events);
+                    setMemberDogs(data.memberDogs);
+                } else {
+                    setGroup(null);
                 }
             } catch (err) {
                 console.error("Failed to load group:", err);
@@ -72,27 +68,37 @@ export default function GroupProfileScreen() {
         };
     }, [id]);
 
+    // Refresh group data when screen is focused (e.g., after creating an event)
+    useFocusEffect(
+        React.useCallback(() => {
+            if (id && group) {
+                refreshGroupData(id, setGroup, setEvents, setMembers, setAdmins, setMemberDogs);
+            }
+        }, [id, group])
+    );
+
     const hasJoined = (g?: Group) => {
         if (!firebaseUser?.uid || !g) return false;
         return Array.isArray(g.memberIds) && g.memberIds.includes(firebaseUser.uid);
     };
 
     const handleJoin = async () => {
+        setDogSelectionVisible(true);
+    };
+
+    const handleDogSelectionConfirm = async (selectedDogIds: string[]) => {
         if (!id || !firebaseUser?.uid) return;
         setSaving(true);
         try {
-            await addMember(id, firebaseUser.uid);
-            const refreshed = await getGroupById(id);
-            setGroup(refreshed);
-            // päivitetään jäsenlista
-            if (refreshed) {
-                const memberProfiles = await getUserProfiles(refreshed.memberIds ?? []);
-                setMembers(memberProfiles);
+            const result = await joinGroupWithDogs(id, firebaseUser.uid, selectedDogIds);
+            if (result.success && result.data) {
+                setGroup(result.data.group);
+                setMembers(result.data.members);
+                setMemberDogs(result.data.memberDogs);
             }
-        } catch (err) {
-            console.error("Failed to join group:", err);
         } finally {
             setSaving(false);
+            setDogSelectionVisible(false);
         }
     };
 
@@ -100,15 +106,12 @@ export default function GroupProfileScreen() {
         if (!id || !firebaseUser?.uid) return;
         setSaving(true);
         try {
-            await removeMember(id, firebaseUser.uid);
-            const refreshed = await getGroupById(id);
-            setGroup(refreshed);
-            if (refreshed) {
-                const memberProfiles = await getUserProfiles(refreshed.memberIds ?? []);
-                setMembers(memberProfiles);
+            const result = await leaveGroupWithDogs(id, firebaseUser.uid);
+            if (result.success && result.data) {
+                setGroup(result.data.group);
+                setMembers(result.data.members);
+                setMemberDogs(result.data.memberDogs);
             }
-        } catch (err) {
-            console.error("Failed to leave group:", err);
         } finally {
             setSaving(false);
         }
@@ -116,20 +119,7 @@ export default function GroupProfileScreen() {
 
     const handleDelete = async () => {
         if (!id) return;
-        Alert.alert("Poista ryhmä", "Haluatko varmasti poistaa ryhmän?", [
-            { text: "Peruuta", style: "cancel" },
-            {
-                text: "Poista",
-                onPress: async () => {
-                    try {
-                        await deleteGroup(id);
-                        router.back();
-                    } catch (e) {
-                        console.error("Failed to delete group:", e);
-                    }
-                },
-            },
-        ]);
+        deleteGroupAction(id, () => router.back());
     };
 
     const isAdmin = !!(firebaseUser?.uid && Array.isArray(group?.groupAdminIds) && group?.groupAdminIds.includes(firebaseUser.uid));
@@ -137,17 +127,13 @@ export default function GroupProfileScreen() {
     const handleGroupUpdated = async () => {
         if (!id) return;
         try {
-            const refreshed = await getGroupById(id);
-            setGroup(refreshed);
-            if (refreshed) {
-                const [memberProfiles, adminProfiles, evts] = await Promise.all([
-                    getUserProfiles(refreshed.memberIds ?? []),
-                    getUserProfiles(refreshed.groupAdminIds ?? []),
-                    getEventsByIds(refreshed.eventIds ?? []),
-                ]);
-                setMembers(memberProfiles);
-                setAdmins(adminProfiles);
-                setEvents(evts);
+            const result = await refreshGroupData(id);
+            if (result.success && result.data) {
+                setGroup(result.data.group);
+                setMembers(result.data.members);
+                setAdmins(result.data.admins);
+                setEvents(result.data.events);
+                setMemberDogs(result.data.memberDogs);
             }
         } catch (err) {
             console.error("Failed to refresh group:", err);
@@ -192,7 +178,7 @@ export default function GroupProfileScreen() {
                     ) : null}
 
                     <View className="mb-4">
-                        <Text className="text-gray-700 font-semibold mb-2">Kouluttajat</Text>
+                        <Text className="text-white font-semibold mb-2">Kouluttajat</Text>
                         {admins.length ? (
                             <View className="flex-row space-x-3">
                                 {admins.map((a) => (
@@ -206,12 +192,12 @@ export default function GroupProfileScreen() {
                                 ))}
                             </View>
                         ) : (
-                            <Text className="text-sm text-gray-600">No admins listed</Text>
+                            <Text className="text-sm text-gray-600">Ei kouluttajia</Text>
                         )}
                     </View>
 
                     <View className="mb-4">
-                        <Text className="text-gray-700 font-semibold mb-2">Jäsenet ({members.length})</Text>
+                        <Text className="text-white font-semibold mb-2">Jäsenet ({members.length})</Text>
                         {members.length ? (
                             <FlatList
                                 data={members}
@@ -233,23 +219,34 @@ export default function GroupProfileScreen() {
                     </View>
 
                     <View className="mb-6">
-                        <Text className="text-gray-700 font-semibold mb-2">Tulevat tapahtumat ({events.length})</Text>
-                        {events.length ? (
+                        <Text className="text-white font-semibold mb-2">Ryhmän koirat ({memberDogs.length})</Text>
+                        {memberDogs.length ? (
                             <FlatList
-                                data={events}
-                                keyExtractor={(ev) => ev.id}
+                                data={memberDogs}
+                                horizontal
+                                keyExtractor={(dog) => dog.id}
                                 renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => router.navigate(`/(main)/eventScreen?id=${item.id}`)}>
-                                    <View className="py-2">
-                                        <Text className="text-base">{item.title || item.eventName || 'Event'}</Text>
-                                        <Text className="text-sm text-gray-600">{item.description || ''}</Text>
+                                    <View className="items-center mr-10">
+                                        <Image
+                                            source={
+                                                item.imageUrl && item.imageUrl.trim() !== ""
+                                                    ? { uri: item.imageUrl }
+                                                    : require("@/assets/images/dog1.jpg")
+                                            }
+                                            className="h-14 w-14 rounded-full"
+                                        />
+                                        <Text className="text-gray-700 text-sm mt-1">{item.name}</Text>
+                                        <Text className="text-gray-600 text-xs">{item.breed}</Text>
                                     </View>
-                                </TouchableOpacity>
                                 )}
                             />
                         ) : (
-                            <Text className="text-sm text-gray-600">No events</Text>
+                            <Text className="text-sm text-gray-600">Ryhmässä ei ole koiria</Text>
                         )}
+                    </View>
+
+                    <View>
+                        <ListOfEvents eventIds={group.eventIds} />
                     </View>
 
                     {firebaseUser?.uid ? (
@@ -259,7 +256,7 @@ export default function GroupProfileScreen() {
                                 onPress={handleLeave}
                                 disabled={saving}
                             >
-                                <Text className="text-white">Leave Group</Text>
+                                <Text className="text-white">Poistu ryhmästä</Text>
                             </TouchableOpacity>
                         ) : (
                             <TouchableOpacity
@@ -267,7 +264,7 @@ export default function GroupProfileScreen() {
                                 onPress={handleJoin}
                                 disabled={saving}
                             >
-                                <Text className="text-white">Join Group</Text>
+                                <Text className="text-white">Liity ryhmään</Text>
                             </TouchableOpacity>
                         )
                     ) : (
@@ -275,14 +272,21 @@ export default function GroupProfileScreen() {
                     )}
 
                 {isAdmin ? (
-                    <View className="mt-4 flex-row space-x-3">
-                        <TouchableOpacity className="bg-yellow-600 px-4 py-3 rounded-lg items-center flex-1" onPress={() => setEditModalVisible(true)}>
-                            <Text className="text-white">Edit</Text>
-                        </TouchableOpacity>
-                        <Text>   </Text>
-                        <TouchableOpacity className="bg-red-700 px-4 py-3 rounded-lg items-center flex-1" onPress={handleDelete}>
-                            <Text className="text-white">Delete Group</Text>
-                        </TouchableOpacity>
+                    <View className="mt-4 gap-1 space-y-3">
+                        <Text className="text-white font-semibold">Ryhmän hallinta:</Text>
+                        <View className="flex-row gap-1 space-x-2">
+                            <TouchableOpacity className="bg-yellow-600 px-4 py-3 rounded-lg items-center flex-1" onPress={() => setEditModalVisible(true)}>
+                                <Text className="text-white">Muokkaa</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity className="bg-red-700 px-4 py-3 rounded-lg items-center flex-1" onPress={handleDelete}>
+                                <Text className="text-white">Poista Ryhmä</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View className="flex-row gap-1">
+                            <TouchableOpacity className="bg-green-600 px-4 py-3 rounded-lg items-center flex-1" onPress={() => router.navigate(`/(main)/addEventScreen?groupId=${id}`)}>
+                                <Text className="text-white font-semibold">+ Lisää tapahtuma</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 ) : null}
 
@@ -291,6 +295,13 @@ export default function GroupProfileScreen() {
                     visible={editModalVisible}
                     onClose={() => setEditModalVisible(false)}
                     onUpdated={handleGroupUpdated}
+                />
+
+                <DogSelectionModal
+                    visible={dogSelectionVisible}
+                    onClose={() => setDogSelectionVisible(false)}
+                    onConfirm={handleDogSelectionConfirm}
+                    isLoading={saving}
                 />
                 </ScrollView>
             </SafeAreaView>

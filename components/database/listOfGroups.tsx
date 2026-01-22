@@ -73,7 +73,7 @@ export default function ListOfGroups({ onSelect, limit, refreshKey }: Props) {
       renderItem={({ item }) => (
         <TouchableOpacity onPress={() => onSelect?.(item) || router.push({ pathname: "/(main)/groupScreen", params: { id: item.id } })}>
           <Card className="m-3 p-4 rounded-lg" variant="elevated" size="lg">
-            <View className="flex-row items-center space-x-4">
+            <View className="flex-row items-center space-x-4 gap-4">
               <Image
                 source={
                   item.imageUrl ? { uri: item.imageUrl } : require("@/assets/images/dog1.jpg")
