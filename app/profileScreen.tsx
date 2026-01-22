@@ -35,6 +35,13 @@ export default function profileScreen() {
             loadDogs();
         }, [])
     );
+
+    const checkInfo = () => {
+        if (!userProfile) return;
+        console.log('User Profile Info:', userProfile);
+        console.log('image url:', userProfile.imageUrl);
+    }
+
     return (
         <SafeAreaView className="flex-1 px-4 pt-6">
             <View className="m-6 p-5 bg-white rounded-lg w-4/6">
@@ -42,7 +49,7 @@ export default function profileScreen() {
                     <HStack space="md" style={{ alignItems: 'center' }}>
                         <Avatar className="bg-blue-600">
                             {userProfile?.imageUrl ? (
-                                <AvatarImage src={userProfile.imageUrl} alt={userProfile?.firstName ?? 'User'} />
+                                <AvatarImage source={{ uri: userProfile.imageUrl }} />
                             ) : (
                                 <AvatarFallbackText>
                                     <AvatarFallbackText className="text-white">
