@@ -89,6 +89,9 @@ export const getDogsWithOwnerInfo = async (dogIds: string[]): Promise<(Dog & { o
     ...dog,
     ownerName: `${ownerMap[dog.ownerId]?.firstName || ""} ${ownerMap[dog.ownerId]?.lastName || ""}`.trim() || "Tuntematon"
   }))
+}
+
+// poistetaan koira ID:llä
 
 export async function deleteDog(dogId: string) {
   await deleteDoc(doc(db, 'dogs', dogId));
