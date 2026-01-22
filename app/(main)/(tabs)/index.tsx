@@ -30,7 +30,7 @@ export default function Index() {
                 breed: 'Sakemanni',
                 age: 100,
                 description: 'Testikoira, joka lisättiin sovelluksesta. Hän on erittäin kiltti ja leikkisä. Rakastaa pitkiä kävelyitä ja herkkuja.',
-                imageUrl: 'image/sakemanni.jpg',
+                imageUrl: "@/assets/images/dog1.jpg",
                 healthAssessmentDone: true
             }
             const res = await addDog(dogData)

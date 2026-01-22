@@ -1,3 +1,4 @@
+import { addEventToGroupAction } from '@/components/database/groupActions';
 import {
     Button,
     ButtonText
@@ -31,8 +32,11 @@ import {
 } from '@/components/ui/radio';
 import { Textarea, TextareaInput } from '@/components/ui/textarea';
 import { VStack } from '@/components/ui/vstack';
+import { createEvent } from '@/src/services/eventService';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const MIN_EVENT_NAME_LENGTH = 1
@@ -41,9 +45,13 @@ const MIN_EVENT_DESCRIPTION_LENGTH = 1
 const MAX_EVENT_DESCRIPTION_LENGTH = 1000
 
 export default function AddEventScreen() {
+    const { groupId } = useLocalSearchParams<{ groupId?: string }>();
+    const router = useRouter();
+    
     const [isInvalidEventName, setIsInvalidEventName] = React.useState(false);
     const [isInvalidEventDescription, setIsInvalidEventDescription] = React.useState(false);
     const [isInvalidAllowedDogs, setIsInvalidAllowedDogs] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const [eventName, setEventName] = React.useState("");
     const [eventType, setEventType] = React.useState("");
@@ -52,7 +60,7 @@ export default function AddEventScreen() {
     const [eventEndTime, setEventEndTime] = React.useState("");
     const [eventAllowedDogsChecks, setEventAllowedDogsChecks] = React.useState<string[]>([]);
 
-    function handleSubmitForm() {
+    async function handleSubmitForm() {
         const isInvalidEventName = eventName.length < MIN_EVENT_NAME_LENGTH || eventName.length > MAX_EVENT_NAME_LENGTH
         setIsInvalidEventName(isInvalidEventName);
 
@@ -65,7 +73,35 @@ export default function AddEventScreen() {
             return;
         }
 
-        setIsInvalidEventName(false);
+        setIsLoading(true);
+        try {
+            // Luodaan tapahtuma
+            const eventData = {
+                title: eventName,
+                eventName: eventName,
+                description: eventDescription,
+                eventType: eventType || undefined,
+                date: Timestamp.now(),
+                createdBy: "",
+            };
+
+            const res = await createEvent(eventData);
+            
+            // Jos tapahtuma luotiin ryhmässä, lisätään se ryhmään
+            if (groupId && res.id) {
+                await addEventToGroupAction(groupId, res.id);
+                Alert.alert("Onnistui", "Tapahtuma lisätty ryhmään");
+                router.back();
+            } else if (res.id) {
+                Alert.alert("Onnistui", "Tapahtuma luotu");
+                router.back();
+            }
+        } catch (error: any) {
+            console.error("Failed to create event:", error);
+            Alert.alert("Virhe", error?.message ?? "Tapahtuman luonti epäonnistui");
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -214,8 +250,9 @@ export default function AddEventScreen() {
                     size="lg"
                     variant="solid"
                     onPress={handleSubmitForm}
+                    disabled={isLoading}
                 >
-                    <ButtonText>Create</ButtonText>
+                    <ButtonText>{isLoading ? "Luodaan..." : "Create"}</ButtonText>
                 </Button>
             </VStack>
         </SafeAreaProvider>

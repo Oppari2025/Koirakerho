@@ -1,11 +1,16 @@
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Card } from '@/components/ui/card';
+import { Heading } from '@/components/ui/heading';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { Event } from '../..//src/types/event';
 import { useAuth } from '../../src/context/AuthContext';
-import { getUpcomingEvents, joinEvent, leaveEvent } from '../../src/services/eventService';
+import { getEventsByIds, getUpcomingEvents, joinEvent, leaveEvent } from '../../src/services/eventService';
 
+type Props = {
+    eventIds?: string[];
+};
 
-export default function ListOfEvents() {
+export default function ListOfEvents({ eventIds }: Props) {
     const { firebaseUser } = useAuth()
     const [events, setEvents] = useState<Event[]>([])
     const [statusByEvent, setStatusByEvent] = useState<Record<string, string>>({})
@@ -13,13 +18,20 @@ export default function ListOfEvents() {
     // ladataan tapahtumat komponentin latautuessa
     useEffect(() => {
         loadEvents()
-    }, [])
+    }, [eventIds])
 
 
     // Funktio tulevien tapahtumien lataamiseen
     const loadEvents = async () => {
         try {
-            const list = await getUpcomingEvents()
+            let list: Event[];
+            if (eventIds && eventIds.length > 0) {
+                // Jos eventIds on annettu (ryhmän tapahtumat), hae vain ne
+                list = await getEventsByIds(eventIds)
+            } else {
+                // Muuten hae kaikki tulevat tapahtumat
+                list = await getUpcomingEvents()
+            }
             setEvents(list)
         } catch (e: any) {
             console.error('Failed to load events:', e)
@@ -100,83 +112,73 @@ export default function ListOfEvents() {
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.sectionTitle}>Tulevat tapahtumat</Text>
+        <View className="w-full pb-2">
+            <Heading size="lg" className="mb-4">Tulevat tapahtumat</Heading>
 
             {/* Lista tapahtumista */}
-            {events.length === 0 ? <Text style={styles.empty}>Ei tulevia tapahtumia</Text> : events.map(ev => (
-                <View key={ev.id} style={styles.item}>
-                <Text style={styles.itemTitle}>{ev.title} {ev.date.toDate().toLocaleString()}</Text>
-                <Text style={styles.itemMeta}>{ev.description}</Text>
-                <Text style={styles.itemMeta}>{ev.location.address}, {ev.location.lat}°, {ev.location.lng}°</Text>
-                <Text style={styles.itemMeta}>Julkaistu: {ev.createdAt.toDate().toLocaleString()}</Text>
-                <Text style={styles.itemMeta}>Osallistujat: {ev.participants.length}</Text>
-                <TouchableOpacity
-                    style={[ styles.button, hasJoined(ev) ? styles.cancel : styles.button ]}
-                    onPress={() => hasJoined(ev) ? handleLeaveEvent(ev.id) : handleJoinEvent(ev.id)}>
-                    <Text style={styles.buttonText}>
-                        {hasJoined(ev) ? "Peruuta osallistuminen" : "Liity tapahtumaan"}
-                    </Text>
-                </TouchableOpacity>
-                {statusByEvent[ev.id] && (
-                    <Text style={styles.status}>{statusByEvent[ev.id]}</Text>
-                )}
-                </View>
-            ))}
+            {events.length === 0 ? (
+                <Text className="text-typography-500 text-center py-4">Ei tulevia tapahtumia</Text>
+            ) : (
+                <FlatList
+                    data={events}
+                    keyExtractor={(ev) => ev.id}
+                    scrollEnabled={false}
+                    renderItem={({ item: ev }) => (
+                        <Card className="mb-3 p-4 rounded-lg bg-background-50 border border-background-200" variant="elevated">
+                            <View>
+                                <Text className="text-lg font-semibold text-typography-900">
+                                    {ev.title || 'Tapahtuma'}
+                                </Text>
+                                
+                                {ev.date && (
+                                    <Text className="text-sm text-typography-600 mt-2">
+                                        {ev.date.toDate().toLocaleString('fi-FI')}
+                                    </Text>
+                                )}
+                                
+                                {ev.description && (
+                                    <Text className="text-sm text-typography-700 mt-2">
+                                        {ev.description}
+                                    </Text>
+                                )}
+                                
+                                {ev.location && (
+                                    <Text className="text-xs text-typography-500 mt-2">
+                                        {ev.location.address}, {ev.location.lat}°, {ev.location.lng}°
+                                    </Text>
+                                )}
+                                
+                                {ev.createdAt && (
+                                    <Text className="text-xs text-typography-500 mt-1">
+                                        Julkaistu: {ev.createdAt.toDate().toLocaleString('fi-FI')}
+                                    </Text>
+                                )}
+                                
+                                {Array.isArray(ev.participants) && (
+                                    <Text className="text-xs text-typography-500 mt-1">
+                                        Osallistujat: {ev.participants.length}
+                                    </Text>
+                                )}
+
+                                <TouchableOpacity
+                                    onPress={() => hasJoined(ev) ? handleLeaveEvent(ev.id) : handleJoinEvent(ev.id)}
+                                    className={`mt-3 px-4 py-2 rounded-lg ${hasJoined(ev) ? 'bg-red-600' : 'bg-green-600'}`}
+                                >
+                                    <Text className="text-white font-semibold text-center">
+                                        {hasJoined(ev) ? "Peruuta osallistuminen" : "Liity tapahtumaan"}
+                                    </Text>
+                                </TouchableOpacity>
+
+                                {statusByEvent[ev.id] && (
+                                    <Text className="text-sm text-typography-600 mt-2 text-center">
+                                        {statusByEvent[ev.id]}
+                                    </Text>
+                                )}
+                            </View>
+                        </Card>
+                    )}
+                />
+            )}
         </View>
-
     )
-
 }
-
-
-const styles = StyleSheet.create({
-    container: { 
-        flex: 1,
-        width: '90%',
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        backgroundColor: '#fff3c0ff',
-    },
-    sectionTitle: {
-        marginTop: 18,
-        fontSize: 18,
-        fontWeight: '700'
-    },
-    empty: {
-        color: '#666',
-        marginTop: 6
-    },
-    item: {
-        marginTop: 8,
-        padding: 8,
-        backgroundColor: '#fff9e6',
-        width: '100%',
-        borderRadius: 8
-    },
-    itemTitle: {
-        fontWeight: '700'
-    },
-    itemMeta: {
-        color: '#666'
-    },
-    status: {
-        marginTop: 6,
-        color: '#333'
-    },
-    button: { 
-        marginTop: 6,
-        backgroundColor: '#206b00ff', 
-        padding: 12, 
-        borderRadius: 8,
-        marginBottom: 6
-    },
-    buttonText: {
-        color: '#fff', 
-        fontWeight: '600' 
-    },
-    cancel: {
-        marginTop: 12,
-        backgroundColor: '#aa0000'
-    }
-})

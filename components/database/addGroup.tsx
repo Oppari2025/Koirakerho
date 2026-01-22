@@ -8,7 +8,7 @@ import { createGroup } from "@/src/services/groupService";
 import { Group } from "@/src/types/group";
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
-import { ActivityIndicator, Image, Modal, Pressable, Text, View, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Image, Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
 
 type Props = {
   onCreated?: (group: Group) => void;
@@ -88,7 +88,7 @@ export default function AddGroup({ onCreated }: Props) {
           <Card className="m-3 p-4 rounded-lg" variant="elevated" size="lg">
             <Heading size="sm" className="mb-3">Luo uusi ryhmä</Heading>
 
-            <View className="space-y-3">
+            <View className="space-y-3 gap-2">
               <Input>
                 <InputField placeholder="Ryhmän nimi" value={groupName} onChangeText={setGroupName} />
               </Input>
@@ -97,7 +97,7 @@ export default function AddGroup({ onCreated }: Props) {
                 <InputField placeholder="Kuvaus (valinnainen)" value={groupDescription} onChangeText={setGroupDescription} />
               </Input>
 
-              <View className="p-2 flex-row gap-2 items-center">
+              <View className="flex-row gap-2 items-center">
                 {selectedImage ? (
                   <Image source={{ uri: selectedImage }} className="h-20 w-20 rounded-lg" />
                 ) : (

@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, Timestamp, where } from "firebase/firestore"
+import { addDoc, collection, doc, getDoc, getDocs, query, Timestamp, where } from "firebase/firestore"
 import { auth, db } from "../firebase/FirebaseConfig"
 import { Dog, FirestoreDog } from "../types/dog"
 
@@ -37,5 +37,56 @@ export const getMyDogs = async (): Promise<Dog[]> => {
   return snapshot.docs.map(doc => ({
     id: doc.id,
     ...(doc.data() as FirestoreDog)
+  }))
+}
+
+// haetaan koirat ID:iden perusteella
+export const getDogsByIds = async (dogIds: string[]): Promise<Dog[]> => {
+  if (dogIds.length === 0) {
+    return []
+  }
+
+  // Haetaan koirat suoraan ID:n perusteella käyttämällä doc() referenceja
+  const dogsPromises = dogIds.map(dogId => 
+    getDoc(doc(db, "dogs", dogId))
+  )
+  
+  const dogDocs = await Promise.all(dogsPromises)
+  
+  return dogDocs
+    .filter(snapshot => snapshot.exists())
+    .map(snapshot => ({
+      id: snapshot.id,
+      ...(snapshot.data() as FirestoreDog)
+    }))
+}
+
+// haetaan koirat ID:iden perusteella omistajan tiedoin
+export const getDogsWithOwnerInfo = async (dogIds: string[]): Promise<(Dog & { ownerName: string })[]> => {
+  const dogs = await getDogsByIds(dogIds)
+  
+  // Haetaan omistajien tiedot
+  const ownerIds = [...new Set(dogs.map(d => d.ownerId))]
+  const ownerMap: Record<string, { firstName: string; lastName: string }> = {}
+  
+  for (const ownerId of ownerIds) {
+    try {
+      const userRef = doc(db, "users", ownerId)
+      const userDoc = await getDoc(userRef)
+      if (userDoc.exists()) {
+        const userData = userDoc.data()
+        ownerMap[ownerId] = {
+          firstName: userData.firstName || "",
+          lastName: userData.lastName || ""
+        }
+      }
+    } catch (err) {
+      console.error(`Failed to fetch owner ${ownerId}:`, err)
+    }
+  }
+  
+  return dogs.map(dog => ({
+    ...dog,
+    ownerName: `${ownerMap[dog.ownerId]?.firstName || ""} ${ownerMap[dog.ownerId]?.lastName || ""}`.trim() || "Tuntematon"
   }))
 }

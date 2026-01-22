@@ -5,7 +5,9 @@ import { Input, InputField } from "@/components/ui/input";
 import { getGroupById, updateGroup } from "@/src/services/groupService";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Image, Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import EventManagement from "./eventManagement";
+import MemberManagement from "./memberManagement";
 
 type Props = {
   groupId: string;
@@ -18,10 +20,13 @@ export default function EditGroup({ groupId, onUpdated, visible, onClose }: Prop
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [memberIds, setMemberIds] = useState<string[]>([]);
+  const [eventIds, setEventIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -35,6 +40,8 @@ export default function EditGroup({ groupId, onUpdated, visible, onClose }: Prop
           setImageUrl(g.imageUrl ?? "");
           setName(g.groupName ?? "");
           setDescription(g.groupDescription ?? "");
+          setMemberIds(g.memberIds ?? []);
+          setEventIds(g.eventIds ?? []);
           setSelectedImage(null);
           setError(null);
         }
@@ -108,12 +115,13 @@ export default function EditGroup({ groupId, onUpdated, visible, onClose }: Prop
   return (
     <Modal visible={visible} transparent animationType="slide">
       <Pressable className="absolute inset-0 bg-black/40" onPress={onClose} />
-      <View className="flex-1 justify-start pt-6">
-        <Card className="m-3 p-4 rounded-lg" variant="elevated" size="lg">
-          <Heading size="sm" className="mb-3">Muokkaa ryhmää</Heading>
+      <View className="flex-1 justify-start gap-2 pt-6">
+        <Card className="m-3 rounded-lg max-h-4/5" variant="elevated" size="lg">
+          <ScrollView className="space-y-3" showsVerticalScrollIndicator={true}>
+            <Heading size="sm" className="mb-3">Muokkaa ryhmää</Heading>
 
-          <View className="space-y-3">
-            <View className="p-2 flex-row gap-2 items-center">
+            <View className="space-y-3 gap-1">
+              <View className="p-2 flex-row gap-2 items-center">
               {selectedImage ? (
                 <Image source={{ uri: selectedImage }} className="h-20 w-20 rounded-lg" />
               ) : imageUrl ? (
@@ -144,10 +152,34 @@ export default function EditGroup({ groupId, onUpdated, visible, onClose }: Prop
 
             {error ? <Text className="pb-1 text-sm text-error-200">{error}</Text> : null}
 
+            <View className="border-t border-background-200 pt-4 mt-4">
+              <MemberManagement 
+                key={refreshKey}
+                groupId={groupId} 
+                memberIds={memberIds}
+                onMemberRemoved={(removedMemberId) => {
+                  setMemberIds(memberIds.filter(id => id !== removedMemberId));
+                  onUpdated?.();
+                }}
+              />
+            </View>
+
+            <View className="border-t border-background-200 pt-4 mt-4">
+              <EventManagement 
+                groupId={groupId} 
+                eventIds={eventIds}
+                onEventRemoved={(removedEventId) => {
+                  setEventIds(eventIds.filter(id => id !== removedEventId));
+                  onUpdated?.();
+                }}
+              />
+            </View>
+
             <Button onPress={handleSave} disabled={saving} action="primary">
               {saving ? <ActivityIndicator /> : <ButtonText>Tallenna</ButtonText>}
             </Button>
-          </View>
+            </View>
+          </ScrollView>
         </Card>
       </View>
     </Modal>
