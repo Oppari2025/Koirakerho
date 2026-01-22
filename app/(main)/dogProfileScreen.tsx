@@ -55,7 +55,10 @@ function DogProfileContent({ dogId }: { dogId: string }) {
     return (
         <SafeAreaView className="flex-1 px-4 pt-6">
             <View>
-                <AppHeader title={dog.name} />
+                <AppHeader
+                title={dog.name}
+                onBackPress={() => router.replace('/profileScreen')}
+                />
                 <View className="absolute top-6 right-6">
                     <TouchableOpacity
                         onPress={() =>

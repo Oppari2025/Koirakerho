@@ -1,11 +1,9 @@
-import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
+import AppHeaderAvatar from '@/components/appHeaderAvatar';
 import { Button, ButtonIcon } from '@/components/ui/button';
-import { Heading } from '@/components/ui/heading';
 import { ArrowRightIcon } from '@/components/ui/icon';
 import { Input, InputField } from '@/components/ui/input';
-import { VStack } from '@/components/ui/vstack';
 import { db } from '@/src/firebase/FirebaseConfig';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { getAuth } from 'firebase/auth';
 import {
     addDoc,
@@ -60,20 +58,20 @@ export default function friendChatScreen() {
     };
 
     const sendMessage = async () => {
-    if (!inputValue.trim() || !currentUser || !chatId) return;
+        if (!inputValue.trim() || !currentUser || !chatId) return;
 
-    // Lähetä viesti
-    await addDoc(collection(db, 'chats', chatId, 'messages'), {
-        text: inputValue,
-        senderUid: currentUser.uid,
-        createdAt: serverTimestamp(),
-    });
+        // Lähetä viesti
+        await addDoc(collection(db, 'chats', chatId, 'messages'), {
+            text: inputValue,
+            senderUid: currentUser.uid,
+            createdAt: serverTimestamp(),
+        });
 
-    // Päivittää chatin viimeisin viesti aika
-    await updateDoc(doc(db, 'chats', chatId), {
-        lastMessageAt: serverTimestamp(),
-    });
-    setInputValue('');
+        // Päivittää chatin viimeisin viesti aika
+        await updateDoc(doc(db, 'chats', chatId), {
+            lastMessageAt: serverTimestamp(),
+        });
+        setInputValue('');
     };
 
     const currentUser: any = getAuth().currentUser;
@@ -142,38 +140,26 @@ export default function friendChatScreen() {
     }, [chatId]);
 
     useEffect(() => {
-    if (!chatId || !currentUser) return;
+        if (!chatId || !currentUser) return;
 
-    const markAsRead = async () => {
-        await updateDoc(doc(db, 'chats', chatId), {
-        [`lastRead.${currentUser.uid}`]: serverTimestamp(),
-        });
-    };
+        const markAsRead = async () => {
+            await updateDoc(doc(db, 'chats', chatId), {
+                [`lastRead.${currentUser.uid}`]: serverTimestamp(),
+            });
+        };
 
-    markAsRead();
+        markAsRead();
     }, [chatId, messages.length]);
 
 
     return (
         <SafeAreaView className="flex-1">
-            <View className="flex-row items-center gap-4 p-4">
-                <Avatar className="bg-indigo-600">
-                    <AvatarFallbackText className="text-white">
-                        {otherUser?.name || '?'}
-                    </AvatarFallbackText>
-                    <AvatarImage
-                        source={{
-                            uri: otherUser?.profilePictureUrl || '../assets/images/dog1.jpg',
-                        }}
-                    />
-                </Avatar>
-                <VStack>
-                    <Heading size="sm">{otherUser?.firstName + " " + otherUser?.lastName}</Heading>
-                </VStack>
-                <Text className="text-lg font-bold">
-                    {(otherUser?.firstName && otherUser?.lastName) ? otherUser.firstName + " " + otherUser.lastName : 'Ladataan...'}
-                </Text>
-            </View>
+            <AppHeaderAvatar
+                title={`${otherUser?.firstName} ${otherUser?.lastName}`}
+                avatarUrl={otherUser?.imageUrl}
+                fallbackText={otherUser?.firstName}
+                onBackPress={() => router.replace('/chatScreen')}
+            />
             <FlatList
                 ref={flatListRef}
                 data={messages}

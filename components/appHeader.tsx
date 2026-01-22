@@ -6,33 +6,38 @@ import { Text, TouchableOpacity, View } from 'react-native';
 type AppHeaderProps = {
   title: string;
   showBack?: boolean;
+  fallbackRoute?: string;
   onBackPress?: () => void;
 };
 
 export default function AppHeader({
   title,
   showBack = true,
+  fallbackRoute = '/profileScreen',
   onBackPress,
 }: AppHeaderProps) {
   const handleBack = () => {
     if (onBackPress) {
       onBackPress();
+      return;
+    }
+
+    if (router.canGoBack()) {
+      router.back();
     } else {
-      router.replace('/profileScreen');
+      router.replace(fallbackRoute);
     }
   };
 
   return (
     <View className="flex-row gap-4 items-center px-8 py-6 bg-white border-b border-gray-200">
       {showBack && (
-        <TouchableOpacity onPress={handleBack} className="mr-6 px-4 ">
+        <TouchableOpacity onPress={handleBack} className="mr-6 px-4">
           <MaterialIcons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
       )}
 
-      <Text className=" text-lg font-semibold">
-        {title}
-      </Text>
+      <Text className="text-lg font-semibold">{title}</Text>
     </View>
   );
 }
