@@ -10,6 +10,7 @@ export interface FirestoreGroup {
   imageUrl?: string;
   memberIds: string[]; 
   eventIds: string[];
+  memberDogs?: Record<string, string[]>; // avain: käyttäjäID, arvo: koiraID-taulukko
 }
 
 export interface Group extends FirestoreGroup {

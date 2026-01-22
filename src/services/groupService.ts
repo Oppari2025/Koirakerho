@@ -111,15 +111,61 @@ export async function listGroups(
   }));
 }
 
-// lisätään jäsen ryhmään
+// lisätään jäsen ryhmään valittujen koirien kanssa
+export async function addMemberWithDogs(
+  groupId: string,
+  memberId: string,
+  dogIds: string[] = []
+): Promise<Group | null> {
+  const ref = doc(db, "groups", groupId);
+  
+  // Haetaan nykyinen ryhmä
+  const currentGroup = await getGroupById(groupId);
+  
+  // Päivitetään memberIds
+  const updatedMemberIds = Array.from(new Set([...(currentGroup?.memberIds ?? []), memberId]));
+  
+  // Päivitetään memberDogs - tallentaa mitkä koirat kuuluvat ryhmään
+  const memberDogs = currentGroup?.memberDogs ?? {};
+  if (dogIds.length > 0) {
+    memberDogs[memberId] = dogIds;
+  }
+
+  await updateDoc(ref, {
+    memberIds: updatedMemberIds,
+    memberDogs: memberDogs,
+  });
+
+  return getGroupById(groupId);
+}
+
+// lisätään jäsen ryhmään (vanha versio yhteensopivuutta varten)
 export async function addMember(
   groupId: string,
   memberId: string
 ): Promise<Group | null> {
+  return addMemberWithDogs(groupId, memberId, []);
+}
+
+// päivitetään jäsenen koirat ryhmässä
+export async function updateMemberDogs(
+  groupId: string,
+  memberId: string,
+  dogIds: string[]
+): Promise<Group | null> {
   const ref = doc(db, "groups", groupId);
+  const currentGroup = await getGroupById(groupId);
+  
+  const memberDogs = currentGroup?.memberDogs ?? {};
+  if (dogIds.length > 0) {
+    memberDogs[memberId] = dogIds;
+  } else {
+    // Poista jäsen jos ei koiria valittu
+    delete memberDogs[memberId];
+  }
 
   await updateDoc(ref, {
-    memberIds: arrayUnion(memberId),
+    memberDogs: memberDogs,
   });
 
   return getGroupById(groupId);
@@ -134,6 +180,31 @@ export async function removeMember(
 
   await updateDoc(ref, {
     memberIds: arrayRemove(memberId),
+  });
+
+  return getGroupById(groupId);
+}
+
+// poistetaan jäsen ryhmästä ja poistetaan hänen koiransa
+export async function removeMemberWithDogs(
+  groupId: string,
+  memberId: string
+): Promise<Group | null> {
+  const ref = doc(db, "groups", groupId);
+  const currentGroup = await getGroupById(groupId);
+  
+  if (!currentGroup) return null;
+
+  // Poista jäsen memberIds-listalta
+  const updatedMemberIds = (currentGroup.memberIds ?? []).filter(id => id !== memberId);
+  
+  // Poista jäsenen koirat memberDogs-objektista
+  const memberDogs = { ...(currentGroup.memberDogs ?? {}) };
+  delete memberDogs[memberId];
+
+  await updateDoc(ref, {
+    memberIds: updatedMemberIds,
+    memberDogs: memberDogs,
   });
 
   return getGroupById(groupId);
