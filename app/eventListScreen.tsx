@@ -2,7 +2,7 @@ import EventCard from '@/components/eventCard';
 import { EventData } from '@/types/events';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 type AddEventButtonProps = {
@@ -87,32 +87,23 @@ export default function EventListScreen() {
     router.navigate(`/(main)/addEventScreen`);
   }
 
+  function onPressEventCard(eventId: string) {
+    router.navigate(`/(main)/eventScreen?id=${eventId}`)
+  }
+
   const renderItem = ({ item }: { item: EventData }) => {
     return (
       <EventCard
         item={item}
-        onPress={() => router.navigate(`/(main)/eventScreen?id=${item.id}`)}
+        onPress={() => onPressEventCard(item.id)}
       />
     );
   };
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          width: "100%",
-          height: "100%",
-          padding: 8,
-          //backgroundColor: '#fff3c0ff',
-        }}
-      >
-        <View
-          style={{
-            height: "auto",
-            width: "100%"
-          }}
-        >
+      <SafeAreaView style={styles.page}>
+        <View style={styles.listContainer}>
           <FlatList
             data={events}
             renderItem={renderItem}
@@ -124,17 +115,9 @@ export default function EventListScreen() {
             ListFooterComponent={() => <View style={{ height: 200 }} />}
           />
         </View>
-        <View
-          style={{
-            alignItems: "flex-end",
-            margin: 8
-          }}
-        >
-          <AddEventButton
-            onPress={onPressAddEvent}
-          />
+        <View style={styles.buttonRow}>
+          <AddEventButton onPress={onPressAddEvent} />
         </View>
-
       </SafeAreaView>
     </SafeAreaProvider>
   )
@@ -151,3 +134,21 @@ const classes = {
   eventCardList: ""
 }
 
+const styles = StyleSheet.create({
+  page: {
+    backgroundColor: '#fff3c0ff',
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    padding: 8,
+    //backgroundColor: '#fff3c0ff',
+  },
+  listContainer: {
+    height: "auto",
+    width: "100%"
+  },
+  buttonRow: {
+    alignItems: "flex-end",
+    margin: 8
+  }
+})

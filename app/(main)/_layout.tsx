@@ -1,13 +1,11 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Drawer } from 'expo-router/drawer';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import '@/global.css';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import 'react-native-reanimated';
 
 export const unstable_settings = {
     anchor: '(tabs)',
@@ -28,6 +26,8 @@ export default function RootLayout() {
                     <Stack.Screen name="dogProfileScreen" options={{ headerShown: false, title: "Dog Profile" }} />
                     <Stack.Screen name="addDogScreen" options={{ headerShown: false, title: "Add Dog" }} />
                     <Stack.Screen name="friendChatScreen" options={{ headerShown: true, title: "Ronald Richards" }} /> {/* Tittle should be dynamic */}
+                    <Stack.Screen name="coordinatePickerScreen" options={{ headerShown: true, title: "Pick Location" }} />
+                    <Stack.Screen name="navigatorScreen" options={{ headerShown: true, title: "Navigator" }} />
                 </Stack>
                 <StatusBar style="auto" />
             

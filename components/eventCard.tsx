@@ -9,7 +9,9 @@ export default function EventCard({ onPress, item }: EventCardProps): React.JSX.
         >
             <View
                 style={{
-                    backgroundColor: "#86614aff",
+                    backgroundColor: "rgb(255, 255, 255)",
+                    borderColor: "gray",
+                    borderWidth: 1,
                     padding: 8,
                     width: "100%",
                     borderRadius: 10
@@ -30,7 +32,9 @@ export default function EventCard({ onPress, item }: EventCardProps): React.JSX.
                     style={{
                         margin: 16,
                         position: "absolute",
-                        backgroundColor: "#86614aff",
+                        backgroundColor: "rgb(255, 255, 255)",
+                        borderColor: "gray",
+                        borderWidth: 1,
                         padding: 8,
                         borderRadius: 50,
                         width: "40%",

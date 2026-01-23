@@ -34,6 +34,7 @@ export default function ticketScreen(): React.JSX.Element {
         <SafeAreaProvider>
             <SafeAreaView
                 style={{
+                    backgroundColor: '#fff3c0ff',
                     padding: 8,
                     height: "100%",
                 }}
@@ -45,7 +46,9 @@ export default function ticketScreen(): React.JSX.Element {
                 >
                     <View
                         style={{
-                            backgroundColor: "white",
+                            backgroundColor: "rgb(255, 255, 255)",
+                            borderColor: "gray",
+                            borderWidth: 1,
                             padding: 16,
                             borderRadius: 10
                         }}
@@ -177,7 +180,9 @@ export default function ticketScreen(): React.JSX.Element {
                     </View>
                     <View
                         style={{
-                            backgroundColor: "white",
+                            backgroundColor: "rgb(255, 255, 255)",
+                            borderColor: "gray",
+                            borderWidth: 1,
                             padding: 16,
                             borderRadius: 10,
                             gap: 8

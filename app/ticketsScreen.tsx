@@ -48,6 +48,8 @@ export default function TicketsScreen(): React.JSX.Element {
             <TouchableOpacity
                 onPress={() => router.navigate(`/(main)/ticketScreen?id=${item.id}`)}
                 style={{
+                    borderColor: "gray",
+                    borderWidth: 1,
                     backgroundColor: "#ffffffff",
                     padding: 16,
                     borderRadius: 10,
@@ -118,6 +120,7 @@ export default function TicketsScreen(): React.JSX.Element {
         <SafeAreaProvider>
             <SafeAreaView
                 style={{
+                    backgroundColor: '#fff3c0ff',
                     padding: 8,
                     height: "100%"
                 }}

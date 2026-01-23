@@ -41,7 +41,7 @@ export default function AddEventScreen() {
 
     return (
         <SafeAreaProvider>
-            <SafeAreaView style={{ width: "100%" }}>
+            <SafeAreaView style={{ width: "100%", backgroundColor: '#fff3c0ff' }}>
                 <ScrollView style={{ width: "100%", padding: 8 }}>
                     <View style={{ gap: 16, marginTop: 8, width: "100%" }}>
                         <TextEditBox
