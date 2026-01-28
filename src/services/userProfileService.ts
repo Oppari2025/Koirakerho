@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore"
+import { doc, getDoc, setDoc, Timestamp, updateDoc } from "firebase/firestore"
 import { db } from "../firebase/FirebaseConfig"
 import { FirestoreUser } from "../types/user"
 
@@ -46,4 +46,12 @@ export const getUserProfiles = async (
   }
 
   return results;
+  
 }
+// päivitetään käyttäjäprofiilia Firestoressa
+export const updateUserProfile = async (
+  data: Partial<any>,
+  userId: string
+) => {
+  await updateDoc(doc(db, 'users', userId), data);
+};

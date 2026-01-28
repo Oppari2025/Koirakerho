@@ -31,3 +31,10 @@ export async function uploadDogImage(uri: string, folder = 'dogs'): Promise<stri
   await uploadBytes(ref, blob);
   return getDownloadURL(ref);
 }
+export async function uploadProfileImage(uri: string, folder = 'users', userId: string): Promise<string> {
+  const blob = await (await fetch(uri)).blob();
+  const path = `${folder}/${userId}/${Date.now()}.jpg`;
+  const ref = storageRef(storage, path);
+  await uploadBytes(ref, blob);
+  return getDownloadURL(ref);
+}

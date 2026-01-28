@@ -1,11 +1,13 @@
 import {
   Avatar,
   AvatarFallbackText,
+  AvatarImage,
 } from '@/components/ui/avatar';
 import { Heading } from '@/components/ui/heading';
 import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { getUserByUid } from '@/src/services/getUserService';
 import { router } from 'expo-router';
 import { getAuth } from 'firebase/auth';
 import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
@@ -20,8 +22,10 @@ export default function chatScreen() {
   const [contacts, setContacts] = useState<
     Array<{
       uid: string;
-      name: string;
+      firstName: string;
+      lastName: string;
       email: string;
+      imageUrl?: string;
       unreadCount: number;
     }>
   >([]);
@@ -29,71 +33,78 @@ export default function chatScreen() {
   const currentUser = getAuth().currentUser;
   const [modalVisible, setModalVisible] = useState(false);
   const [newEmail, setNewEmail] = useState('');
+
   const getChatId = (uid1: string, uid2: string) =>
     uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
 
- const loadContacts = async () => {
-  if (!currentUser) return;
+  const loadContacts = async () => {
+    if (!currentUser) return;
 
-  const snap = await getDoc(doc(db, 'users', currentUser.uid));
-  if (!snap.exists()) return;
+    const snap = await getDoc(doc(db, 'users', currentUser.uid));
+    if (!snap.exists()) return;
 
-  const emails = snap.data().contacts || [];
-  if (emails.length === 0) {
-    setContacts([]);
-    return;
-  }
+    const emails = snap.data().contacts || [];
+    if (emails.length === 0) {
+      setContacts([]);
+      return;
+    }
 
-  const users = await Promise.all(
-    emails.map((email: string) => getUserByEmail(email))
-  );
+    const users = await Promise.all(
+      emails.map(async (email: string) => {
+        const user = await getUserByEmail(email);
+        if (!user) return null;
+        const fullProfile = await getUserByUid(user.uid);
+        return fullProfile;
+      })
+    );
 
-  const gotNewMessage = await Promise.all(
-    users.filter(Boolean).map(async (user: any) => {
-      const chatId = getChatId(currentUser.uid, user.uid);
-      const chatRef = doc(db, 'chats', chatId);
-      const chatSnap = await getDoc(chatRef);
 
-      let unreadCount = 0;
-      let lastMessageAt: any = null;
+    const gotNewMessage = await Promise.all(
+      users.filter(Boolean).map(async (user: any) => {
+        const chatId = getChatId(currentUser.uid, user.uid);
+        const chatRef = doc(db, 'chats', chatId);
+        const chatSnap = await getDoc(chatRef);
 
-      if (chatSnap.exists()) {
-        const chatData = chatSnap.data();
-        lastMessageAt = chatData?.lastMessageAt || null;
+        let unreadCount = 0;
+        let lastMessageAt: any = null;
 
-        const lastRead = chatData?.lastRead?.[currentUser.uid];
+        if (chatSnap.exists()) {
+          const chatData = chatSnap.data();
+          lastMessageAt = chatData?.lastMessageAt || null;
 
-        const msgsRef = collection(db, 'chats', chatId, 'messages');
-        const allMsgsSnap = await getDocs(msgsRef);
+          const lastRead = chatData?.lastRead?.[currentUser.uid];
 
-        const unreadMsgs = allMsgsSnap.docs.filter(msg => {
-          const data = msg.data();
-          return (
-            data.senderUid !== currentUser.uid &&
-            (!lastRead || data.createdAt.toMillis() > lastRead.toMillis())
-          );
-        });
+          const msgsRef = collection(db, 'chats', chatId, 'messages');
+          const allMsgsSnap = await getDocs(msgsRef);
 
-        unreadCount = unreadMsgs.length;
-      }
+          const unreadMsgs = allMsgsSnap.docs.filter(msg => {
+            const data = msg.data();
+            return (
+              data.senderUid !== currentUser.uid &&
+              (!lastRead || data.createdAt.toMillis() > lastRead.toMillis())
+            );
+          });
 
-      return {
-        ...user,
-        unreadCount,
-        lastMessageAt,
-      };
-    })
-  );
+          unreadCount = unreadMsgs.length;
+        }
 
-  // Järjestetää kontaktit viimeisimmän viestin mukaan
-  gotNewMessage.sort((a, b) => {
-    const aTime = a.lastMessageAt ? a.lastMessageAt.toMillis() : 0;
-    const bTime = b.lastMessageAt ? b.lastMessageAt.toMillis() : 0;
-    return bTime - aTime;
-  });
+        return {
+          ...user,
+          unreadCount,
+          lastMessageAt,
+        };
+      })
+    );
 
-  setContacts(gotNewMessage);
-};
+    // Järjestetää kontaktit viimeisimmän viestin mukaan
+    gotNewMessage.sort((a, b) => {
+      const aTime = a.lastMessageAt ? a.lastMessageAt.toMillis() : 0;
+      const bTime = b.lastMessageAt ? b.lastMessageAt.toMillis() : 0;
+      return bTime - aTime;
+    });
+
+    setContacts(gotNewMessage);
+  };
 
   // Päivittää sivun
   const onRefresh = async () => {
@@ -149,12 +160,10 @@ export default function chatScreen() {
               <HStack className="items-center justify-between">
                 <HStack space="md">
                   <Avatar className="bg-indigo-600">
-                    <AvatarFallbackText className="text-white">
-                      {user.name}
-                    </AvatarFallbackText>
+                    <AvatarImage source={{ uri: user?.imageUrl }} />
                   </Avatar>
                   <VStack>
-                    <Heading size="sm">{user.name}</Heading>
+                    <Heading size="sm">{user.firstName + " " + user.lastName}</Heading>
                     <Text size="sm">{user.email}</Text>
                   </VStack>
                 </HStack>

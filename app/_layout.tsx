@@ -1,20 +1,36 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import 'react-native-reanimated';
-
+import '@/global.css';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '@/src/context/AuthContext';
-
-
-import '@/global.css';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { Stack } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import 'react-native-reanimated';
+
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
   return (
     <AuthProvider>
-      <InnerRoot />
+      <GestureHandlerRootView>
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Drawer>
+          <Drawer.Screen
+            name="(main)"
+            options={{ drawerLabel: 'Home', title: 'Home', headerShown: false }}
+          />
+          <Drawer.Screen
+            name="profileScreen"
+            options={{ drawerLabel: 'My Profile', title: 'My Profile', headerShown: false }}
+          />
+        </Drawer>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+      </GestureHandlerRootView>
     </AuthProvider>
   );
 }

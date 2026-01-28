@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, Timestamp, where } from "firebase/firestore"
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, Timestamp, updateDoc, where } from "firebase/firestore"
 import { auth, db } from "../firebase/FirebaseConfig"
 import { Dog, FirestoreDog } from "../types/dog"
 
@@ -96,3 +96,22 @@ export const getDogsWithOwnerInfo = async (dogIds: string[]): Promise<(Dog & { o
 export async function deleteDog(dogId: string) {
   await deleteDoc(doc(db, 'dogs', dogId));
 }
+export const getDogById = async (dogId: string): Promise<Dog | null> => {
+  const ref = doc(db, "dogs", dogId);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) return null;
+
+  return {
+    id: snap.id,
+    ...(snap.data() as FirestoreDog),
+  };
+};
+
+export const updateDog = async (
+  dogId: string,
+  data: Partial<FirestoreDog>
+) => {
+  const ref = doc(db, "dogs", dogId);
+  return await updateDoc(ref, data);
+};
