@@ -29,7 +29,7 @@ export default function Login() {
       router.replace?.('/')
     } catch (error: any) {
       console.error('handleLogin error', error)
-      setErrorMessage(error.message)
+      setErrorMessage("Virhe kirjautumisessa: tarkista sähköposti ja salasana")
     }
   }
 
@@ -68,7 +68,7 @@ export default function Login() {
             disabled={loading}
           >
             <Text style={styles.buttonText}>
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Kirjaudutaan sisään...' : 'Kirjaudu sisään'}
             </Text>
           </TouchableOpacity>
 
@@ -76,7 +76,7 @@ export default function Login() {
             style={styles.secondaryButton}
             onPress={() => router.push?.('/register')}
           >
-            <Text style={styles.secondaryButtonText}>Dont have an account? Register</Text>
+            <Text style={styles.secondaryButtonText}>Ei käyttäjää? Rekisteröidy</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -94,7 +94,7 @@ export default function Register() {
             disabled={loading}
           >
             <Text style={styles.buttonText}>
-              {loading ? "Registering..." : "Register"}
+              {loading ? "Luodaan käyttäjää..." : "Luo käyttäjä"}
             </Text>
           </TouchableOpacity>
 
@@ -102,7 +102,7 @@ export default function Register() {
               style={styles.secondaryButton}
               onPress={() => router.push?.('/login')}
             >
-              <Text style={styles.secondaryButtonText}>Already have an account? Login</Text>
+              <Text style={styles.secondaryButtonText}>Onko sinulla jo käyttäjä? Kirjaudu sisään</Text>
             </TouchableOpacity>
         </View>
       </ScrollView>
