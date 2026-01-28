@@ -1,8 +1,12 @@
 import Button from '@/components/button';
 import CheckBoxGroup from '@/components/checkBoxGroup';
+import { addEventToGroupAction } from '@/components/database/groupActions';
 import TextEditBox from '@/components/textEditBox';
+import { createEvent } from '@/src/services/eventService';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
-import { ScrollView, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const MIN_EVENT_NAME_LENGTH = 1

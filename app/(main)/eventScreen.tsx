@@ -1,6 +1,6 @@
 import Button from "@/components/button";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -40,6 +40,10 @@ export default function EventScreen() {
 
     async function onPressSaveChanges() {
         setIsEditMode(false);
+    }
+
+    async function onPressBuyTicket() {
+        router.push('/buyTicketsScreen');
     }
 
     return (
@@ -212,6 +216,15 @@ export default function EventScreen() {
                             </View>
                         )
                     }
+                    <View style={{ width: "50%", flexDirection: "row", alignSelf: "center", justifyContent: "center", position: "relative", zIndex: 99, bottom: "150%", gap: 4 }}>
+                        <Button
+                            style={{ backgroundColor: "#825de8ff", padding: 16, flexGrow: 1, borderRadius: 10 }}
+                            textColor="#FFF"
+                            title="Buy ticket"
+                            key="Buy Ticket"
+                            onPress={onPressBuyTicket}
+                        />
+                    </View>
                 </View>
             </SafeAreaView>
         </SafeAreaProvider>
