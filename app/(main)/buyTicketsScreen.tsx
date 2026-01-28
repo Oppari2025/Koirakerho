@@ -1,45 +1,84 @@
-import { Image } from 'expo-image';
-import { StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import React from 'react';
+import { Image } from '@/components/ui/image';
+import { useLocalSearchParams } from 'expo-router';
+import React, { useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function buyTicketsScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText className="text-2xl font-bold">Osta lippu</ThemedText>
-        <HelloWave />
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+export default function BuyTicketsScreen() {
+    const { event: eventString } = useLocalSearchParams<{ event: string }>();
+    const event = eventString ? JSON.parse(eventString) : null;
+
+    const TICKET_PRICE = 10;
+    const [quantity, setQuantity] = useState(1);
+
+    const totalPrice = quantity * TICKET_PRICE;
+
+    return (
+        <SafeAreaView className="flex-1 p-4 gap-4 ">
+            <View className='flex-1'>
+                <View className=' flex-1 gap-4'>
+                    <View className="items-center flex-row justify-between w-full px-4 mb-4">
+                    <Text className="text-xl text-white font-bold">{event?.eventName}</Text>
+                    <Text className="text-base text-white">{event?.date}</Text>
+                    </View>
+                    <Image
+                    source={{ uri: event?.imageUrl }}
+                    alt={event?.eventName}
+                    className="w-full h-64 rounded-lg"                   
+                    />
+                    <Text className="mt-4 text-base text-white">{event?.eventInfo}</Text>
+                </View>
+            </View>
+            <View className='flex-1 justify-center'>
+            <ThemedText className="text-2xl font-bold">
+                Osta lippu
+            </ThemedText>
+            <View className="p-4 rounded-xl bg-black/5 gap-1 flex-row justify-between">
+                <ThemedText className="text-lg font-semibold">
+                    Peruslippu
+                </ThemedText>
+                <ThemedText>
+                    10 € / kpl
+                </ThemedText>
+            </View>
+            <View className="flex-row items-center justify-center gap-5">
+                <TouchableOpacity
+                    className="w-11 h-11 rounded-full bg-black/10 items-center justify-center"
+                    onPress={() => setQuantity(Math.max(1, quantity - 1))}
+                >
+                    <ThemedText className="text-2xl font-bold">
+                        −
+                    </ThemedText>
+                </TouchableOpacity>
+
+                <ThemedText className="text-xl font-semibold">
+                    {quantity}
+                </ThemedText>
+
+                <TouchableOpacity
+                    className="w-11 h-11 rounded-full bg-black/10 items-center justify-center"
+                    onPress={() => setQuantity(quantity + 1)}
+                >
+                    <ThemedText className="text-2xl font-bold">
+                        +
+                    </ThemedText>
+                </TouchableOpacity>
+            </View>
+            <View className="flex-row items-center justify-between">
+                <ThemedText>
+                    Yhteensä
+                </ThemedText>
+                <ThemedText className="text-xl font-bold">
+                    {totalPrice} €
+                </ThemedText>
+            </View>
+            <TouchableOpacity className="mt-2 py-4 rounded-xl bg-blue-600 items-center">
+                <ThemedText className="text-white text-base font-semibold">
+                    Siirry maksamaan
+                </ThemedText>
+            </TouchableOpacity>
+            </View>
+        </SafeAreaView>
+    );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

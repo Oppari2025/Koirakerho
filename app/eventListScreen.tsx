@@ -91,7 +91,14 @@ export default function EventListScreen() {
     return (
       <EventCard
         item={item}
-        onPress={() => router.navigate(`/(main)/eventScreen?id=${item.id}`)}
+        onPress={() =>
+          router.navigate({
+            pathname: '/(main)/eventScreen',
+            params: {
+              event: JSON.stringify(item),
+            },
+          })
+        }
       />
     );
   };

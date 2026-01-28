@@ -7,7 +7,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function EventScreen() {
-    const eventId = useLocalSearchParams<{ id: string }>();
+    const eventId = useLocalSearchParams<{ id: string, eventName: string, eventInfo: string, date: string, imageUrl: string }>();
 
     // State flags
     const [isAdminControlsEnabled, setIsAdminControlsEnabled] = React.useState<boolean>(true);
@@ -21,6 +21,8 @@ export default function EventScreen() {
     const [allowedDogs, setAllowedDogs] = React.useState<string[]>([]);
     const [allowedPeople, setAllowedPeople] = React.useState<string[]>([]);
     const [imageUrl, setImageUrl] = React.useState<string>("https://gluestack.github.io/public-blog-video-assets/saree.png");
+    const { event: eventString } = useLocalSearchParams<{ event: string }>();
+    const event = eventString ? JSON.parse(eventString) : null;
 
     async function onPressEdit() {
         // Back up old values.
@@ -43,7 +45,12 @@ export default function EventScreen() {
     }
 
     async function onPressBuyTicket() {
-        router.push('/buyTicketsScreen');
+        router.push({
+            pathname: '/buyTicketsScreen',
+            params: {
+                event: JSON.stringify(event), // EventScreeniltä saatu event
+            },
+        });
     }
 
     return (
