@@ -1,3 +1,4 @@
+import StripeProvider from '@/components/stripeProvider';
 import '@/global.css';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '@/src/context/AuthContext';
@@ -15,7 +16,8 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <AuthProvider>
+        <AuthProvider>
+    <StripeProvider>
       <GestureHandlerRootView>
               <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Drawer>
@@ -31,7 +33,9 @@ export default function RootLayout() {
         <StatusBar style="auto" />
       </ThemeProvider>
       </GestureHandlerRootView>
+    </StripeProvider>
     </AuthProvider>
+
   );
 }
 

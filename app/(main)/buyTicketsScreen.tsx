@@ -1,3 +1,4 @@
+import CheckoutForm from '@/components/checkout-form.native';
 import { ThemedText } from '@/components/themed-text';
 import { Image } from '@/components/ui/image';
 import { useLocalSearchParams } from 'expo-router';
@@ -73,11 +74,7 @@ export default function BuyTicketsScreen() {
                     {totalPrice} €
                 </ThemedText>
             </View>
-            <TouchableOpacity className="mt-2 py-4 rounded-xl bg-blue-600 items-center">
-                <ThemedText className="text-white text-base font-semibold">
-                    Siirry maksamaan
-                </ThemedText>
-            </TouchableOpacity>
+            <CheckoutForm amount={totalPrice} />
             </View>
         </SafeAreaView>
     );
