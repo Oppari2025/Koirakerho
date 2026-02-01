@@ -1,5 +1,6 @@
 import { useStripe } from '@stripe/stripe-react-native';
 import * as Linking from 'expo-linking';
+import { router } from 'expo-router';
 import React from 'react';
 import { Alert, Text, TouchableOpacity } from 'react-native';
 
@@ -49,6 +50,7 @@ export default function CheckoutForm({ amount }: { amount: number }) {
             Alert.alert(`Error code: ${error.code}`, error.message);
         } else {
             Alert.alert('Success', 'Your order is confirmed!');
+            router.replace('/ticketsScreen');
         }
 
     };

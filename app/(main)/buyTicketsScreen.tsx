@@ -1,9 +1,10 @@
 import CheckoutForm from '@/components/checkout-form.native';
 import { ThemedText } from '@/components/themed-text';
 import { Image } from '@/components/ui/image';
+import { addTicket } from '@/src/services/ticketService';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Button, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function BuyTicketsScreen() {
@@ -12,8 +13,42 @@ export default function BuyTicketsScreen() {
 
     const TICKET_PRICE = 10;
     const [quantity, setQuantity] = useState(1);
-
     const totalPrice = quantity * TICKET_PRICE;
+
+    const generateId = () =>
+    `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+    const createTicketFromEvent = (event: any) => {
+    return {
+        eventId: event.id,
+        eventName: event.eventName,
+        data: generateId(),
+        startTime: event.date,
+        };
+    };
+
+    const ticketInfo = () => {
+        const ticket = createTicketFromEvent(event);
+        console.log('Created ticket:', ticket);
+    }
+
+    const saveTicket = async () => {
+  if (!event) return;
+
+  try {
+    await addTicket({
+      eventId: event.id,
+      eventName: event.eventName,
+      startTime: event.date,
+      data: generateId(),
+    });
+
+    console.log("Ticket saved");
+  } catch (err) {
+    console.error("Failed to save ticket", err);
+  }
+};
+
 
     return (
         <SafeAreaView className="flex-1 p-4 gap-4 ">
@@ -76,6 +111,8 @@ export default function BuyTicketsScreen() {
             </View>
             <CheckoutForm amount={totalPrice} />
             </View>
+            <Button onPress={ticketInfo} title="Näytä lippuinfo" />
+            <Button title="Tallenna lippu" onPress={saveTicket} />
         </SafeAreaView>
     );
 }
