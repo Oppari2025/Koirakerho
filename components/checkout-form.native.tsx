@@ -1,3 +1,4 @@
+import { addTicket } from "@/src/services/ticketService";
 import { useStripe } from '@stripe/stripe-react-native';
 import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
@@ -18,9 +19,21 @@ async function fetchPaymentSheetParams(amount: number): Promise<{
     }).then((res: { json: () => any; }) => res.json());
 }
 
-export default function CheckoutForm({ amount }: { amount: number }) {
+type CheckoutFormProps = {
+    amount: number;
+    event: {
+        id: string;
+        eventName: string;
+        date: string;
+        imageUrl?: string;
+        eventInfo?: string;
+    };
+};
+
+export default function CheckoutForm({ amount, event }: CheckoutFormProps) {
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = React.useState(false);
+    const [paymentInitialized, setPaymentInitialized] = React.useState(false);
 
     const initializePaymentSheet = async () => {
         const { paymentIntent, ephemeralKey, customer } =
@@ -41,28 +54,50 @@ export default function CheckoutForm({ amount }: { amount: number }) {
         });
         if (!error) {
             setLoading(true);
+            setPaymentInitialized(true);
         }
     };
 
     const openPaymentSheet = async () => {
         const { error } = await presentPaymentSheet();
+
         if (error) {
             Alert.alert(`Error code: ${error.code}`, error.message);
         } else {
             Alert.alert('Success', 'Your order is confirmed!');
-            router.replace('/ticketsScreen');
-        }
 
+            try {
+                await addTicket({
+                    eventId: event.id,
+                    eventName: event.eventName,
+                    startTime: event.date,
+                    data: Date.now().toString(),
+                });
+                console.log("Ticket saved");
+                router.replace("/ticketsScreen");
+            } catch (err) {
+                console.error("Failed to save ticket", err);
+            }
+        }
     };
 
     return (
         <>
-            <TouchableOpacity className='mt-2 py-4 rounded-xl bg-blue-600 items-center' onPress={initializePaymentSheet}>
+            <TouchableOpacity
+                className='mt-2 py-4 rounded-xl bg-blue-600 items-center'
+                onPress={initializePaymentSheet}
+            >
                 <Text className='text-white font-bold'>Initialize Payment Sheet</Text>
             </TouchableOpacity>
-            <TouchableOpacity className='mt-2 py-4 rounded-xl bg-blue-600 items-center' onPress={openPaymentSheet}>
-                <Text className='text-white font-bold'>Open Payment Sheet</Text>
-            </TouchableOpacity>
+
+            {paymentInitialized && (
+                <TouchableOpacity
+                    className='mt-2 py-4 rounded-xl bg-blue-600 items-center'
+                    onPress={openPaymentSheet}
+                >
+                    <Text className='text-white font-bold'>Open Payment Sheet</Text>
+                </TouchableOpacity>
+            )}
         </>
     );
 }   

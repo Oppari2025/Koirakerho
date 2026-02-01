@@ -4,7 +4,7 @@ import { Image } from '@/components/ui/image';
 import { addTicket } from '@/src/services/ticketService';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { Button, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function BuyTicketsScreen() {
@@ -109,10 +109,8 @@ export default function BuyTicketsScreen() {
                     {totalPrice} €
                 </ThemedText>
             </View>
-            <CheckoutForm amount={totalPrice} />
+            <CheckoutForm amount={totalPrice} event={event} />
             </View>
-            <Button onPress={ticketInfo} title="Näytä lippuinfo" />
-            <Button title="Tallenna lippu" onPress={saveTicket} />
         </SafeAreaView>
     );
 }
