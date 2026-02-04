@@ -1,8 +1,12 @@
 import Button from '@/components/button';
 import CheckBoxGroup from '@/components/checkBoxGroup';
+import { addEventToGroupAction } from '@/components/database/groupActions';
 import TextEditBox from '@/components/textEditBox';
+import { createEvent } from '@/src/services/eventService';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
-import { ScrollView, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const MIN_EVENT_NAME_LENGTH = 1
@@ -11,14 +15,15 @@ const MIN_EVENT_DESCRIPTION_LENGTH = 1
 const MAX_EVENT_DESCRIPTION_LENGTH = 1000
 
 export default function AddEventScreen() {
+    // routing
     const { groupId } = useLocalSearchParams<{ groupId?: string }>();
     const router = useRouter();
-    
+
+    // state
     const [isInvalidEventName, setIsInvalidEventName] = React.useState(false);
     const [isInvalidEventDescription, setIsInvalidEventDescription] = React.useState(false);
     const [isInvalidAllowedDogs, setIsInvalidAllowedDogs] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
-
     const [eventName, setEventName] = React.useState("");
     const [eventType, setEventType] = React.useState("");
     const [eventDescription, setEventDescription] = React.useState("");
@@ -50,10 +55,15 @@ export default function AddEventScreen() {
                 eventType: eventType || undefined,
                 date: Timestamp.now(),
                 createdBy: "",
+                location: {
+                    lat: 0,
+                    lng: 0,
+                    address: "Testikatu 1"
+                }
             };
 
             const res = await createEvent(eventData);
-            
+
             // Jos tapahtuma luotiin ryhmässä, lisätään se ryhmään
             if (groupId && res.id) {
                 await addEventToGroupAction(groupId, res.id);
@@ -73,7 +83,7 @@ export default function AddEventScreen() {
 
     return (
         <SafeAreaProvider>
-            <SafeAreaView style={{ width: "100%" }}>
+            <SafeAreaView style={styles.container}>
                 <ScrollView style={{ width: "100%", padding: 8 }}>
                     <View style={{ gap: 16, marginTop: 8, width: "100%" }}>
                         <TextEditBox
@@ -140,6 +150,17 @@ export default function AddEventScreen() {
         </SafeAreaProvider>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 8,
+        backgroundColor: '#fff3c0ff',
+    },
+    text: {
+        color: "black"
+    }
+})
 
 
 const classes = {

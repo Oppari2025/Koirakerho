@@ -30,6 +30,11 @@ export default function RootLayout() {
                     <Stack.Screen name="editDogProfileScreen" options={{ headerShown: false, title: "Edit Dog Profile" }} />
                     <Stack.Screen name="addDogScreen" options={{ headerShown: false, title: "Add Dog" }} />
                     <Stack.Screen name="friendChatScreen" options={{ headerShown: false, title: "Friend chatScreen" }} />
+                    <Stack.Screen name="eventListScreen" options={{ headerShown: false, title: "Event list" }} />  
+                    <Stack.Screen name="ticketsScreen" options={{ headerShown: false, title: "Tickets" }} />
+                    <Stack.Screen name="coordinatePickerScreen" options={{ headerShown: true, title: "Select Location" }} />  
+                    <Stack.Screen name="placeSearchScreen" options={{ headerShown: true, title: "Search Location" }} />  
+                    <Stack.Screen name="navigatorScreen" options={{ headerShown: true, title: "Navigator" }} />  
                 </Stack>
                 <StatusBar style="auto" />
             
