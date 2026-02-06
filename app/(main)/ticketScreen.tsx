@@ -1,7 +1,7 @@
 import { getTicketById } from "@/src/services/ticketService";
 import { EventTicket } from "@/types/event-ticket";
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import QRCodeStyled from "react-native-qrcode-styled";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -59,12 +59,12 @@ export default function TicketScreen(): React.JSX.Element {
                             <Text style={{ fontWeight: "bold" }}>Date</Text>
                             <Text>{ticket.startTime}</Text>
                         </View>
-                        <View style={{ borderBottomColor: "gray", borderBottomWidth: StyleSheet.hairlineWidth, borderStyle: "dashed" }} />
+                        <View style={styles.horizontalLineDashed} />
                         <View>
                             <Text style={{ fontWeight: "bold" }}>Time</Text>
                             <Text>{ticket.startTime}</Text>
                         </View>
-                        <View style={{ borderBottomColor: "gray", borderBottomWidth: StyleSheet.hairlineWidth, borderStyle: "dashed" }} />
+                        <View style={styles.horizontalLineDashed} />
                         <View>
                             <Text style={{ fontWeight: "bold" }}>Location</Text>
                             <Text>Test Road 1</Text>
