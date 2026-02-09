@@ -1,7 +1,7 @@
 import { getTicketById } from "@/src/services/ticketService";
 import { EventTicket } from "@/types/event-ticket";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import QRCodeStyled from "react-native-qrcode-styled";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";

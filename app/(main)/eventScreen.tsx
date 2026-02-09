@@ -1,9 +1,9 @@
 import { CheckBoxOption } from "@/types/checkbox";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { DateTimePickerAndroid, DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import * as Calendar from 'expo-calendar';
 import * as ImagePicker from 'expo-image-picker';
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,7 +21,6 @@ const ALLOWED_PEOPLE_OPTIONS: CheckBoxOption[] = [
 ];
 
 export default function EventScreen() {
-    const eventId = useLocalSearchParams<{ id: string, eventName: string, eventInfo: string, date: string, imageUrl: string }>();
     const defaultDate = new Date(Date.now());
 
     const insets = useSafeAreaInsets();
@@ -43,16 +42,6 @@ export default function EventScreen() {
     const [eventAllowedPeople, setEventAllowedPeople] = useState<string[]>(["club_members", "dog_owners", "other"]);
     const [eventImageUrl, setEventImageUrl] = useState<string>("");
 
-    // Form values
-    const [eventName, setEventName] = React.useState<string>("");
-    const previousEventName = React.useRef<string>("");
-    const [eventDescription, setEventDescription] = React.useState<string>("");
-    const previousEventDescription = React.useRef<string>("");
-    const [allowedDogs, setAllowedDogs] = React.useState<string[]>([]);
-    const [allowedPeople, setAllowedPeople] = React.useState<string[]>([]);
-    const [imageUrl, setImageUrl] = React.useState<string>("https://gluestack.github.io/public-blog-video-assets/saree.png");
-    const { event: eventString } = useLocalSearchParams<{ event: string }>();
-    const event = eventString ? JSON.parse(eventString) : null;
     // refs
     const previousEventName = useRef<string>("");
     const previousEventDescription = useRef<string>("");
@@ -111,13 +100,6 @@ export default function EventScreen() {
         setIsEditMode(false);
     }
 
-    async function onPressBuyTicket() {
-        router.push({
-            pathname: '/buyTicketsScreen',
-            params: {
-                event: JSON.stringify(event), // EventScreeniltä saatu event
-            },
-        });
     async function onPressDelete() {
         // TODO: Delete from the db
 
@@ -677,55 +659,20 @@ export default function EventScreen() {
                         <View style={{ height: 300 }} />
                     </View>
                 </ScrollView>
-                <View style={{ width: "100%" }}>
-                    {
-                        isAdminControlsEnabled && (
-                            <View style={{ width: "50%", flexDirection: "row", alignSelf: "center", justifyContent: "center", position: "relative", zIndex: 99, bottom: "200%", gap: 4 }}>
-                                {
-                                    isEditMode
-                                        ? (
-                                            <>
-                                                <Button
-                                                    style={{ backgroundColor: "#006b00ff", padding: 16, flexGrow: 1, borderRadius: 10 }}
-                                                    textColor="#FFF"
-                                                    title="Save"
-                                                    key="save"
-                                                    onPress={onPressSaveChanges}
-                                                />
-                                                <Button
-                                                    style={{ backgroundColor: "#bd003fff", padding: 16, flexGrow: 1, borderRadius: 10 }}
-                                                    textColor="#FFF"
-                                                    title="Discard"
-                                                    key="discard"
-                                                    onPress={onPressDiscardChanges}
-                                                />
-                                            </>
-                                        )
-                                        : (
-                                            <>
-                                                <Button
-                                                    style={{ backgroundColor: "#e07b1cff", padding: 16, flexGrow: 1, borderRadius: 10 }}
-                                                    textColor="#FFF"
-                                                    title="Edit"
-                                                    key="edit"
-                                                    onPress={onPressEdit}
-                                                />
-                                            </>
-                                        )
-                                }
-                            </View>
-                        )
-                    }
-                    <View style={{ width: "50%", flexDirection: "row", alignSelf: "center", justifyContent: "center", position: "relative", zIndex: 99, bottom: "150%", gap: 4 }}>
-                        <Button
-                            style={{ backgroundColor: "#825de8ff", padding: 16, flexGrow: 1, borderRadius: 10 }}
-                            textColor="#FFF"
-                            title="Buy ticket"
-                            key="Buy Ticket"
-                            onPress={onPressBuyTicket}
-                        />
-                    </View>
-                </View>
+            <View className="flex-1 absolute right-5 bottom-5">
+                <TouchableOpacity                    style={{
+                        backgroundColor: "#0000007f",
+                        padding: 8,
+                        borderRadius: 10,
+                        alignSelf: "center"
+                    }}
+                    onPress={() => {
+                        router.push("/(main)/buyTicketsScreen");
+                    }}
+                >
+                    <Text style={{ color: "white", fontSize: 16 }}>Osta lippu</Text>
+                </TouchableOpacity>
+            </View>
             </SafeAreaView>
         </SafeAreaProvider>
     )
