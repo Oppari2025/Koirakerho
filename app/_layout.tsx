@@ -58,8 +58,6 @@ function InnerRoot() {
         {firebaseUser ? (
           <>
             <Stack.Screen name="(main)/(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(main)/eventScreen" options={{ headerShown: true, title: "Event" }} />
-            <Stack.Screen name="(main)/addEventScreen" options={{ headerShown: true, title: "Add Event" }} />
             <Stack.Screen name="(main)/dogProfileScreen" options={{ headerShown: false, title: "Dog Profile" }} />
           </>
         ) : (

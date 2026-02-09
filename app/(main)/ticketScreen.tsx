@@ -44,30 +44,11 @@ export default function TicketScreen(): React.JSX.Element {
                             <Text style={{ fontSize: 20, textAlign: "center" }} numberOfLines={1}>
                                 {ticket.eventName}
                             </Text>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, textAlign: "center" }}>
-                                {ticket.type || "Standard"}
-                            </Text>
                             <View style={{ alignItems: "center", borderWidth: StyleSheet.hairlineWidth, borderColor: "black", padding: 16, gap: 8 }}>
                                 <QRCodeStyled data={ticket.data} pieceScale={1} size={180} />
                             </View>
                             <View style={{ borderBottomColor: "gray", borderBottomWidth: StyleSheet.hairlineWidth }} />
                             <Text style={{ textAlign: "center", color: "gray" }}>{ticket.id}</Text>
-                        </View>
-                    </View>
-                    <View style={{ backgroundColor: "white", padding: 16, borderRadius: 10, gap: 8 }}>
-                        <View>
-                            <Text style={{ fontWeight: "bold" }}>Date</Text>
-                            <Text>{ticket.startTime}</Text>
-                        </View>
-                        <View style={styles.horizontalLineDashed} />
-                        <View>
-                            <Text style={{ fontWeight: "bold" }}>Time</Text>
-                            <Text>{ticket.startTime}</Text>
-                        </View>
-                        <View style={styles.horizontalLineDashed} />
-                        <View>
-                            <Text style={{ fontWeight: "bold" }}>Location</Text>
-                            <Text>Test Road 1</Text>
                         </View>
                     </View>
                 </ScrollView>
