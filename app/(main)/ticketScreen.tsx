@@ -1,218 +1,58 @@
+import { getTicketById } from "@/src/services/ticketService";
 import { EventTicket } from "@/types/event-ticket";
-import React, { useEffect, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import QRCodeStyled from 'react-native-qrcode-styled';
+import QRCodeStyled from "react-native-qrcode-styled";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-export default function ticketScreen(): React.JSX.Element {
+export default function TicketScreen(): React.JSX.Element {
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const [ticket, setTicket] = React.useState<EventTicket | null>(null);
 
-    // state
-
-    const [ticket, setTicket] = useState<EventTicket>({
-        id: "???",
-        type: "???",
-        eventId: "???",
-        eventName: "???",
-        data: "???",
-        startTime: "???"
-    });
-
-    // effects
-
-    useEffect(() => {
-        const test_ticket = {
-            id: "73849656879543687943874693",
-            type: "standard",
-            eventId: "asda",
-            eventName: "Test Event 1",
-            data: "https://example.com/jfdgsjgfddgfiujopgfuijop",
-            startTime: "2020-01-01 00:00:00"
-        }
-
-        setTicket(test_ticket);
-        return () => {
-
+    React.useEffect(() => {
+        const fetchTicket = async () => {
+            if (!id) return;
+            try {
+                const ticketData = await getTicketById(id);
+                if (ticketData) setTicket(ticketData);
+            } catch (err) {
+                console.error("Failed to fetch ticket:", err);
+            }
         };
-    }, []);
+        fetchTicket();
+    }, [id]);
+
+    if (!ticket) {
+        return (
+            <SafeAreaProvider>
+                <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Text>Loading ticket...</Text>
+                </SafeAreaView>
+            </SafeAreaProvider>
+        );
+    }
 
     return (
         <SafeAreaProvider>
-            <SafeAreaView style={styles.container}>
-                <ScrollView contentContainerStyle={{ rowGap: 8, flex: 1 }}>
-                    <View style={styles.ticketMainContainer}>
-                        <View style={styles.ticketContainerHeader}>
-                            <Text style={[styles.text, styles.ticketContainerHeaderText]}>
-                                Event Ticket
+            <SafeAreaView style={{ padding: 8, height: "100%" }}>
+                <ScrollView contentContainerStyle={{ rowGap: 8 }}>
+                    <View style={{ backgroundColor: "white", padding: 16, borderRadius: 10 }}>
+                        <View style={{ gap: 8, alignItems: "center" }}>
+                            <Text style={{ fontWeight: "bold", fontSize: 20 }}>Event Ticket</Text>
+                            <View style={{ borderBottomColor: "gray", borderBottomWidth: StyleSheet.hairlineWidth }} />
+                            <Text style={{ fontSize: 20, textAlign: "center" }} numberOfLines={1}>
+                                {ticket.eventName}
                             </Text>
-                        </View>
-
-
-                        <View style={styles.horizontalLine} />
-
-
-                        <View style={styles.ticketContainerContent}>
-                            <View style={styles.eventNameTextContainer}>
-                                <Text
-                                    style={[styles.text, styles.eventNameText]}
-                                    numberOfLines={1}
-                                >
-                                    Test Event 1
-                                </Text>
+                            <View style={{ alignItems: "center", borderWidth: StyleSheet.hairlineWidth, borderColor: "black", padding: 16, gap: 8 }}>
+                                <QRCodeStyled data={ticket.data} pieceScale={1} size={180} />
                             </View>
-
-                            <View style={styles.ticketTypeTextContainer}>
-                                <Text style={[styles.text, styles.ticketTypeText]}>
-                                    {
-                                        (() => {
-                                            switch (ticket.type) {
-                                                case "standard":
-                                                    return "Perus";
-                                                case "basic":
-                                                    return "Budjetti";
-                                                case "premium":
-                                                    return "VIP";
-                                                default:
-                                                    return "???";
-                                            }
-                                        })()
-                                    }
-                                </Text>
-                            </View>
-
-
-                            <View style={styles.ticketBottomContainer}>
-                                <View style={styles.qrCodeContainer}>
-                                    <QRCodeStyled
-                                        style={{}}
-                                        data={ticket.data}
-                                        pieceScale={1}
-                                        size={180}
-                                    />
-                                </View>
-                            </View>
-                        </View>
-
-                        <View style={styles.horizontalLine} />
-
-                        <View>
-                            <Text style={[styles.ticketIdText]}>
-                                {ticket.id}
-                            </Text>
-                        </View>
-                    </View>
-
-
-
-                    <View
-                        style={styles.ticketMainContainer}
-                    >
-                        <View>
-                            <Text style={[styles.text, styles.infoFieldHeadingText]}>
-                                Date
-                            </Text>
-                            <Text style={[styles.text, styles.infoFieldText]}>
-                                {ticket.startTime}
-                            </Text>
-                        </View>
-                        <View style={styles.horizontalLineDashed} />
-                        <View>
-                            <Text style={[styles.text, styles.infoFieldHeadingText]}>
-                                Time
-                            </Text>
-                            <Text style={[styles.text, styles.infoFieldText]}>
-                                {ticket.startTime}
-                            </Text>
-                        </View>
-                        <View style={styles.horizontalLineDashed} />
-                        <View>
-                            <Text style={[styles.text, styles.infoFieldHeadingText]}>
-                                Location
-                            </Text>
-                            <Text style={[styles.text, styles.infoFieldText]}>
-                                Test Road 1
-                            </Text>
+                            <View style={{ borderBottomColor: "gray", borderBottomWidth: StyleSheet.hairlineWidth }} />
+                            <Text style={{ textAlign: "center", color: "gray" }}>{ticket.id}</Text>
                         </View>
                     </View>
                 </ScrollView>
             </SafeAreaView>
         </SafeAreaProvider>
-    )
+    );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 8,
-        //height: "100%",
-        backgroundColor: '#fff3c0ff'
-    },
-    ticketMainContainer: {
-        backgroundColor: "white",
-        padding: 16,
-        borderRadius: 10,
-        gap: 8,
-        borderWidth: 1,
-        borderColor: "gray"
-    },
-    ticketContainerHeader: {
-        alignItems: "center"
-    },
-    text: {
-        color: "black"
-    },
-    ticketTypeTextContainer: {
-        padding: 8,
-        width: "100%"
-    },
-    ticketTypeText: {
-        fontWeight: "bold",
-        fontSize: 16,
-        textAlign: "center",
-    },
-    infoFieldHeadingText: {
-        fontWeight: "bold"
-    },
-    infoFieldText: {
-
-    },
-    ticketIdText: {
-        textAlign: "center",
-        color: "gray"
-    },
-    ticketContainerHeaderText: {
-        fontWeight: "bold",
-        fontSize: 20
-    },
-    horizontalLine: {
-        borderBottomColor: "gray",
-        borderBottomWidth: StyleSheet.hairlineWidth
-    },
-    horizontalLineDashed: {
-        borderBottomColor: "gray",
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderStyle: "dashed"
-    },
-    ticketContainerContent: {
-        padding: 8,
-        gap: 8,
-        width: "100%"
-    },
-    eventNameTextContainer: {
-        height: 40
-    },
-    eventNameText: {
-        fontSize: 20,
-        textAlign: "center"
-    },
-    qrCodeContainer: {
-        alignItems: "center",
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: "black",
-        padding: 16,
-        gap: 8
-    },
-    ticketBottomContainer: {
-        alignItems: "center",
-        width: "100%"
-    }
-})

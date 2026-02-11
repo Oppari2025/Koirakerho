@@ -53,7 +53,10 @@ export default function EventListScreen(): React.JSX.Element {
   }
 
   function onPressEventCard(item: EventData) {
-    router.navigate(`/(main)/eventScreen?id=${item.id}`);
+    router.push({
+      pathname: '/(main)/eventScreen',
+      params: { id: item.id },
+    });
   }
 
   return (
