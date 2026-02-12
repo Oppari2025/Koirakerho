@@ -1,76 +1,83 @@
-import EventTicketCard from "@/components/eventTicketCard";
-import { EventTicket } from "@/types/event-ticket";
+import { getMyTickets } from "@/src/services/ticketService";
+import { Ticket } from "@/src/types/ticket";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import React from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function TicketsScreen(): React.JSX.Element {
     const router = useRouter();
+    const [tickets, setTickets] = React.useState<Ticket[]>([]);
+    const [loading, setLoading] = React.useState(false);
 
-    const [tickets, setTickets] = useState<EventTicket[]>([]);
+  // Haetaan liput Firebasesta kun komponentti mountataan
+  React.useEffect(() => {
+    const fetchTickets = async () => {
+      setLoading(true);
+      try {
+        const myTickets = await getMyTickets();
+        setTickets(myTickets as Ticket[]);
+      } catch (err) {
+        console.error("Failed to load tickets:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+        fetchTickets();
+  }, []);
 
-    useEffect(() => {
-        const test_tickets: EventTicket[] = [
-            {
-                id: "gjhddghj",
-                type: "standard",
-                eventId: "asda",
-                eventName: "Test Event 1",
-                data: "nbmvcxnmmncbvcxnbvm",
-                startTime: "2020-01-01 00:00:00"
-            },
-            {
-                id: "asdasd",
-                type: "premium",
-                eventId: "sdff",
-                eventName: "Test Event 2 dgsjhlgdfsjhfjhhjgdfhhjkudhkjldkguhjkhjukhjugkdhjugfkh",
-                data: "asdgkhfasdfkghasfdgkhfasgkhaskghsfasdgfdgsh",
-                startTime: "2020-01-01 00:00:00"
-            },
-            {
-                id: "gsdfgdgd",
-                type: "basic",
-                eventId: "fsdf",
-                eventName: "Test Event 3",
-                data: "tyuerwwyurioetyruiotwryuioetyuri",
-                startTime: "2020-01-01 00:00:00"
-            }
-        ]
+    const renderItem = ({ item }: { item: Ticket }) => {
+        return (
+            <TouchableOpacity
+                onPress={() => router.navigate(`/(main)/ticketScreen?id=${item.id}`)}
+                style={{
+                    backgroundColor: "#ffffffff",
+                    padding: 16,
+                    borderRadius: 10,
+                    gap: 8
+                }}
+            >
+                <View style={{ width: "100%", flexDirection: "row" }}>
+                    <View style={{ borderRadius: 10, backgroundColor: "#ebebebff", padding: 8 }}>
+                    </View>
+                </View>
 
-        setTickets(test_tickets);
-        return () => {
+                <View style={{ height: 40 }}>
+                    <Text style={{ color: "#000000ff", fontWeight: "bold", fontSize: 16 }}>
+                        {item.eventName}
+                    </Text>
+                </View>
+                <View style={{ borderBottomColor: "black", borderBottomWidth: StyleSheet.hairlineWidth }} />
 
-        };
-    }, []);
 
-    function onPressEventTicketCard(item: EventTicket) {
-        router.navigate(`/(main)/ticketScreen?id=${item.id}`)
-    }
+                <View>
+                    <Text>{item.startTime}</Text>
+                </View>
+            </TouchableOpacity >
+        );
+    };
 
-    return (
-        <SafeAreaProvider>
-            <SafeAreaView style={styles.container}>
-                <FlatList
-                    ListHeaderComponent={() => <View style={{ height: 8 }} />}
-                    ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-                    ListFooterComponent={() => <View style={{ height: 200 }} />}
-                    data={tickets}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => {
-                        return (
-                            <EventTicketCard
-                                onPress={() => onPressEventTicketCard(item)}
-                                eventName={item.eventName}
-                                startTime={item.startTime}
-                                ticketType={item.type}
-                            />
-                        )
-                    }}
-                />
-            </SafeAreaView>
-        </SafeAreaProvider>
-    )
+return (
+    <SafeAreaProvider>
+      <SafeAreaView style={{ padding: 8, height: "100%" }}>
+        <FlatList
+          data={tickets}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={() => <View style={{ height: 8 }} />}
+          ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+          ListFooterComponent={() => <View style={{ height: 200 }} />}
+          refreshing={loading}
+          onRefresh={async () => {
+            setLoading(true);
+            const myTickets = await getMyTickets();
+            setTickets(myTickets as Ticket[]);
+            setLoading(false);
+          }}
+        />
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
 }
 
 const styles = StyleSheet.create({

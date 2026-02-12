@@ -857,14 +857,20 @@ export default function EventScreen() {
                         <View style={{ height: 300 }} />
                     </View>
                 </ScrollView>
-
-
-
-
-
-
-
-
+            <View className="flex-1 absolute right-5 bottom-5">
+                <TouchableOpacity                    style={{
+                        backgroundColor: "#0000007f",
+                        padding: 8,
+                        borderRadius: 10,
+                        alignSelf: "center"
+                    }}
+                    onPress={() => {
+                        router.push("/(main)/buyTicketsScreen");
+                    }}
+                >
+                    <Text style={{ color: "white", fontSize: 16 }}>Osta lippu</Text>
+                </TouchableOpacity>
+            </View>
             </SafeAreaView>
         </SafeAreaProvider>
     )

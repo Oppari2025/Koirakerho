@@ -1,3 +1,4 @@
+import StripeProvider from '@/components/stripeProvider';
 import '@/global.css';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '@/src/context/AuthContext';
@@ -15,7 +16,8 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <AuthProvider>
+        <AuthProvider>
+    <StripeProvider>
       <GestureHandlerRootView>
               <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Drawer>
@@ -31,7 +33,9 @@ export default function RootLayout() {
         <StatusBar style="auto" />
       </ThemeProvider>
       </GestureHandlerRootView>
+    </StripeProvider>
     </AuthProvider>
+
   );
 }
 
@@ -54,8 +58,6 @@ function InnerRoot() {
         {firebaseUser ? (
           <>
             <Stack.Screen name="(main)/(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(main)/eventScreen" options={{ headerShown: true, title: "Event" }} />
-            <Stack.Screen name="(main)/addEventScreen" options={{ headerShown: true, title: "Add Event" }} />
             <Stack.Screen name="(main)/dogProfileScreen" options={{ headerShown: false, title: "Dog Profile" }} />
           </>
         ) : (
