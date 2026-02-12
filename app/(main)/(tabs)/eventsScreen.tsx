@@ -18,7 +18,7 @@ export default function eventsScreen(): React.JSX.Element {
                     fontWeight: "bold",
                 },
                 tabBarIndicatorStyle: {
-                    backgroundColor: "#009200ff"
+                    backgroundColor: "green"
                 }
             }}
         >
@@ -26,14 +26,14 @@ export default function eventsScreen(): React.JSX.Element {
                 name="EventListScreen"
                 component={EventListScreen}
                 options={{
-                    title: "Listing"
+                    title: "Listaus"
                 }}
             />
             <Tab.Screen
                 name="TicketsScreen"
                 component={TicketsScreen}
                 options={{
-                    title: "Tickets"
+                    title: "Liput"
                 }}
             />
         </Tab.Navigator>

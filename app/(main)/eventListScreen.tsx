@@ -1,58 +1,57 @@
 import EventCard from '@/components/eventCard';
-import { EventData } from '@/types/events';
+import { useAuth } from '@/src/context/AuthContext';
+import { getUpcomingEvents } from '@/src/services/eventService';
+import { Event } from '@/src/types/event';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function EventListScreen(): React.JSX.Element {
   // router
   const router = useRouter();
 
+  // database
+  const { firebaseUser } = useAuth()
+
   // state
-  const [events, setEvents] = useState<EventData[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [isAdminUser, setIsAdminUser] = useState<boolean>(true);
+  const [status, setStatus] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // effects
 
-  useEffect(() => {
-    const test_events: EventData[] = [
-      {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        eventName: 'First Item',
-        eventInfo: "This is test event number 1.",
-        date: "01.01.2020",
-        imageUrl: "https://dgfadag"
-      },
-      {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        eventName: 'Second Item',
-        eventInfo: "This is test event number 2.",
-        date: "01.01.2020",
-        imageUrl: "https://dgafdaggd"
-      },
-      {
-        id: '3ac68afc-c60ghf5-48d3-a4f8-fbd91aa97f63',
-        eventName: 'Second Item',
-        eventInfo: "This is test event number 3.",
-        date: "01.01.2020",
-        imageUrl: "https://gdadagds"
-      }
-    ]
+  async function handleGetEvents() {
+    console.log("handlegetevents");
+    setIsLoading(true);
+    setStatus(null);
 
-    setEvents(test_events);
-    return () => {
-
-    };
-  }, []);
-
-
-  function onPressAddEvent() {
-    router.navigate(`/(main)/addEventScreen`);
+    getUpcomingEvents().then(events => {
+      setEvents(events);
+    }).catch(error => {
+      setStatus(`Tapahtumatietojen lataaminen epäonnistui.`);
+    }).finally(() => {
+      setIsLoading(false);
+    });
   }
 
-  function onPressEventCard(item: EventData) {
+  async function onRefresh() {
+    handleGetEvents();
+  }
+
+  useEffect(() => {
+    handleGetEvents();
+
+    return () => { };
+  }, []);
+
+  function onPressAddEvent() {
+    router.navigate(`/(main)/eventScreen`);
+  }
+
+  function onPressEventCard(item: Event) {
     router.navigate(`/(main)/eventScreen?id=${item.id}`);
   }
 
@@ -60,6 +59,27 @@ export default function EventListScreen(): React.JSX.Element {
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <View style={styles.listContainer}>
+          {
+            (
+              () => {
+                if (status) {
+                  return (
+                    <Text className="text-black text-lg">
+                      {status}
+                    </Text>
+                  )
+                }
+                else if (!events || events.length === 0) {
+                  return (
+                    <Text className="text-black text-lg">
+                      Ei tulevia tapahtumia.
+                    </Text>
+                  )
+                }
+              }
+            )()
+          }
+
           <FlatList
             ListHeaderComponent={() => <View style={{ height: 8 }} />}
             ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
@@ -74,6 +94,7 @@ export default function EventListScreen(): React.JSX.Element {
                 />
               );
             }}
+            refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
           />
         </View>
         <View style={styles.overlay}>
@@ -102,7 +123,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     padding: 8,
-    backgroundColor: '#fff3c0ff',
+    backgroundColor: '#fdfbd4',
   },
   listContainer: {
     height: "auto",
@@ -119,25 +140,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
     pointerEvents: "box-none",
-
-    // backgroundColor: "#b430303d",
-    // borderWidth: 2,
-    // borderColor: "blue",
   },
   text: {
     color: "black"
   },
   floatingButton: {
-    width: 56,
-    height: 56,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
     elevation: 2,
-    backgroundColor: '#144100ff',
+    backgroundColor: '#bdb76b',
+    borderWidth: 1,
+    borderColor: "gray"
   },
   floatingButtonIcon: {
-    fontSize: 28,
-    color: "white"
+    fontSize: 32,
+    color: "#fdfbd4"
   }
 });

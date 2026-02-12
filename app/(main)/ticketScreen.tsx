@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 8,
         //height: "100%",
-        backgroundColor: '#fff3c0ff'
+        backgroundColor: '#fdfbd4'
     },
     ticketMainContainer: {
         backgroundColor: "white",
