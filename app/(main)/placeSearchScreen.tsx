@@ -1,5 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useRouter } from "expo-router";
+import { RelativePathString, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +14,7 @@ type SearchResult = {
 export default function placeSearchScreen(): React.JSX.Element {
     // routing
     const router = useRouter();
+    const { returnPath } = useLocalSearchParams<{ returnPath: RelativePathString }>();
 
     // state
     const [searchText, setSearchText] = useState<string>("");
@@ -27,12 +28,13 @@ export default function placeSearchScreen(): React.JSX.Element {
 
         async function getSearchResults() {
             try {
-                const url = `https://photon.komoot.io/api/?q=${searchText}&lang=en&limit=10`;
+                const url = `https://photon.komoot.io/api/?q=${searchText}&lang=en&limit=20`;
+                
 
                 const response = await fetch(url);
 
                 if (!response.ok) {
-                    setErrorMessage("Ongelma haettaessa paikkatietoja.");
+                    setErrorMessage("Ongelma haettaessa paikkatietoja.");                   
                     return;
                 }
 
@@ -83,7 +85,7 @@ export default function placeSearchScreen(): React.JSX.Element {
                         location = `${city}, ${state}, ${country}`;
                     }
                     else {
-                       location = `${state}, ${country}`; 
+                        location = `${state}, ${country}`;
                     }
 
                     const result: SearchResult = {
@@ -109,7 +111,7 @@ export default function placeSearchScreen(): React.JSX.Element {
 
     async function onPressSearchResult(item: SearchResult) {
         router.dismissTo({
-            pathname: "/coordinatePickerScreen",
+            pathname: returnPath,
             params: {
                 lon: item.longitude,
                 lat: item.latitude,
@@ -136,13 +138,16 @@ export default function placeSearchScreen(): React.JSX.Element {
                         </Text>
                     ) : (
                         <Text style={[styles.text, styles.headingText]}>
-                            {searchResults ? `${searchResults.length} hakutulosta` : "Kirjoita hakeaksesi."}
+                            {searchResults
+                                ? `${searchResults.length} hakutulosta`
+                                : "Kirjoita hakeaksesi."}
                         </Text>
                     )
                 }
 
                 <FlatList
                     ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+                    ListFooterComponent={() => <View style={{ height: 80 }} />}
                     data={searchResults}
                     renderItem={({ item }) => {
                         return (
@@ -172,7 +177,6 @@ export default function placeSearchScreen(): React.JSX.Element {
                         )
                     }}
                 />
-
             </SafeAreaView>
         </SafeAreaProvider>
     )

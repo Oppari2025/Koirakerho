@@ -35,7 +35,7 @@ export default function RootLayout() {
                     <Stack.Screen name="ticketsScreen" options={{ headerShown: false, title: "Tickets" }} />
                     <Stack.Screen name="coordinatePickerScreen" options={{ headerShown: true, title: "Select Location" }} />  
                     <Stack.Screen name="placeSearchScreen" options={{ headerShown: true, title: "Search Location" }} />  
-                    <Stack.Screen name="navigatorScreen" options={{ headerShown: true, title: "Navigator" }} />  
+                    <Stack.Screen name="navigatorScreen" options={{ headerShown: true, title: "Navigator" }} />
                 </Stack>
                 <StatusBar style="auto" />
             
