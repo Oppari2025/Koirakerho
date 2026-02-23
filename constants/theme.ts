@@ -10,20 +10,32 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text: '#3B2F2F', // Taupe (dark text)
+    background: '#F5E9DA', // Golden Taupe (light background)
+    tint: '#C2B280', // Golden Taupe
+    icon: '#A89F91', // Muted taupe
+    tabIconDefault: '#A89F91',
+    tabIconSelected: '#C2B280',
+    accent: '#FFD700', // Gold accent
+    border: '#E6D3B3', // Light taupe border
+    card: '#E6D3B3', // Card background
+    white: '#FFFFFF',
+    black: '#000000',
+    gray: '#A89F91',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: '#F5E9DA', // Light taupe text
+    background: '#3B2F2F', // Taupe (dark background)
+    tint: '#FFD700', // Gold accent
+    icon: '#C2B280', // Golden Taupe
+    tabIconDefault: '#C2B280',
+    tabIconSelected: '#FFD700',
+    accent: '#FFD700',
+    border: '#A89F91',
+    card: '#A89F91',
+    white: '#FFFFFF',
+    black: '#000000',
+    gray: '#E6D3B3',
   },
 };
 
