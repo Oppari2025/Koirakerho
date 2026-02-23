@@ -3,13 +3,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function CheckBoxGroup({ options, checkedValues, onChange, fontSize, style, label, isEditable }: CheckBoxGroupProps): React.JSX.Element {
+export default function CheckBoxGroup({ options, checkedValues, onChange, fontSize, style, label, isEditable, labelStyle, optionLabelStyle }: CheckBoxGroupProps): React.JSX.Element {
     let updatedCheckedValues = [...checkedValues];
     fontSize = fontSize || 15;
 
     return (
         <View style={[styles.container, style]}>
-            <Text className="font-bold text-xl text-white">
+            <Text style={[{ fontWeight: 'bold', fontSize: 20, color: '#fff' }, labelStyle]}>
                 {label}
             </Text>
 
@@ -25,8 +25,6 @@ export default function CheckBoxGroup({ options, checkedValues, onChange, fontSi
                                         key={option.value}
                                         style={active ? [styles.checkBox, styles.activeCheckBox] : styles.checkBox}
                                         onPress={() => {
-                                            console.log(option.value, active);
-
                                             if (active) {
                                                 // Uncheck
                                                 updatedCheckedValues = updatedCheckedValues.filter(
@@ -47,7 +45,12 @@ export default function CheckBoxGroup({ options, checkedValues, onChange, fontSi
                                             color={active ? "#06b6d4" : "#64748b"}
                                         />
                                         <Text
-                                            style={active ? [styles.text, styles.activeText, { fontSize: fontSize }] : [styles.text, { fontSize: fontSize }]}
+                                            style={[
+                                                { marginLeft: 4, color: '#374151' },
+                                                active && { color: '#6b7280' },
+                                                { fontSize: fontSize },
+                                                optionLabelStyle
+                                            ]}
                                         >
                                             {option.label}
                                         </Text>
@@ -80,7 +83,12 @@ export default function CheckBoxGroup({ options, checkedValues, onChange, fontSi
                                                 }
                                             />
                                             <Text
-                                                style={active ? [styles.text, styles.activeText, { fontSize: fontSize }] : [styles.text, { fontSize: fontSize }]}
+                                                style={[
+                                                    { marginLeft: 4, color: '#374151' },
+                                                    active && { color: '#6b7280' },
+                                                    { fontSize: fontSize },
+                                                    optionLabelStyle
+                                                ]}
                                             >
                                                 {option.label}
                                             </Text>
@@ -92,7 +100,7 @@ export default function CheckBoxGroup({ options, checkedValues, onChange, fontSi
                     )
                         : updatedCheckedValues.length <= 0 && (
                             <View>
-                                <Text style={[styles.text, { fontSize: fontSize }]}>None</Text>
+                                <Text style={[styles.text, { fontSize: fontSize }, optionLabelStyle]}>None</Text>
                             </View>
                         )
 

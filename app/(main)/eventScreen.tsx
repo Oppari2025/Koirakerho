@@ -1,10 +1,12 @@
+import { getEventsByIds } from "@/src/services/eventService";
 import { CheckBoxOption } from "@/types/checkbox";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DateTimePickerAndroid, DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import * as Calendar from 'expo-calendar';
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -27,7 +29,8 @@ export default function EventScreen() {
 
     // routing
     const router = useRouter();
-    const eventId = useLocalSearchParams<{ id: string }>();
+    const params = useLocalSearchParams<{ id: string }>();
+    const eventId = params.id;
     
 
     // state
@@ -35,12 +38,31 @@ export default function EventScreen() {
     const [isAdminControlsEnabled, setIsAdminControlsEnabled] = useState<boolean>(true);
     const [eventName, setEventName] = useState<string>("");
     const [eventStartDate, setEventStartDate] = React.useState<Date>(defaultDate);
-    const [eventPlaceName, setEventPlaceName] = useState<string>("Testipaikka");
-    const [eventLocationAddress, setEventLocationAddress] = useState<string>("Testikatu 1, Testikaupunki, 00000");
+    const [eventPlaceName, setEventPlaceName] = useState<string>("");
+    const [eventLocationAddress, setEventLocationAddress] = useState<string>("");
     const [eventDescription, setEventDescription] = useState<string>("");
-    const [eventAllowedDogs, setEventAllowedDogs] = useState<string[]>(["big", "medium", "small"]);
-    const [eventAllowedPeople, setEventAllowedPeople] = useState<string[]>(["club_members", "dog_owners", "other"]);
+    const [eventAllowedDogs, setEventAllowedDogs] = useState<string[]>([]);
+    const [eventAllowedPeople, setEventAllowedPeople] = useState<string[]>([]);
     const [eventImageUrl, setEventImageUrl] = useState<string>("");
+    // Fetch event details on mount
+    useEffect(() => {
+        async function fetchEvent() {
+            if (!eventId) return;
+            const events = await getEventsByIds([eventId]);
+            if (events && events.length > 0) {
+                const ev = events[0];
+                setEventName(ev.title || "");
+                setEventStartDate(ev.date?.toDate ? ev.date.toDate() : defaultDate);
+                setEventPlaceName(ev.location?.name || "");
+                setEventLocationAddress(ev.location?.address || "");
+                setEventDescription(ev.description || "");
+                setEventAllowedDogs(ev.allowedDogs || []);
+                setEventAllowedPeople(ev.allowedPeople || []);
+                setEventImageUrl(ev.imageUrl || "");
+            }
+        }
+        fetchEvent();
+    }, [eventId]);
 
     // refs
     const previousEventName = useRef<string>("");

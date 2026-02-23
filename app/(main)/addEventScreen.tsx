@@ -2,6 +2,7 @@ import Button from '@/components/button';
 import CheckBoxGroup from '@/components/checkBoxGroup';
 import { addEventToGroupAction } from '@/components/database/groupActions';
 import TextEditBox from '@/components/textEditBox';
+import { Colors } from '@/constants/theme';
 import { createEvent } from '@/src/services/eventService';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Timestamp } from 'firebase/firestore';
@@ -48,11 +49,10 @@ export default function AddEventScreen() {
         setIsLoading(true);
         try {
             // Luodaan tapahtuma
-            const eventData = {
+            const eventData: any = {
                 title: eventName,
                 eventName: eventName,
                 description: eventDescription,
-                eventType: eventType || undefined,
                 date: Timestamp.now(),
                 createdBy: "",
                 location: {
@@ -61,6 +61,7 @@ export default function AddEventScreen() {
                     address: "Testikatu 1"
                 }
             };
+            if (eventType) eventData.eventType = eventType;
 
             const res = await createEvent(eventData);
 
@@ -84,63 +85,69 @@ export default function AddEventScreen() {
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
-                <ScrollView style={{ width: "100%", padding: 8 }}>
-                    <View style={{ gap: 16, marginTop: 8, width: "100%" }}>
+                <ScrollView style={{ width: "100%" }} contentContainerStyle={{ padding: 16, backgroundColor: Colors.light.card }}>
+                    <View style={{ gap: 20, marginTop: 8, width: "100%" }}>
                         <TextEditBox
-                            label="Event Name"
-                            placeholder="Nameless Event"
+                            label="Tapahtuman nimi"
+                            placeholder="Nimetön tapahtuma"
                             numberOfLines={1}
                             isEditable={true}
                             value={eventName}
                             onChangeText={setEventName}
+                            labelStyle={{ color: Colors.light.text }}
+                            inputStyle={{ color: Colors.light.text }}
                         />
 
                         <CheckBoxGroup
-                            label="Allowed People"
+                            label="Sallitut henkilöt"
                             options={[
-                                { label: "Club Members", value: "members" },
-                                { label: "Event Organizers", value: "organizers" },
-                                { label: "Others", value: "others" }
+                                { label: "Jäsenet", value: "members" },
+                                { label: "Järjestäjät", value: "organizers" },
+                                { label: "Muut", value: "others" }
                             ]}
                             fontSize={16}
                             isEditable={true}
                             checkedValues={allowedPeople}
                             onChange={setAllowedPeople}
                             style={{}}
+                            labelStyle={{ color: Colors.light.text }}
+                            optionLabelStyle={{ color: Colors.light.text }}
                         />
 
                         <CheckBoxGroup
-                            label="Allowed Dogs"
+                            label="Sallitut koirat"
                             options={[
-                                { label: "Small", value: "small" },
-                                { label: "Medium", value: "medium" },
-                                { label: "Big", value: "big" }
+                                { label: "Pienet", value: "small" },
+                                { label: "Keskikokoiset", value: "medium" },
+                                { label: "Isot", value: "big" }
                             ]}
                             fontSize={16}
                             isEditable={true}
                             checkedValues={allowedDogs}
                             onChange={setAllowedDogs}
                             style={{}}
+                            labelStyle={{ color: Colors.light.text }}
+                            optionLabelStyle={{ color: Colors.light.text }}
                         />
 
                         <TextEditBox
-                            label="Event Description"
-                            placeholder="No description provided."
-                            numberOfLines={50}
+                            label="Tapahtuman kuvaus"
+                            placeholder="Ei kuvausta."
+                            numberOfLines={6}
                             isEditable={true}
                             value={eventDescription}
                             onChangeText={setEventDescription}
+                            labelStyle={{ color: Colors.light.text }}
+                            inputStyle={{ color: Colors.light.text }}
                         />
-
-                        <View style={{ height: 500 }} />
                     </View>
                 </ScrollView>
-                <View style={{ width: "100%" }}>
-                    <View style={{ width: "50%", flexDirection: "row", alignSelf: "center", justifyContent: "center", position: "relative", zIndex: 99, bottom: "150%", gap: 4 }}>
+                <View style={{ width: "100%", backgroundColor: Colors.light.card, paddingVertical: 16 }}>
+                    <View style={{ width: "60%", flexDirection: "row", alignSelf: "center", justifyContent: "center", gap: 8 }}>
                         <Button
-                            style={{ backgroundColor: "#006b00ff", padding: 16, flexGrow: 1, borderRadius: 10 }}
-                            textColor="#FFF"
-                            title="Create"
+                            style={{ backgroundColor: Colors.light.accent, padding: 16, flexGrow: 1, borderRadius: 12 }}
+                            textColor={Colors.light.text}
+                            title="Luo tapahtuma"
                             key="create"
                             onPress={handleSubmitForm}
                         />
@@ -154,13 +161,12 @@ export default function AddEventScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 8,
-        backgroundColor: '#fff3c0ff',
+        backgroundColor: Colors.light.card,
     },
     text: {
-        color: "black"
-    }
-})
+        color: Colors.light.text,
+    },
+});
 
 
 const classes = {
