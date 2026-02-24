@@ -10,7 +10,7 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#3B2F2F', // Taupe (dark text)
+    text: '#111111', // Dark text for better contrast
     background: '#F5E9DA', // Golden Taupe (light background)
     tint: '#C2B280', // Golden Taupe
     icon: '#A89F91', // Muted taupe

@@ -43,7 +43,7 @@ export default function friendChatScreen() {
                 className="mb-2 px-4 py-2 rounded-full"
                 style={{
                     alignSelf: isUser ? 'flex-end' : 'flex-start',
-                    backgroundColor: isUser ? '#3B82F6' : '#118e34ff',
+                    backgroundColor: isUser ? '#A89F91' : '#118e34ff',
                 }}
             >
                 <View className='flex-row px-2'>
@@ -153,7 +153,7 @@ export default function friendChatScreen() {
 
 
     return (
-        <SafeAreaView className="flex-1">
+        <SafeAreaView className="flex-1" style={{ backgroundColor: '#3B2F2F' }}>
             <AppHeaderAvatar
                 title={`${otherUser?.firstName} ${otherUser?.lastName}`}
                 avatarUrl={otherUser?.imageUrl}
@@ -181,6 +181,7 @@ export default function friendChatScreen() {
                 <Button
                     size="lg"
                     className="rounded-full px-3"
+                    style={{ backgroundColor: '#FFD700' }}
                     onPress={sendMessage}
                 >
                     <ButtonIcon as={ArrowRightIcon} />
