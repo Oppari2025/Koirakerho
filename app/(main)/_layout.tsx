@@ -37,7 +37,7 @@ export default function RootLayout() {
                     <Stack.Screen name="placeSearchScreen" options={{ headerShown: true, title: "Search Location" }} />  
                     <Stack.Screen name="navigatorScreen" options={{ headerShown: true, title: "Navigator" }} />  
                 </Stack>
-                <StatusBar style="auto" />
+                <StatusBar hidden={true} />
             
             </ThemeProvider>
         </GluestackUIProvider>

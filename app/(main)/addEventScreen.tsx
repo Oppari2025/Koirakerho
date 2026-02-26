@@ -89,8 +89,8 @@ export default function AddEventScreen() {
                     <View style={{ gap: 20, marginTop: 8, width: "100%" }}>
                         <TextEditBox
                             label="Tapahtuman nimi"
-                            placeholder="Nimetön tapahtuma"
-                            numberOfLines={1}
+                            placeholder="Tapahtuma"
+                            numberOfLines={1.1}
                             isEditable={true}
                             value={eventName}
                             onChangeText={setEventName}

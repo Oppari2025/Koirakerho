@@ -34,7 +34,7 @@ export default function AppHeaderAvatar({
   };
 
 return (
-  <View style={{ backgroundColor: '#A89F91', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}>
+  <View style={{ backgroundColor: '#C2B280', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}>
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       {showBack && (
         <TouchableOpacity onPress={handleBack} style={{ marginRight: 16 }}>

@@ -43,11 +43,11 @@ export default function friendChatScreen() {
                 className="mb-2 px-4 py-2 rounded-full"
                 style={{
                     alignSelf: isUser ? 'flex-end' : 'flex-start',
-                    backgroundColor: isUser ? '#A89F91' : '#118e34ff',
+                    backgroundColor: isUser ? '#FFD700' : '#118e34ff',
                 }}
             >
                 <View className='flex-row px-2'>
-                    <Text style={{ color: 'white', fontSize: 14, marginRight: 10 }}>{item.text}</Text>
+                    <Text style={{ color: 'black', fontSize: 14, marginRight: 10 }}>{item.text}</Text>
                     <Text style={{ color: 'black', fontSize: 10, marginTop: 4 }}>
                         {item.createdAt?.toDate().toLocaleTimeString()}
 
@@ -153,7 +153,7 @@ export default function friendChatScreen() {
 
 
     return (
-        <SafeAreaView className="flex-1" style={{ backgroundColor: '#3B2F2F' }}>
+        <SafeAreaView className="flex-1" style={{ backgroundColor: '#F5E9DA' }}>
             <AppHeaderAvatar
                 title={`${otherUser?.firstName} ${otherUser?.lastName}`}
                 avatarUrl={otherUser?.imageUrl}
@@ -173,6 +173,7 @@ export default function friendChatScreen() {
             <View className="flex-row items-center p-4 gap-2">
                 <Input variant="rounded" size="md" className="flex-1">
                     <InputField
+                        style={{ color: 'black', paddingHorizontal: 12, paddingVertical: 8 }}
                         placeholder="Type a message..."
                         value={inputValue}
                         onChangeText={setInputValue}

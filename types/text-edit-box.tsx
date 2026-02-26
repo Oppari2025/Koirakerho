@@ -1,4 +1,5 @@
 
+
 type TextEditBoxProps = {
     label?: string;
     isEditable?: boolean;
@@ -6,6 +7,8 @@ type TextEditBoxProps = {
     numberOfLines?: number;
     onChangeText: (text: string) => void;
     placeholder?: string;
+    labelStyle?: object;
+    inputStyle?: object;
 }
 
 export { TextEditBoxProps };

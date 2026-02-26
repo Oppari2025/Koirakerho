@@ -73,7 +73,7 @@ export default function ListOfGroups({ onSelect, limit, refreshKey }: Props) {
       contentContainerStyle={{ paddingVertical: 8, backgroundColor: Colors.light.background }}
       renderItem={({ item }) => (
         <TouchableOpacity onPress={() => onSelect?.(item) || router.push({ pathname: "/(main)/groupScreen", params: { id: item.id } })}>
-          <Card style={{ margin: 12, padding: 16, borderRadius: 12, backgroundColor: Colors.light.card, borderColor: Colors.light.border, borderWidth: 1 }} variant="elevated" size="lg">
+          <Card style={{ margin: 12, padding: 16, borderRadius: 12, backgroundColor: Colors.light.card, borderColor: Colors.light.border, borderWidth: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }} variant="elevated" size="lg">
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
               <Image
                 source={

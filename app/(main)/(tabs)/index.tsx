@@ -1,7 +1,9 @@
+import { Colors } from '@/constants/theme';
 import { useAuth } from '@/src/context/AuthContext';
 import { router } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const { userProfile, firebaseUser, loading, logout } = useAuth();
@@ -17,23 +19,25 @@ export default function HomeScreen() {
   const userName = userProfile?.firstName || firebaseUser?.email || 'Käyttäjä';
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.greeting}>Hei, {userName}!</Text>
-      <Text style={styles.subtitle}>Tervetuloa Koirakerhosovellukseen!</Text>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.greeting}>Hei, {userName}!</Text>
+        <Text style={styles.subtitle}>Tervetuloa Koirakerhosovellukseen!</Text>
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/groupList')}>
-        <Text style={styles.buttonText}>Ryhmät</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/profileScreen')}>
-        <Text style={styles.buttonText}>Profiili</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/eventListScreen')}>
-        <Text style={styles.buttonText}>Tapahtumat</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={logout}>
-        <Text style={styles.buttonText}>Kirjaudu ulos</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={[styles.button, { backgroundColor: Colors.light.accent, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }]} onPress={() => router.push('/groupList')}>
+          <Text style={styles.buttonText}>Ryhmät</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { backgroundColor: Colors.light.accent, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }]} onPress={() => router.push('/profileScreen')}>
+          <Text style={styles.buttonText}>Profiili</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { backgroundColor: Colors.light.accent, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }]} onPress={() => router.push('/eventListScreen')}>
+          <Text style={styles.buttonText}>Tapahtumat</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { backgroundColor: Colors.light.accent, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }]} onPress={logout}>
+          <Text style={styles.buttonText}>Kirjaudu ulos</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
@@ -42,31 +46,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff3c0ff',
+    backgroundColor: Colors.light.background,
     padding: 24,
   },
   greeting: {
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 12,
-    color: '#144100ff',
+    color: Colors.light.text,
   },
   subtitle: {
     fontSize: 18,
     marginBottom: 32,
-    color: '#111111ff',
+    color: Colors.light.text,
   },
   button: {
-    backgroundColor: '#144100ff',
+    backgroundColor: Colors.light.card,
     paddingVertical: 16,
     paddingHorizontal: 32,
-    borderRadius: 10,
+    borderRadius: 12,
     marginBottom: 16,
     width: 220,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.light.border,
   },
   buttonText: {
-    color: '#fff',
+    color: Colors.light.text,
     fontSize: 18,
     fontWeight: '600',
   },

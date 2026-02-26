@@ -3,6 +3,7 @@ import {
   AvatarFallbackText,
   AvatarImage,
 } from '@/components/ui/avatar';
+import { AddIcon } from "@/components/ui/icon";
 import { Heading } from '@/components/ui/heading';
 import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
@@ -15,14 +16,14 @@ import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc } from 'firebas
 import React, { useEffect, useState } from 'react';
 import { Modal, RefreshControl, TextInput, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../../../src/firebase/FirebaseConfig';
 import { getUserByEmail } from '../../../src/services/getUserByEmail';
 
 const ChatColors = {
-  background: '#E6D3B3', // slightly darker than Colors.light.background
-  card: '#C2B280', // slightly darker than Colors.light.card
-  border: '#A89F91', // same as Colors.light.border
+  background: Colors.light.background,
+  card: Colors.light.card,
+  border: Colors.light.border,
   accent: Colors.light.accent,
   text: Colors.light.text,
   white: Colors.light.white,
@@ -147,10 +148,11 @@ export default function chatScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light.background, padding: 16, paddingTop: 24, position: 'relative' }}>
-      <Heading size="lg" style={{ marginBottom: 24, color: Colors.light.text }}>
-        Koirakerho
-      </Heading>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light.background, padding: 16, paddingTop: 24, position: 'relative' }}>
+        <Heading size="lg" style={{ marginBottom: 24, color: Colors.light.text }}>
+          Koirakerho
+        </Heading>
 
       <ScrollView contentContainerStyle={{ gap: 24 }}
         refreshControl={
@@ -198,8 +200,8 @@ export default function chatScreen() {
         }}
       >
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Avatar style={{ backgroundColor: ChatColors.accent }}>
-            <AvatarFallbackText style={{ color: ChatColors.white }}>+</AvatarFallbackText>
+          <Avatar style={{ backgroundColor: ChatColors.accent, width: 56, height: 56 }}>
+            <AddIcon height={28} width={28} color={Colors.light.text} />
           </Avatar>
         </TouchableOpacity>
       </View>
@@ -218,21 +220,23 @@ export default function chatScreen() {
               value={newEmail}
               onChangeText={setNewEmail}
               placeholder="Sähköposti"
-              style={{ borderWidth: 1, borderColor: ChatColors.border, padding: 8, borderRadius: 8, marginBottom: 16, color: ChatColors.text }}
+              placeholderTextColor={'#3B2F2F'}
+              style={{ borderWidth: 1, borderColor: '#3B2F2F', padding: 8, borderRadius: 8, marginBottom: 16, color: ChatColors.text }}
               keyboardType="email-address"
               autoCapitalize="none"
             />
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 16 }}>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text style={{ color: ChatColors.accent, fontWeight: 'bold' }}>Peruuta</Text>
+                <Text style={{ color: '#3B2F2F', fontWeight: 'bold' }}>Peruuta</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={addContactByEmail}>
-                <Text style={{ color: ChatColors.accent, fontWeight: 'bold' }}>Lisää</Text>
+                <Text style={{ color: '#3B2F2F', fontWeight: 'bold' }}>Lisää</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
     </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
