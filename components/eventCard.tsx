@@ -9,27 +9,29 @@ export default function EventCard({ onPress, item }: EventCardProps): React.JSX.
             onPress={onPress}
         >
             <Image
-                source={{ uri: item.imageUrl }}
+                //source={{ uri: item.imageUrl }}
                 style={styles.image}
                 alt="image"
             />
             <View style={styles.eventDateContainer}>
-                <Text style={[styles.text, styles.eventDateText]}>
-                    {item.date}
+                <Text
+                    className="text-black text-md font-bold"
+                >
+                    {item.date.toDate().toLocaleDateString()}
                 </Text>
             </View>
             <View>
                 <Text
-                    style={[styles.text, styles.headerText]}
+                    className="text-black text-lg font-semibold"
                     numberOfLines={1}
                 >
-                    {item.eventName}
+                    {item.title}
                 </Text>
                 <Text
-                    style={[styles.text, styles.normalText]}
+                    className="text-black text-base"
                     numberOfLines={1}
                 >
-                    {item.eventInfo}
+                    {item.description}
                 </Text>
             </View>
         </TouchableOpacity>
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         width: "100%",
         height: "auto",
-        aspectRatio: 16/9,
+        aspectRatio: 16 / 9,
         borderWidth: 1,
         borderColor: "gray",
         backgroundColor: "gray"
@@ -63,21 +65,7 @@ const styles = StyleSheet.create({
         alignSelf: "flex-end",
         backgroundColor: "white",
         borderWidth: 1,
-        borderColor: "gray"
-    },
-    text: {
-        color: "black"
-    },
-    normalText: {
-        fontSize: 16
-    },
-    headerText: {
-        fontWeight: "bold",
-        fontSize: 16,
-    },
-    eventDateText: {
-        textAlign: "center",
-        fontWeight: "bold",
-        fontSize: 16
+        borderColor: "gray",
+        alignItems: "center"
     }
 });

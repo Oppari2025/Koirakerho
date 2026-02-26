@@ -3,6 +3,7 @@ import CheckBoxGroup from '@/components/checkBoxGroup';
 import { addEventToGroupAction } from '@/components/database/groupActions';
 import TextEditBox from '@/components/textEditBox';
 import { Colors } from '@/constants/theme';
+import { useAuth } from '@/src/context/AuthContext';
 import { createEvent } from '@/src/services/eventService';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Timestamp } from 'firebase/firestore';
@@ -34,6 +35,8 @@ export default function AddEventScreen() {
     const [allowedPeople, setAllowedPeople] = React.useState<string[]>([]);
 
     async function handleSubmitForm() {
+        const { firebaseUser } = useAuth();
+
         const isInvalidEventName = eventName.length < MIN_EVENT_NAME_LENGTH || eventName.length > MAX_EVENT_NAME_LENGTH
         setIsInvalidEventName(isInvalidEventName);
 
@@ -54,7 +57,7 @@ export default function AddEventScreen() {
                 eventName: eventName,
                 description: eventDescription,
                 date: Timestamp.now(),
-                createdBy: "",
+                createdBy: firebaseUser?.uid,
                 location: {
                     lat: 0,
                     lng: 0,
@@ -64,6 +67,8 @@ export default function AddEventScreen() {
             if (eventType) eventData.eventType = eventType;
 
             const res = await createEvent(eventData);
+            console.log("res", res);
+
 
             // Jos tapahtuma luotiin ryhmässä, lisätään se ryhmään
             if (groupId && res.id) {

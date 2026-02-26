@@ -1,15 +1,10 @@
+import { Event } from "@/src/types/event";
 
-type EventData = {
-  id: string;
-  eventName: string;
-  eventInfo: string;
-  date: string;
-  imageUrl: string;
-};
 
 type EventCardProps = {
-  item: EventData;
+  item: Event;
   onPress: () => void;
 };
 
-export { EventCardProps, EventData };
+export { EventCardProps };
+

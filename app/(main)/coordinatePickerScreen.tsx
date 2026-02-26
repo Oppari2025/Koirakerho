@@ -13,8 +13,8 @@ export default function coordinatePickerScreen(): React.JSX.Element {
     // routing
     const router = useRouter();
     const routerParams = useLocalSearchParams<{ lon: string, lat: string, searchText: string }>();
-    console.log(routerParams);
-    
+    console.log("router", routerParams);
+
 
     // state
     const [selectedLatitude, setSelectedLatitude] = useState<number>();
@@ -24,7 +24,6 @@ export default function coordinatePickerScreen(): React.JSX.Element {
     const [isFetchingLocationPermission, setIsFetchingLocationPermission] = useState<boolean>(false);
     const [locationWatchId, setLocationWatchId] = React.useState<number>();
     const [pickedCoordinates, setPickedCoordinates] = React.useState<number[]>();
-    const [searchText, setSearchText] = useState<string>(routerParams.searchText);
 
 
     // effects
@@ -51,15 +50,6 @@ export default function coordinatePickerScreen(): React.JSX.Element {
 
             };
         })();
-    }, []);
-
-    useEffect(() => {
-        if (routerParams.lon !== undefined && routerParams.lat !== undefined && routerParams.searchText !== undefined) {
-            //setSearchText(routerParams.searchText);
-            console.log("dfsdsdds");
-            
-            //router.setParams({});
-        }
     }, []);
 
     async function onPressSearchBar() {
@@ -126,8 +116,8 @@ export default function coordinatePickerScreen(): React.JSX.Element {
                                 name="search"
                                 style={{ fontSize: 32, color: "black" }}
                             />
-                            <Text style={{ color: searchText ? "black" : "gray", fontSize: 16, borderWidth: 1, borderColor: "black", borderRadius: 10, padding: 8, flex: 1 }}>
-                                {searchText ? searchText : "Hae paikkaa"}
+                            <Text style={{ color: routerParams?.searchText ? "black" : "gray", fontSize: 16, borderWidth: 1, borderColor: "black", borderRadius: 10, padding: 8, flex: 1 }}>
+                                {routerParams?.searchText ? routerParams?.searchText : "Hae paikkaa"}
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -150,11 +140,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: "100%",
-        height: "100%",
-        //padding: 8,
-        //backgroundColor: '#fff3c0ff',
-        //justifyContent: "center",
-        //alignItems: "center"
+        height: "100%"
     },
     text: {
         color: "black"
@@ -166,12 +152,8 @@ const styles = StyleSheet.create({
         height: "100%",
         pointerEvents: "box-none",
         padding: 8,
-        zIndex: 2, // same with the bottom sheet
+        zIndex: 2,
         alignItems: "center",
-        // remove
-        //backgroundColor: "#f300004b",
-        //borderWidth: 4,
-        //borderColor: "green"
     },
     okButton: {
         backgroundColor: "green",
