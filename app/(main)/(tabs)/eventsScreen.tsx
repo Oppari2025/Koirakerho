@@ -2,7 +2,7 @@ import EventListScreen from "@/app/(main)/eventListScreen";
 import TicketsScreen from "@/app/(main)/ticketsScreen";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Tab = createMaterialTopTabNavigator();
 

@@ -1,9 +1,10 @@
-import { useRouter } from "expo-router"
-import { StatusBar } from "expo-status-bar"
-import React, { useState } from "react"
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
-import { SafeAreaProvider } from "react-native-safe-area-context"
-import { useAuth } from "../src/context/AuthContext"
+import { Colors } from '@/constants/theme';
+import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useAuth } from "../src/context/AuthContext";
 
 export default function Register() {
   const { register, loading } = useAuth()
@@ -39,46 +40,46 @@ export default function Register() {
       <StatusBar style="auto" />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.container}>
-          <Text style={styles.title}>Register</Text>
+          <Text style={[styles.title, { color: Colors.light.text }]}>Register</Text>
 
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: Colors.light.white, color: Colors.light.text, borderColor: Colors.light.border }]}
             placeholder="Email"
-            placeholderTextColor="#111111ff"
+            placeholderTextColor={Colors.light.gray}
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
           />
 
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: Colors.light.white, color: Colors.light.text, borderColor: Colors.light.border }]}
             placeholder="First Name"
-            placeholderTextColor="#111111ff"
+            placeholderTextColor={Colors.light.gray}
             value={firstName}
             onChangeText={setFirstName}
           />
 
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: Colors.light.white, color: Colors.light.text, borderColor: Colors.light.border }]}
             placeholder="Last Name"
-            placeholderTextColor="#111111ff"
+            placeholderTextColor={Colors.light.gray}
             value={lastName}
             onChangeText={setLastName}
           />
 
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: Colors.light.white, color: Colors.light.text, borderColor: Colors.light.border }]}
             placeholder="Password"
-            placeholderTextColor="#111111ff"
+            placeholderTextColor={Colors.light.gray}
             secureTextEntry
             value={password}
             onChangeText={setPassword}
           />
 
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: Colors.light.white, color: Colors.light.text, borderColor: Colors.light.border }]}
             placeholder="Confirm Password"
-            placeholderTextColor="#111111ff"
+            placeholderTextColor={Colors.light.gray}
             secureTextEntry
             value={confirmPassword}
             onChangeText={setConfirmPassword}
@@ -89,21 +90,21 @@ export default function Register() {
           ) : null}
 
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, { backgroundColor: Colors.light.accent }]}
             onPress={handleRegister}
             disabled={loading}
           >
-            <Text style={styles.buttonText}>
-              {loading ? "Registering..." : "Register"}
+            <Text style={[styles.buttonText, { color: Colors.light.text }]}>
+              {loading ? 'Registering...' : 'Register'}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-              style={styles.secondaryButton}
-              onPress={() => router.push?.('/login')}
-            >
-              <Text style={styles.secondaryButtonText}>Already have an account? Login</Text>
-            </TouchableOpacity>
+            style={styles.secondaryButton}
+            onPress={() => router.push?.('/login')}
+          >
+            <Text style={[styles.secondaryButtonText, { color: Colors.light.tint }]}>Already have an account? Login</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaProvider>
@@ -114,7 +115,7 @@ export default function Register() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#fff3c0ff',
+    backgroundColor: Colors.light.background,
   },
   scroll: {
     flexGrow: 1,
@@ -127,46 +128,37 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700',
     marginBottom: 24,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#111111ff',
     padding: 14,
     borderRadius: 10,
     marginBottom: 16,
-    fontSize: 16
+    fontSize: 16,
   },
   button: {
-    backgroundColor: '#144100ff',
     padding: 14,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 4
+    marginTop: 4,
   },
   buttonText: {
-    color: '#fff',
     fontSize: 17,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   secondaryButton: {
     padding: 12,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   secondaryButtonText: {
-    color: '#144100ff',
     fontSize: 16,
-    fontWeight: '500'
-  },
-  helperText: {
-    marginTop: 14,
-    textAlign: 'center',
-    color: '#444'
+    fontWeight: '500',
   },
   error: {
     marginBottom: 12,
     color: 'red',
     textAlign: 'center',
     fontWeight: '600',
-  }
+  },
 });

@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { AddIcon } from "@/components/ui/icon";
 import { Input, InputField } from "@/components/ui/input";
+import { Colors } from "@/constants/theme";
 import { uploadGroupImage } from "@/src/firebase/storage";
 import { createGroup } from "@/src/services/groupService";
 import { Group } from "@/src/types/group";
@@ -122,8 +123,13 @@ export default function AddGroup({ onCreated }: Props) {
       </Modal>
 
       <View style={{ position: 'absolute', left: 0, right: 0, bottom: 24, alignItems: 'center' }} pointerEvents="box-none">
-        <Button onPress={() => setVisible(true)} size="lg" action="primary" className="h-16 w-16 rounded-full items-center justify-center">
-          <AddIcon height={28} width={28} className="text-typography-0" />
+        <Button
+          onPress={() => setVisible(true)}
+          size="lg"
+          action="primary"
+          style={{ height: 64, width: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.light.accent }}
+        >
+          <AddIcon height={28} width={28} color={Colors.light.text} />
         </Button>
       </View>
 

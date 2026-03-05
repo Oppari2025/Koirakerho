@@ -3,6 +3,7 @@ import EditGroup from "@/components/database/editGroup";
 import { deleteGroupAction, joinGroupWithDogs, leaveGroupWithDogs, loadGroupData, refreshGroupData } from "@/components/database/groupActions";
 import ListOfEvents from "@/components/database/listOfEvents";
 import { Heading } from "@/components/ui/heading";
+import { Colors } from "@/constants/theme";
 import { useAuth } from "@/src/context/AuthContext";
 import { Group } from "@/src/types/group";
 import { useFocusEffect } from "@react-navigation/native";
@@ -143,8 +144,8 @@ export default function GroupProfileScreen() {
     if (loading) {
         return (
             <SafeAreaProvider>
-                <SafeAreaView className="flex-1 items-center justify-center">
-                    <ActivityIndicator size="large" />
+                <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.light.background }}>
+                    <ActivityIndicator size="large" color={Colors.light.accent} />
                 </SafeAreaView>
             </SafeAreaProvider>
         );
@@ -153,8 +154,8 @@ export default function GroupProfileScreen() {
     if (!group) {
         return (
             <SafeAreaProvider>
-                <SafeAreaView className="flex-1 items-center justify-center">
-                    <Text>Ryhmää ei löytynyt</Text>
+                <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.light.background }}>
+                    <Text style={{ color: Colors.light.text }}>Ryhmää ei löytynyt</Text>
                 </SafeAreaView>
             </SafeAreaProvider>
         );
@@ -162,86 +163,86 @@ export default function GroupProfileScreen() {
 
     return (
         <SafeAreaProvider>
-            <SafeAreaView className="flex-1 ">
-                <ScrollView contentContainerStyle={{ padding: 16 }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light.background }}>
+                <ScrollView contentContainerStyle={{ padding: 16, backgroundColor: Colors.light.background }}>
                     <Image
                         source={ group.imageUrl ? { uri: group.imageUrl } : require("@/assets/images/dog1.jpg")}
-                        className="w-full h-64 rounded-md "
+                        style={{ width: '100%', height: 256, borderRadius: 12 }}
                     />
 
-                    <Heading size="lg" className="mb-2 mt-4">
+                    <Heading size="lg" style={{ marginBottom: 8, marginTop: 16, color: Colors.light.text }}>
                         {group.groupName}
                     </Heading>
 
                     {group.groupDescription ? (
-                        <Text className="text-sm text-gray-700 mb-4">{group.groupDescription}</Text>
+                        <Text style={{ fontSize: 14, color: Colors.light.gray, marginBottom: 16 }}>{group.groupDescription}</Text>
                     ) : null}
 
-                    <View className="mb-4">
-                        <Text className="text-white font-semibold mb-2">Kouluttajat</Text>
+                    <View style={{ marginBottom: 16 }}>
+                        <Text style={{ color: Colors.light.text, fontWeight: 'bold', marginBottom: 8 }}>Kouluttajat</Text>
                         {admins.length ? (
-                            <View className="flex-row space-x-3">
+                            <View style={{ flexDirection: 'row', gap: 12 }}>
                                 {admins.map((a) => (
-                                    <View key={a.id} className="items-center">
+                                    <View key={a.id} style={{ alignItems: 'center' }}>
                                         <Image
                                             source={a.data.imageUrl ? { uri: a.data.imageUrl } : require("@/assets/images/dog1.jpg")}
-                                            className="h-12 w-12 rounded-full"
+                                            style={{ height: 48, width: 48, borderRadius: 24 }}
                                         />
-                                        <Text className="text-sm text-gray-700">{a.data.firstName} {a.data.lastName}</Text>
+                                        <Text style={{ fontSize: 14, color: Colors.light.gray }}>{a.data.firstName} {a.data.lastName}</Text>
                                     </View>
                                 ))}
                             </View>
                         ) : (
-                            <Text className="text-sm text-gray-600">Ei kouluttajia</Text>
+                            <Text style={{ fontSize: 14, color: Colors.light.gray }}>Ei kouluttajia</Text>
                         )}
                     </View>
 
-                    <View className="mb-4">
-                        <Text className="text-white font-semibold mb-2">Jäsenet ({members.length})</Text>
+                    <View style={{ marginBottom: 16 }}>
+                        <Text style={{ color: Colors.light.text, fontWeight: 'bold', marginBottom: 8 }}>Jäsenet ({members.length})</Text>
                         {members.length ? (
                             <FlatList
                                 data={members}
                                 horizontal
                                 keyExtractor={(it) => it.id}
                                 renderItem={({ item }) => (
-                                    <View className="items-center mr-10">
+                                    <View style={{ alignItems: 'center', marginRight: 24 }}>
                                         <Image
                                             source={item.data.imageUrl ? { uri: item.data.imageUrl } : require("@/assets/images/dog1.jpg")}
-                                            className="h-14 w-14 rounded-full"
+                                            style={{ height: 56, width: 56, borderRadius: 28 }}
                                         />
-                                        <Text className="text-gray-700 text-sm mt-1">{item.data.firstName}</Text>
+                                        <Text style={{ color: Colors.light.gray, fontSize: 14, marginTop: 4 }}>{item.data.firstName}</Text>
                                     </View>
                                 )}
                             />
                         ) : (
-                            <Text className="text-sm text-gray-600">Ei jäseniä</Text>
+                            <Text style={{ fontSize: 14, color: Colors.light.gray }}>Ei jäseniä</Text>
                         )}
                     </View>
 
-                    <View className="mb-6">
-                        <Text className="text-white font-semibold mb-2">Ryhmän koirat ({memberDogs.length})</Text>
+                    <View style={{ marginBottom: 24 }}>
+                        <Text style={{ color: Colors.light.text, fontWeight: 'bold', marginBottom: 8 }}>Ryhmän koirat ({memberDogs.length})</Text>
                         {memberDogs.length ? (
                             <FlatList
                                 data={memberDogs}
                                 horizontal
                                 keyExtractor={(dog) => dog.id}
                                 renderItem={({ item }) => (
-                                    <View className="items-center mr-10">
+                                    <View style={{ alignItems: 'center', marginRight: 24 }}>
                                         <Image
                                             source={
                                                 item.imageUrl && item.imageUrl.trim() !== ""
                                                     ? { uri: item.imageUrl }
                                                     : require("@/assets/images/dog1.jpg")
                                             }
-                                            className="h-14 w-14 rounded-full"
+                                            style={{ height: 56, width: 56, borderRadius: 28 }}
                                         />
-                                        <Text className="text-gray-700 text-sm mt-1">{item.name}</Text>
-                                        <Text className="text-gray-600 text-xs">{item.breed}</Text>
+                                        <Text style={{ color: Colors.light.gray, fontSize: 14, marginTop: 4 }}>{item.name}</Text>
+                                        <Text style={{ color: Colors.light.gray, fontSize: 12 }}>{item.breed}</Text>
                                     </View>
                                 )}
                             />
                         ) : (
-                            <Text className="text-sm text-gray-600">Ryhmässä ei ole koiria</Text>
+                            <Text style={{ fontSize: 14, color: Colors.light.gray }}>Ryhmässä ei ole koiria</Text>
                         )}
                     </View>
 
@@ -252,39 +253,39 @@ export default function GroupProfileScreen() {
                     {firebaseUser?.uid ? (
                         hasJoined(group) ? (
                             <TouchableOpacity
-                                className="bg-red-600 px-4 py-3 rounded-lg items-center"
+                                style={{ backgroundColor: '#e74c3c', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10, alignItems: 'center', marginTop: 8 }}
                                 onPress={handleLeave}
                                 disabled={saving}
                             >
-                                <Text className="text-white">Poistu ryhmästä</Text>
+                                <Text style={{ color: Colors.light.white }}>Poistu ryhmästä</Text>
                             </TouchableOpacity>
                         ) : (
                             <TouchableOpacity
-                                className="bg-blue-600 px-4 py-3 rounded-lg items-center"
+                                style={{ backgroundColor: Colors.light.accent, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10, alignItems: 'center', marginTop: 8 }}
                                 onPress={handleJoin}
                                 disabled={saving}
                             >
-                                <Text className="text-white">Liity ryhmään</Text>
+                                <Text style={{ color: Colors.light.text }}>Liity ryhmään</Text>
                             </TouchableOpacity>
                         )
                     ) : (
-                        <Text className="text-sm text-gray-600">Kirjaudu sisään liittyäksesi ryhmään</Text>
+                        <Text style={{ fontSize: 14, color: Colors.light.gray }}>Kirjaudu sisään liittyäksesi ryhmään</Text>
                     )}
 
                 {isAdmin ? (
-                    <View className="mt-4 gap-1 space-y-3">
-                        <Text className="text-white font-semibold">Ryhmän hallinta:</Text>
-                        <View className="flex-row gap-1 space-x-2">
-                            <TouchableOpacity className="bg-yellow-600 px-4 py-3 rounded-lg items-center flex-1" onPress={() => setEditModalVisible(true)}>
-                                <Text className="text-white">Muokkaa</Text>
+                    <View style={{ marginTop: 16, gap: 8 }}>
+                        <Text style={{ color: Colors.light.text, fontWeight: 'bold' }}>Ryhmän hallinta:</Text>
+                        <View style={{ flexDirection: 'row', gap: 8 }}>
+                            <TouchableOpacity style={{ backgroundColor: Colors.light.accent, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10, alignItems: 'center', flex: 1 }} onPress={() => setEditModalVisible(true)}>
+                                <Text style={{ color: Colors.light.text }}>Muokkaa</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity className="bg-red-700 px-4 py-3 rounded-lg items-center flex-1" onPress={handleDelete}>
-                                <Text className="text-white">Poista Ryhmä</Text>
+                            <TouchableOpacity style={{ backgroundColor: '#c0392b', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10, alignItems: 'center', flex: 1 }} onPress={handleDelete}>
+                                <Text style={{ color: Colors.light.white }}>Poista Ryhmä</Text>
                             </TouchableOpacity>
                         </View>
-                        <View className="flex-row gap-1">
-                            <TouchableOpacity className="bg-green-600 px-4 py-3 rounded-lg items-center flex-1" onPress={() => router.navigate(`/(main)/addEventScreen?groupId=${id}`)}>
-                                <Text className="text-white font-semibold">+ Lisää tapahtuma</Text>
+                        <View style={{ flexDirection: 'row', gap: 8 }}>
+                            <TouchableOpacity style={{ backgroundColor: '#27ae60', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10, alignItems: 'center', flex: 1 }} onPress={() => router.navigate(`/(main)/addEventScreen?groupId=${id}`)}>
+                                <Text style={{ color: Colors.light.white, fontWeight: 'bold' }}>+ Lisää tapahtuma</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

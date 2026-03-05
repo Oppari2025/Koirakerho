@@ -3,10 +3,12 @@ import {
   AvatarFallbackText,
   AvatarImage,
 } from '@/components/ui/avatar';
+import { AddIcon } from "@/components/ui/icon";
 import { Heading } from '@/components/ui/heading';
 import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { Colors } from '@/constants/theme';
 import { getUserByUid } from '@/src/services/getUserService';
 import { router } from 'expo-router';
 import { getAuth } from 'firebase/auth';
@@ -14,20 +16,29 @@ import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc } from 'firebas
 import React, { useEffect, useState } from 'react';
 import { Modal, RefreshControl, TextInput, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../../../src/firebase/FirebaseConfig';
 import { getUserByEmail } from '../../../src/services/getUserByEmail';
 
+const ChatColors = {
+  background: Colors.light.background,
+  card: Colors.light.card,
+  border: Colors.light.border,
+  accent: Colors.light.accent,
+  text: Colors.light.text,
+  white: Colors.light.white,
+};
+
 export default function chatScreen() {
   const [contacts, setContacts] = useState<
-    Array<{
+    {
       uid: string;
       firstName: string;
       lastName: string;
       email: string;
       imageUrl?: string;
       unreadCount: number;
-    }>
+    }[]
   >([]);
   const [refreshing, setRefreshing] = useState(false);
   const currentUser = getAuth().currentUser;
@@ -137,10 +148,11 @@ export default function chatScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 p-4 py-6 relative">
-      <Heading size="lg" className="mb-6">
-        Koirakerho
-      </Heading>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light.background, padding: 16, paddingTop: 24, position: 'relative' }}>
+        <Heading size="lg" style={{ marginBottom: 24, color: Colors.light.text }}>
+          Koirakerho
+        </Heading>
 
       <ScrollView contentContainerStyle={{ gap: 24 }}
         refreshControl={
@@ -156,20 +168,20 @@ export default function chatScreen() {
               })
             }
           >
-            <VStack className="p-4 border border-gray-200 rounded-lg">
-              <HStack className="items-center justify-between">
-                <HStack space="md">
+            <VStack style={{ padding: 16, borderWidth: 1, borderColor: Colors.light.border, borderRadius: 12, backgroundColor: Colors.light.card }}>
+              <HStack style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                <HStack style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                   <Avatar className="bg-indigo-600">
                     <AvatarImage source={{ uri: user?.imageUrl }} />
                   </Avatar>
                   <VStack>
-                    <Heading size="sm">{user.firstName + " " + user.lastName}</Heading>
-                    <Text size="sm">{user.email}</Text>
+                    <Heading size="sm" style={{ color: Colors.light.text }}>{user.firstName + " " + user.lastName}</Heading>
+                    <Text size="sm" style={{ color: Colors.light.text }}>{user.email}</Text>
                   </VStack>
                 </HStack>
                 {user.unreadCount > 0 && (
-                  <View className="bg-green-500 rounded-full px-3.5 py-2 items-center justify-center">
-                    <Text className="text-white text-xs font-bold">{user.unreadCount}</Text>
+                  <View style={{ backgroundColor: Colors.light.accent, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 8, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ color: Colors.light.white, fontSize: 12, fontWeight: 'bold' }}>{user.unreadCount}</Text>
                   </View>
                 )}
               </HStack>
@@ -188,8 +200,8 @@ export default function chatScreen() {
         }}
       >
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Avatar className="bg-green-600">
-            <AvatarFallbackText className="text-white">+</AvatarFallbackText>
+          <Avatar style={{ backgroundColor: ChatColors.accent, width: 56, height: 56 }}>
+            <AddIcon height={28} width={28} color={Colors.light.text} />
           </Avatar>
         </TouchableOpacity>
       </View>
@@ -201,28 +213,30 @@ export default function chatScreen() {
         animationType="fade"
         onRequestClose={() => setModalVisible(false)}
       >
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white p-4 rounded-lg w-80">
-            <Text className="mb-2 text-lg font-bold">Lisää kontakti</Text>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <View style={{ backgroundColor: ChatColors.card, padding: 16, borderRadius: 12, width: 320 }}>
+            <Text style={{ marginBottom: 8, fontSize: 18, fontWeight: 'bold', color: ChatColors.text }}>Lisää kontakti</Text>
             <TextInput
               value={newEmail}
               onChangeText={setNewEmail}
               placeholder="Sähköposti"
-              className="border border-gray-300 p-2 rounded mb-4"
+              placeholderTextColor={'#3B2F2F'}
+              style={{ borderWidth: 1, borderColor: '#3B2F2F', padding: 8, borderRadius: 8, marginBottom: 16, color: ChatColors.text }}
               keyboardType="email-address"
               autoCapitalize="none"
             />
-            <View className="flex-row justify-end space-x-2">
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 16 }}>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text className="text-red-500 font-bold">Peruuta</Text>
+                <Text style={{ color: '#3B2F2F', fontWeight: 'bold' }}>Peruuta</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={addContactByEmail}>
-                <Text className="text-green-500 font-bold">Lisää</Text>
+                <Text style={{ color: '#3B2F2F', fontWeight: 'bold' }}>Lisää</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
     </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

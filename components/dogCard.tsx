@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/heading';
+import { Colors } from '@/constants/theme';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import React from 'react';
@@ -11,7 +12,7 @@ export default function DogCard({dog, name, image }: { dog: any[]; name: string;
         <View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-4">
                 {dog.map(dog => (
-                    <Card key={dog.id} size="md" variant="elevated" className="m-3 bg-gray-600 p-2 rounded-lg">
+                    <Card key={dog.id} size="md" variant="elevated" className="m-3 p-2 rounded-lg" style={{ backgroundColor: Colors.light.card, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 3 }}>
                         <TouchableOpacity
                             onPress={() =>
                                 router.replace({
@@ -33,17 +34,17 @@ export default function DogCard({dog, name, image }: { dog: any[]; name: string;
                                 source={{ uri: dog.imageUrl }}
                                 className="h-32 w-32 rounded-lg mb-2"
                             />
-                            <Heading size="lg" className="mb-1 text-white self-center">
+                            <Heading size="lg" className="mb-1 self-center" style={{ color: Colors.light.text }} maxWidth={120} numberOfLines={1}>
                                 {dog.name}
                             </Heading>
                         </TouchableOpacity>
 
                     </Card>
                 ))}
-                <Card size="md" variant="elevated" className="m-3 bg-gray-600 p-2 rounded-lg">
+                <Card size="md" variant="elevated" className="m-3 p-2 rounded-lg" style={{ backgroundColor: Colors.light.card, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 3 }}>
                     <TouchableOpacity onPress={() => router.push(`/addDogScreen`)}>
-                        <MaterialIcons name="add-circle-outline" size={128} color="white" className="self-center mb-2" />
-                        <Heading size="lg" className="mb-1 text-white self-center">
+                        <MaterialIcons name="add-circle-outline" size={128} color='#3B2F2F' className="self-center mb-2" />
+                        <Heading size="lg" className="mb-1 self-center" style={{ color: '#3B2F2F' }}>
                             + Add Dog
                         </Heading>
                     </TouchableOpacity>

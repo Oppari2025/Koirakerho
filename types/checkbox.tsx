@@ -1,4 +1,5 @@
 
+
 type CheckBoxGroupProps = {
     label: string,
     options: CheckBoxOption[];
@@ -7,6 +8,8 @@ type CheckBoxGroupProps = {
     onChange: (updatedCheckedValues: string[]) => void;
     style: any;
     isEditable: boolean;
+    labelStyle?: object;
+    optionLabelStyle?: object;
 }
 
 type CheckBoxOption = {

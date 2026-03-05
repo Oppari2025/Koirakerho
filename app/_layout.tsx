@@ -16,24 +16,22 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-        <AuthProvider>
-    <StripeProvider>
-      <GestureHandlerRootView>
-              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Drawer>
-          <Drawer.Screen
-            name="(main)"
-            options={{ drawerLabel: 'Home', title: 'Home', headerShown: false }}
-          />
-          <Drawer.Screen
-            name="profileScreen"
-            options={{ drawerLabel: 'My Profile', title: 'My Profile', headerShown: false }}
-          />
-        </Drawer>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-      </GestureHandlerRootView>
-    </StripeProvider>
+    <AuthProvider>
+      <StripeProvider>
+        <GestureHandlerRootView>
+          
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Drawer>
+              <Drawer.Screen
+                name="(main)"
+                options={{ drawerLabel: 'Home', title: 'Home', headerShown: false }}
+              />
+            </Drawer>
+            <StatusBar />
+          
+        </ThemeProvider>
+        </GestureHandlerRootView>
+      </StripeProvider>
     </AuthProvider>
 
   );
@@ -57,8 +55,7 @@ function InnerRoot() {
       <Stack>
         {firebaseUser ? (
           <>
-            <Stack.Screen name="(main)/(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(main)/dogProfileScreen" options={{ headerShown: false, title: "Dog Profile" }} />
+            <Stack.Screen name="(main)" options={{ headerShown: false }} />
           </>
         ) : (
           <>
@@ -67,7 +64,7 @@ function InnerRoot() {
           </>
         )}
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar hidden={true} />
     </ThemeProvider>
   );
 }

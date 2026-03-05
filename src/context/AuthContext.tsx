@@ -15,7 +15,8 @@ interface AuthContextType {
 
   register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>
   login: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void> 
+  logout: () => Promise<void>
+  refreshUserProfile: () => Promise<void>
 }
 
 // luodaan AuthContext ja AuthProvider-komponentit
@@ -104,10 +105,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(false)
     }
   }
+  // Profiilin päivitys ulkoisesta komponentista
+  const refreshUserProfile = async () => {
+    if (firebaseUser) {
+      const profile = await getUserProfile(firebaseUser.uid);
+      setUserProfile(profile);
+    }
+  };
+
   // jaetaan AuthContextin arvot lapsikomponenteille
   return (
     <AuthContext.Provider
-      value={{ firebaseUser, userProfile, loading, register, login, logout }}
+      value={{ firebaseUser, userProfile, loading, register, login, logout, refreshUserProfile }}
     >
       {children}
     </AuthContext.Provider>

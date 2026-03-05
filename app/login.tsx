@@ -1,3 +1,4 @@
+import { Colors } from '@/constants/theme';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
@@ -38,21 +39,21 @@ export default function Login() {
       <StatusBar style="auto" />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.container}>
-          <Text style={styles.title}>Login</Text>
+          <Text style={[styles.title, { color: Colors.light.text }]}>Login</Text>
 
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: Colors.light.white, color: Colors.light.text, borderColor: Colors.light.border }]}
             placeholder="Email"
-            placeholderTextColor="#111111ff"
+            placeholderTextColor={Colors.light.gray}
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
           />
 
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: Colors.light.white, color: Colors.light.text, borderColor: Colors.light.border }]}
             placeholder="Password"
-            placeholderTextColor="#111111ff"
+            placeholderTextColor={Colors.light.gray}
             secureTextEntry
             value={password}
             onChangeText={setPassword}
@@ -63,11 +64,11 @@ export default function Login() {
           ) : null}
 
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, { backgroundColor: Colors.light.accent }]}
             onPress={handleLogin}
             disabled={loading}
           >
-            <Text style={styles.buttonText}>
+            <Text style={[styles.buttonText, { color: Colors.light.text }]}>
               {loading ? 'Logging in...' : 'Login'}
             </Text>
           </TouchableOpacity>
@@ -76,7 +77,7 @@ export default function Login() {
             style={styles.secondaryButton}
             onPress={() => router.push?.('/register')}
           >
-            <Text style={styles.secondaryButtonText}>Dont have an account? Register</Text>
+            <Text style={[styles.secondaryButtonText, { color: Colors.light.tint }]}>Dont have an account? Register</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -87,7 +88,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#fff3c0ff',
+    backgroundColor: Colors.light.background,
   },
   scroll: {
     flexGrow: 1,
@@ -100,46 +101,37 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700',
     marginBottom: 24,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#111111ff',
     padding: 14,
     borderRadius: 10,
     marginBottom: 16,
-    fontSize: 16
+    fontSize: 16,
   },
   button: {
-    backgroundColor: '#144100ff',
     padding: 14,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 4
+    marginTop: 4,
   },
   buttonText: {
-    color: '#fff',
     fontSize: 17,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   secondaryButton: {
     padding: 12,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   secondaryButtonText: {
-    color: '#144100ff',
     fontSize: 16,
-    fontWeight: '500'
-  },
-  helperText: {
-    marginTop: 14,
-    textAlign: 'center',
-    color: '#444'
+    fontWeight: '500',
   },
   error: {
     marginBottom: 12,
     color: 'red',
     textAlign: 'center',
     fontWeight: '600',
-  }
+  },
 });
